@@ -1,0 +1,158 @@
+<!doctype html>
+<html ng-app="myApp" ng-csp lang="en_US">
+<title>Watch Desk. oDesk job watcher.</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="stylesheet" href="/css/basic.css">
+<link rel="stylesheet" href="/css/form.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/jobsList.css">
+<link rel="stylesheet" href="/css/error.css">
+<link rel="stylesheet" href="/css/settings.css">
+
+<script src="/js/core/angular.1.4.min.js"></script>
+
+<script src="/js/modules/timeAgo.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/services/localStorage.js"></script>
+<script src="/js/modules/settings.js"></script>
+<script src="/js/services/share.js"></script>
+<script src="/js/services/pageMode.js"></script>
+<script src="/js/services/scrollAnimate.js"></script>
+<script src="/js/services/jobsListHeight.js"></script>
+<script src="/js/services/jobsPager.js"></script>
+<script src="/js/services/jobsFolders.js"></script>
+<script src="/js/popup.js"></script>
+
+<body ng-controller="wrap" ng-class="pageStateCL">
+<div id="popup_helper">
+    <img src="/images/ext_icon_help.png" alt="">
+    You can close this window tab and work through extension popup.
+</div>
+<div id="wrap">
+    <div ng-controller="manager">
+        <header>
+            <div class="stngs_trigger" ng-click="settingsShow()" title="Settings"></div>
+            <div id="logo">
+                <img src="/images/logo.png" width="140" height="21" alt="" title="Watch Desk. oDesk job watcher.">
+            </div>
+        </header>
+        <form class="jobSearch" ng-submit="feedsSubmit(feedsValue)">
+            <input type="text" name="search" ng-model="feedsValue" placeholder="Find Jobs" class="js_text">
+            <input type="submit" value="" class="js_submit" title="Find">
+        </form>
+        <div id="menu">
+            <label class="msitem m_select" title="Select All">
+                <span class="msis_check">
+                    <input type="checkbox" class="fch_cust" id="jl_all" ng-model="selectAllModel" ng-change="selectAll(selectAllModel)">
+                    <label for="jl_all" class="fl_cust"></label>
+                </span>
+            </label>
+            <span class="msitem m_favorites" ng-click="moveJobsToFolder('favorites')" title="Add selected to Favorites"></span>
+            <span class="msitem m_delete" ng-click="moveJobsToFolder('trash')" title="Delete selected"></span>
+        </div>
+    </div>
+
+    <!-- Job List -->
+    <div class="serverError">
+        Odesk.com server internal error. Try to repeat the request.
+    </div>
+    <div class="jobs_list" ng-controller="jobsList" id="jobsList" ng-class="jobListClass">
+        <div class="jl_data">
+            <ul>
+                <li class="jl_item" ng-repeat="job in jobList" ng-class="job.new ? 'jli_new' : ''">
+                    <div class="jl_item_cont" ng-if="job.id" ng-class="job.selected ? 'job_selected' : ''">
+                        <div class="jl_check">
+                            <input type="checkbox" class="fch_cust" value="{{job.id}}" ng-model="job.selected" id="jl_{{job.id}}">
+                            <label for="jl_{{job.id}}" class="fl_cust"></label>
+                        </div>
+                        <div class="jli_name">
+                            <a href="{{job.url}}" target="_blank">{{job.title}}</a>
+                        </div>
+                        <div class="jli_params">
+                            <strong>{{job.job_type}} - </strong>
+                            <span ng-if="job.duration">Est. Time: {{job.duration}} - </span>
+                            <span ng-if="job.budget">Est. Budget: ${{job.budget}} - </span>
+                            {{job.date_created | timeAgo}}
+                        </div>
+                        <div class="jli_skills">
+                            <span class="jl_skill" ng-repeat="skill in job.skills">
+                                {{skill}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="jl_pager" ng-if="job.pageNum" id="page_{{job.pageNum}}">
+                        Page {{job.pageNum}}
+                    </div>
+                </li>
+            </ul>
+            <div class="jl_more_wrap">
+                <button class="ajax_btn jl_more_btn" ng-class="jobsLoaded ? 'el-loading' : ''" ng-click="moreJobsGet()">Load More Jobs</button>
+            </div>
+            <div class="jl_full">No more jobs that match your search</div>
+        </div>
+        <div class="jl_empty">Empty Folder</div>
+        <div class="jl_response_empty">oDesk didn't find any jobs that match your search. Please modify your search to expand it.</div>
+    </div>
+    <ul class="jobFolders" ng-controller="jobsFolders">
+        <li class="jf_item selected" data-value="inbox" ng-click="folderChange($event)">Inbox</li>
+        <li class="jf_item" data-value="favorites" ng-click="folderChange($event)">Favorites</li>
+        <li class="jf_item" data-value="trash" ng-click="folderChange($event)">Trash</li>
+    </ul>
+
+    <!-- Settings -->
+    <form class="settings" ng-controller="settings" ng-submit="settingsSubmit()">
+        <div class="st_column">
+            <div class="sg_item">
+                <label for="jobsPerPage" class="ft_label">Jobs per page</label>
+                <input type="number" ng-model="settings.jobsPerPage" class="f_text ft_small" id="jobsPerPage" min="10" max="100" required>
+                <div class="ft_descr">Between: 10 &ndash; 100</div>
+            </div>
+            <div class="sg_item">
+                <label for="jobsPerPage" class="ft_label">Budget interval</label>
+                <input type="number" ng-model="settings.budgetFrom" class="f_text ft_small" id="budgetFrom" min="0" max="10000">
+                &nbsp;&ndash;&nbsp;
+                <input type="number" ng-model="settings.budgetTo" class="f_text ft_small" id="budgetTo" min="1" max="1000000">
+                <div class="ft_descr">Default unlimited</div>
+            </div>
+            <div class="sg_item">
+                <label for="jobType" class="ft_label">Job type</label>
+                <select name="jobType" id="jobType" ng-model="settings.jobType.value">
+                    <option ng-repeat="type in settings.jobType.values">{{type}}</option>
+                </select>
+            </div>
+            <div class="sg_item">
+                <label for="notifyInterval" class="ft_label">Notify every</label>
+                <input type="number" ng-model="settings.notifyInterval" class="f_text ft_small" id="notifyInterval" min="1" max="300" required ng-disabled="settings.notifyDisabled">
+                <div class="ft_descr">Minutes between: 1 &ndash; 300</div>
+            </div>
+            <div class="sg_item sgi_ntf_disable">
+                <input type="checkbox" class="fch_cust" id="notifyDisabled" ng-model="settings.notifyDisabled">
+                <label for="notifyDisabled" class="fl_cust"></label>
+                <label for="notifyDisabled">Disable notification</label>
+            </div>
+        </div>
+        <div class="st_column stc_right">
+            <div class="sg_item">
+                <label for="jobsPerPage" class="ft_label">Days posted</label>
+                <input type="number" ng-model="settings.daysPosted" class="f_text ft_small" id="daysPosted" min="0" max="50">
+                <div class="ft_descr">Default unlimited</div>
+            </div>
+            <div class="sg_item">
+                <label for="duration" class="ft_label">Duration</label>
+                <select name="duration" id="duration" ng-model="settings.duration.value">
+                    <option ng-repeat="type in settings.duration.values">{{type}}</option>
+                </select>
+                <div class="ft_descr">&nbsp;</div>
+            </div>
+            <div class="sg_item">
+                <label for="workload" class="ft_label">Workload</label>
+                <select name="workload" id="workload" ng-model="settings.workload.value">
+                    <option ng-repeat="type in settings.workload.values">{{type}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="fp_submit">
+            <button id="tokenApply">Apply</button>
+        </div>
+    </form>
+</div>

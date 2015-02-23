@@ -1,0 +1,135 @@
+.jobs_list {
+    clear: both;
+    max-height: 438px;
+    min-height: 50px;
+    overflow: auto;
+    margin-bottom: 60px;
+    border-top: 1px solid #e5e5e5;
+}
+.pageWideMode .jobs_list {
+    max-height: calc(100% - 162px);
+}
+.appSettingsMode .jobs_list,
+.pageInitialMode .jobs_list,
+.pageErrorMode .jobs_list { display: none }
+.pageInitialMode .jobs_list {
+    min-height: 0;
+}
+.jl_response_empty,
+.jl_empty {
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1.75rem;
+    color: #7c7c7a;
+}
+.jl_data,
+.jl_response_empty,
+.jl_empty { display: none }
+.pageDataEmpty .jl_response_empty,
+.pageDataExistsMode .jl_data,
+.job_list_empty .jl_empty { display: block }
+
+.jl_item {
+    position: relative;
+    border-bottom: 1px solid #e5e5e5;
+    -webkit-transition: background-color .8s linear;
+}
+.jl_item_cont {
+    padding: 10px 10px 10px 35px;
+}
+.jl_item_cont:hover {
+    background-color: #fcfcf0;
+}
+.job_selected {
+    background-color: #ffffea!important;
+}
+.jli_new {
+    background-color: #EDF6FF;
+}
+.jl_check {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    margin-top: -8px;
+    -webkit-user-select: none;
+}
+.jli_name {
+    font-size: 1.167rem;
+    font-weight: bold;
+}
+.jli_params {
+    color: #7c7c7a;
+}
+.jli_skills {
+    overflow: hidden;
+    padding: 5px 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.jl_skill {
+    padding: 5px 7px;
+    margin-right: 5px;
+    background-color: #f2f2ed;
+    border-radius: 4px;
+    font-size: .917rem;
+    line-height: 1;
+    color: #646165;
+}
+.jl_more_wrap {
+    text-align: center;
+}
+.folder_favorites .jl_more_wrap,
+.folder_trash .jl_more_wrap,
+.pageNoMoreJobs .jl_more_wrap {
+    display: none;
+}
+.jl_more_btn {
+    margin: 10px 0;
+}
+.jl_pager {
+    padding: 10px 10px 10px 35px;
+    background-color: #FFDCB8;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.jobFolders {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+    background-color: #f5f5f2;
+    font-size: 1.417rem;
+    font-weight: bold;
+    font-family: sans-serif;
+    border-top: 1px solid #e5e5e5;
+}
+.pageDataExistsMode .jobFolders {
+    display: block;
+}
+.appSettingsMode .jobFolders { display: none }
+.jf_item {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.jf_item:hover {
+    background-color: #CCC;
+}
+.jf_item.selected {
+    background-color: #333;
+    color: #FFF;
+}
+.jl_full {
+    display: none;
+    padding: 10px 0;
+    font-size: 1.25rem;
+    text-align: center;
+}
+.pageNoMoreJobs .jl_full {
+    display: block;
+}

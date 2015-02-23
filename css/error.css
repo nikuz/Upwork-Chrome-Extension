@@ -1,0 +1,10 @@
+.serverError {
+    display: none;
+    padding: 15px 0;
+    clear: both;
+    font-size: 1.256rem;
+    text-align: center;
+}
+.pageErrorMode .serverError {
+    display: block;
+}
