@@ -1,7 +1,7 @@
 .jobs_list {
     clear: both;
+    min-height: 300px;
     max-height: 438px;
-    min-height: 50px;
     overflow: auto;
     margin-bottom: 60px;
     border-top: 1px solid #e5e5e5;
