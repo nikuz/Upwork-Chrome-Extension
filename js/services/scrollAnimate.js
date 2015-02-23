@@ -7,7 +7,7 @@ myApp.factory('myScrollAnimate', function(){
             parent = this.el(parent);
             offset = offset || 0;
             this.initialValue = parent.scrollTop;
-            this.start = new Date;
+            this.start = Date.now();
             this.target = parent.scrollTop + el.getBoundingClientRect().top - offset;
 
             this.tick(el, parent, offset);
@@ -21,14 +21,17 @@ myApp.factory('myScrollAnimate', function(){
         initialValue: null,
         start: null,
         progress: function(){
-            var val = (new Date - this.start) / 6000;
+            var val = (Date.now() - this.start) / 6000;
             return val > 1 ? 1 : val;
+        },
+        validDuration: function(){
+            return (Date.now()-this.start) / 1000 < 1;
         },
         tick: function(el, parent, offset){
             var scroll = parent.scrollTop,
                 step, progress, target;
 
-            if(this.target - scroll > 1){
+            if(this.target - scroll > 1 && this.validDuration()){
                 progress = this.progress();
                 step = (progress * (this.target - this.initialValue));
                 target = parent.scrollTop + step;
