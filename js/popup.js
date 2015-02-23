@@ -91,7 +91,7 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
         !preview && myPageMode.remove('load');
         if(!localStorage) return;
 
-        var result, inbox;
+        var result;
         if(!data.length){
             if(!addMore){
                 storage.clear('inbox');
@@ -105,8 +105,7 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
             myPageMode.remove('init');
             myPageMode.add('data');
 
-            inbox = storage.get('inbox') || [];
-            result = inbox.concat(data);
+            result = storage.get('inbox');
             myJobsPager(result, settings.jobsPerPage);
             $scope.jobList = result;
             myJobsListHeight();
