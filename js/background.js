@@ -61,6 +61,14 @@ var watcher = {
             text: count.toString()
         });
     },
+    newJobsBadgeUpdate: function(){
+        var newJobsLen = proxy.cacheCheckNew().length;
+        if(newJobsLen > 0){
+            this.newJobsBadge(newJobsLen);
+        } else {
+            this.newJobsBadgeReset();
+        }
+    },
     newJobsBadgeReset: function(){
         this.newJobsBadge('');
         this.newJobsCountLast = 0;

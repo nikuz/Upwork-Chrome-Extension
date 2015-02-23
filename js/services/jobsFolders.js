@@ -36,6 +36,7 @@ myApp.factory('myJobsFolders', ['myJobsPager', function(myJobsPager){
                         this.checkLimit(targetFolder, folder); // check limit
                         storage.set(folder, targetFolder);
                         storage.set(curFolder, originalJobsList);
+                        this.jobsMakeViewed(filteredJobs, folder);
                     }
                 }
                 return jobListCopy;
@@ -71,6 +72,18 @@ myApp.factory('myJobsFolders', ['myJobsPager', function(myJobsPager){
                 }
                 i++;
             }
+        },
+        jobsMakeViewed: function(filteredJobs, folder){
+            var ids = [],
+                i = 0, l = filteredJobs.length;
+
+            for(; i<l; i++){
+                ids.push(filteredJobs[i].id);
+            }
+
+            chrome.runtime.getBackgroundPage(function(bgPage){
+                bgPage.proxy.cacheNewMakeViewed(ids, folder);
+            });
         },
         sort: function(a, b){
             var prop = 'date_created';

@@ -293,40 +293,38 @@ var proxy = {
         }
         return response;
     },
-    cacheNewMakeViewed: function(){
-        var feeds = storage.get('feeds');
-        if(!feeds) return;
+    cacheNewMakeViewed: function(ids, folderName){
+        ids = typeof ids === 'object' ? ids : [ids];
+        folderName = folderName || 'inbox';
 
-        var curCache = this.cacheGet(feeds);
-        if(!curCache) return;
+        var feeds = storage.get('feeds'),
+            curCache = this.cacheGet(feeds),
+            folder = storage.get(folderName),
+            cacheName = this.cacheNameGet(feeds),
+            i = 0, l = curCache.jobs.length;
+
         curCache = curCache.jobs;
 
-        var inbox = storage.get('inbox');
-        if(!inbox) return;
-
-        var i = 0, l = inbox.length, match,
-            j, jl = curCache.length,
-            cacheName = this.cacheNameGet(feeds);
-
         for(; i<l; i++){
-            if(inbox[i].new){
-                inbox[i].new = 0;
-                match = true;
-                for(j = 0; j<jl; j++){
-                    if(curCache[j].id === inbox[i].id){
-                        curCache[j].new = 0;
-                    }
-                }
+            if(ids.indexOf(curCache[i].id) !== -1){
+                curCache[i].new = 0;
+            }
+        }
+        i = 0; l = folder.length;
+        for(; i<l; i++){
+            if(ids.indexOf(folder[i].id) !== -1){
+                folder[i].new = 0;
             }
         }
 
-        if(match){
-            storage.set('cache_'+cacheName, {
-                created: Date.now(),
-                jobs: curCache
-            });
-            storage.set('inbox', inbox);
-        }
+        storage.set('cache_'+cacheName, {
+            created: Date.now(),
+            jobs: curCache
+        });
+        storage.set(folderName, folder);
+
+        watcher.newJobsBadgeUpdate();
+        return true;
     },
     cacheLengthLimit: 10,
     cacheLengthCheck: function(){

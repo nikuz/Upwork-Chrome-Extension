@@ -1,6 +1,3 @@
-chrome.runtime.getBackgroundPage(function(bgPage){
-    bgPage.watcher.newJobsBadgeReset();
-});
 document.addEventListener('DOMContentLoaded', function(){
     if(window.innerWidth > 800){
         document.getElementById('wrap').className += ' pageWideMode';
@@ -57,7 +54,6 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
         myJobsPager(localInbox, settings.jobsPerPage);
         $scope.jobList = localInbox;
         myJobsListHeight();
-        makeViewed();
     } else if(storage.get('feeds')){
         jobsGet();
     }
@@ -112,7 +108,6 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
         }
 
         $scope.safeApply();
-        makeViewed();
         if(addMore){
             myScrollAnimate.animate('#page_'+(myJobsPager.count($scope.jobList)), '#jobsList', 105);
         } else {
@@ -169,16 +164,13 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
         });
     }
 
-    function makeViewed(){
+    $scope.makeViewed = function(url, id){
         chrome.runtime.getBackgroundPage(function(bgPage) {
-            setTimeout(function () {
-                $scope.jobList.forEach(function (item) {
-                    item.new = 0;
-                });
-                bgPage.proxy.cacheNewMakeViewed($scope.jobList);
-            }, 100);
+            if(bgPage.proxy.cacheNewMakeViewed(id)){
+                chrome.tabs.create({ 'url': url });
+            }
         });
-    }
+    };
 
     window.addEventListener('message', function(e){
         if(e.data === 'newJobs'){

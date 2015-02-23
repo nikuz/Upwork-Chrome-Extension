@@ -59,14 +59,14 @@
     <div class="jobs_list" ng-controller="jobsList" id="jobsList" ng-class="jobListClass">
         <div class="jl_data">
             <ul>
-                <li class="jl_item" ng-repeat="job in jobList" ng-class="job.new ? 'jli_new' : ''">
+                <li class="jl_item" ng-repeat="job in jobList" ng-class="job.new ? 'jli_is_new' : ''">
                     <div class="jl_item_cont" ng-if="job.id" ng-class="job.selected ? 'job_selected' : ''">
                         <div class="jl_check">
                             <input type="checkbox" class="fch_cust" value="{{job.id}}" ng-model="job.selected" id="jl_{{job.id}}">
                             <label for="jl_{{job.id}}" class="fl_cust"></label>
                         </div>
                         <div class="jli_name">
-                            <a href="{{job.url}}" target="_blank">{{job.title}}</a>
+                            <a href="{{job.url}}" ng-click="makeViewed(job.url, job.id)">{{job.title}}</a>
                         </div>
                         <div class="jli_params">
                             <strong>{{job.job_type}} - </strong>
@@ -79,6 +79,7 @@
                                 {{skill}}
                             </span>
                         </div>
+                        <div class="jli_new" ng-if="job.new">new</div>
                     </div>
                     <div class="jl_pager" ng-if="job.pageNum" id="page_{{job.pageNum}}">
                         Page {{job.pageNum}}

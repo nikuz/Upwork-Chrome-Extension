@@ -32,7 +32,6 @@
 .jl_item {
     position: relative;
     border-bottom: 1px solid #e5e5e5;
-    -webkit-transition: background-color .8s linear;
 }
 .jl_item_cont {
     padding: 10px 10px 10px 35px;
@@ -43,7 +42,7 @@
 .job_selected {
     background-color: #ffffea!important;
 }
-.jli_new {
+.jli_is_new {
     background-color: #EDF6FF;
 }
 .jl_check {
@@ -54,6 +53,7 @@
     -webkit-user-select: none;
 }
 .jli_name {
+    padding-right: 40px;
     font-size: 1.167rem;
     font-weight: bold;
 }
@@ -132,4 +132,14 @@
 }
 .pageNoMoreJobs .jl_full {
     display: block;
+}
+.jli_new {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 2px 3px;
+    background-color: #fc4f4f;
+    color: #fff;
+    font-weight: bold;
+    font-size: .833rem;
 }
