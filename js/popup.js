@@ -80,7 +80,7 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
             jobsRequest.then(function(data){
                 response(data, null, addMore);
             });
-            jobsRequest.rejected(function(err){
+            jobsRequest.rejected(function(){
                 myPageMode.remove('load');
                 myPageMode.add('error');
             });
@@ -106,15 +106,10 @@ myApp.controller('jobsList', ['$scope', 'mySharedService', 'myPageMode', 'myScro
             myPageMode.add('data');
 
             inbox = storage.get('inbox') || [];
-            if(!addMore){
-                inbox = [];
-            }
             result = inbox.concat(data);
             myJobsPager(result, settings.jobsPerPage);
             $scope.jobList = result;
             myJobsListHeight();
-
-            storage.set('inbox', inbox.concat(data));
         }
 
         $scope.safeApply();

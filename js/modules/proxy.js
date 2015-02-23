@@ -24,6 +24,7 @@ var proxy = {
         });
         return df.promise;
     },
+    attemptLimit: 5,
     request: function(df, options, preview){
         var that = this,
             settings = pageSettings.get(),
@@ -94,14 +95,11 @@ var proxy = {
     requestServer: function(options){
         var df = new MyDefer();
 
-        options.attempt = 1;
         this.requestServerGet(df, options);
 
         return df.promise;
     },
-    attemptLimit: 5,
     requestServerGet: function(df, options){
-        var that = this;
         var requestDf = oDesk.request({
             url: '/api/profiles/v2/search/jobs.json',
             dataType: 'JSON',
@@ -113,12 +111,7 @@ var proxy = {
         });
 
         requestDf.rejected(function(){
-            if(options.attempt !== that.attemptLimit){
-                options.attempt++;
-                that.requestServerGet(df, options);
-            } else {
-                df.reject();
-            }
+            df.reject();
         });
     },
     requestDataGet: function(options){
@@ -238,10 +231,8 @@ var proxy = {
             request.then(function(data){
                 data = that.cacheObfuscator(data.jobs);
                 var curCache = that.cacheGet(options.q),
-                    inbox = storage.get('inbox'),
                     i = 0, l = data.length,
-                    limit_len, result = [],
-                    popup = chrome.extension.getViews({type: 'popup'})[0];
+                    limit_len, result = [];
 
                 curCache = curCache ? curCache.jobs : [];
                 limit_len = curCache.length || that.cacheCountLimit;
@@ -252,14 +243,19 @@ var proxy = {
                     }
                 }
                 if(result.length){
-                    curCache.splice(limit_len-result.length);
                     that.cacheSet(options, result);
+                    curCache.splice(limit_len-result.length);
 
-                    inbox = inbox.concat(result).sort(that.sort);
-                    if(!popup){
-                        inbox.splice(settings.jobsPerPage);
+                    var inbox = storage.get('inbox');
+                    if(inbox){
+                        var popup = chrome.extension.getViews({type: 'popup'})[0];
+
+                        inbox = inbox.concat(result).sort(that.sort);
+                        if(!popup){
+                            inbox.splice(settings.jobsPerPage);
+                        }
+                        storage.set('inbox', inbox);
                     }
-                    storage.set('inbox', inbox);
                 }
             });
         });

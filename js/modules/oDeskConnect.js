@@ -52,7 +52,9 @@ var oDesk = {
             req.error(function(err){
                 if(params.isInner && params.attempt !== that.attemptLimit){
                     params.attempt++;
-                    request(params);
+                    setTimeout(function(){
+                        request(params);
+                    }, 200);
                 } else {
                     df.reject(err);
                 }
@@ -103,8 +105,8 @@ var oDesk = {
                 }).then(function(data){
                     that.store(['token', 'token_secret'], data);
                     that.store('token', 'access', data);
+                    storage.set('initial', true);
                     df.resolve();
-                    chrome.tabs.create({ 'url': chrome.runtime.getURL('popup.html?initial=true') });
                 }).rejected(function(err){
                     df.reject(err);
                 });

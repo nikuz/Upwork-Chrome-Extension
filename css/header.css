@@ -110,6 +110,7 @@ header {
     background-color: #FFF;
     box-shadow: 0 0 5px rgba(0,0,0,.4);
     font-size: 1.25rem;
+    z-index: 10;
 }
 .pageExtraInitial #popup_helper { display: block }
 #popup_helper:after {
