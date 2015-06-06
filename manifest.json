@@ -3,7 +3,7 @@
     "name": "Watch desk. oDesk job watcher.",
     "short_name": "Watch desk",
     "description": "This extension use oDesk API for watching new jobs and showing notifications.",
-    "version": "1.0.7",
+    "version": "1.0.9",
     "browser_action": {
         "default_icon": "/images/icon.png",
         "default_popup": "popup.html"
