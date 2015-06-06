@@ -1,19 +1,39 @@
-var storage = {
-    get: function(name){
-        var data = localStorage[name];
-        try {
-            data = JSON.parse(data);
-        } catch(e){}
+'use strict';
 
-        return data;
-    },
-    set: function(name, data){
-        localStorage[name] = typeof data === 'object' ? JSON.stringify(data) : data;
-    },
-    check: function(name){
-        return !!localStorage[name];
-    },
-    clear: function(name){
-        delete localStorage[name];
-    }
+import * as _ from 'underscore';
+
+// ----------------
+// public functions
+// ----------------
+
+var pGet = name => {
+  var data = localStorage[name];
+  try {
+    data = JSON.parse(data);
+  } catch (e){}
+
+  return data;
 };
+
+var pSet = (name, data) => {
+  localStorage[name] = _.isObject(data) ? JSON.stringify(data) : data;
+};
+var pCheck = name => {
+  return !!localStorage[name];
+};
+var pClear = name => {
+  delete localStorage[name];
+};
+
+
+// ---------
+// interface
+// ---------
+
+export {
+  pGet as get,
+  pSet as set,
+  pCheck as check,
+  pClear as clear,
+};
+

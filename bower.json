@@ -1,10 +1,13 @@
 {
-  "name" : "bower components",
+  "name": "bower components",
   "version": "0.1",
-  "dependencies" : {
-    "jquery" : "latest",
-    "reflux" : "latest",
-    "requirejs" : "latest",
-    "react" : "latest"
+  "dependencies": {
+    "jquery": "latest",
+    "reflux": "latest",
+    "requirejs": "latest",
+    "underscore": "latest",
+    "react": "latest",
+    "crypto-js": "latest",
+    "async": "latest"
   }
 }

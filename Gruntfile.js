@@ -6,25 +6,18 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     shell: {
       clean: {
-        command: [
-          'rm -rf release',
-          'mkdir release'
-        ].join(' && ')
+        command: 'rm -rf release && mkdir release'
       },
       copy_dependencies: {
         command: 'cp manifest.json release/'
       },
       copy_html: {
-        command: [
-          'cp popup.html release/',
-          'cp verifierRequest.html release/',
-          'cp background.html release/'
-        ].join(' && ')
+        command: 'cp *.html release/'
       },
       copy_js: {
         command: [
           'cp --parents js/main.js release/',
-          'cp --parents bower_components/requirejs/require.js release/'
+          'cp --parents js/verifier.js release/'
         ].join(' && ')
       },
       copy_css: {
@@ -32,22 +25,41 @@ module.exports = function(grunt) {
       },
       copy_images: {
         command: 'cp -r images release/'
-      },
-      copy_bower: {
-        command: function() {
-          var htmlFile = grunt.file.read('js/main.js'),
-            bowerIncludes = htmlFile.match(/bower_components[^'"]+/g);
-
-          bowerIncludes.forEach(function(item, index) {
-            var ext = '.js';
-            if (/\.js$/.test(item)) {
-              ext = '';
+      }
+    },
+    bower: {
+      dev: {
+        options: {
+          expand: true,
+          packageSpecific: {
+            'crypto-js': {
+              files: [
+                '*.js'
+              ]
+            },
+            'jquery': {
+              files: [
+                'dist/jquery.min.js'
+              ]
+            },
+            'underscore': {
+              files: [
+                'underscore-min.js'
+              ]
+            },
+            'reflux': {
+              files: [
+                'dist/reflux.min.js'
+              ]
+            },
+            'react': {
+              files: [
+                'react-with-addons.min.js'
+              ]
             }
-            console.log(item + ext);
-            bowerIncludes[index] = 'cp --parents ' + item + ext + ' release/';
-          });
-          return 'mkdir -p release/bower_components && ' + bowerIncludes.join(' && ');
-        }
+          }
+        },
+        dest: 'release/bower_components/'
       }
     },
     babel: {
@@ -59,7 +71,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'js',
-          src: ['**/*.js'],
+          src: ['**/*.js', '!verifier.js'],
           dest: 'release/js'
         }]
       },
@@ -77,7 +89,7 @@ module.exports = function(grunt) {
     },
     watch: {
       babel: {
-        files: 'js/*.js',
+        files: ['js/*.js', 'js/**/*.js'],
         tasks: ['babel:dev'],
         options: {
           spawn: false,
@@ -176,6 +188,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-bower');
 
   grunt.registerTask('default', [
     'shell:clean',
@@ -184,7 +197,7 @@ module.exports = function(grunt) {
     'shell:copy_js',
     'shell:copy_css',
     'shell:copy_images',
-    'shell:copy_bower',
+    'bower',
     'babel:dev',
     'watch'
   ]);

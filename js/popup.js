@@ -2,6 +2,7 @@
 
 import * as $ from 'jquery';
 import * as React from 'react';
+import * as odesk from 'modules/odesk';
 
 // tutorial1.js
 var CommentBox = React.createClass({
