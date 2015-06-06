@@ -97,6 +97,25 @@ module.exports = function(grunt) {
         tasks: ['shell:copy_images']
       }
     },
+    jscs: {
+      options: {
+        preset: 'airbnb',
+        config: '.jscsrc'
+      },
+      src: [
+        '*.js',
+        'js/**/*.js'
+      ]
+    },
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc'
+      },
+      all: [
+        '*.js',
+        'js/**/*.js'
+      ]
+    },
     cssmin: {
       files: {
         expand: true,
@@ -168,6 +187,11 @@ module.exports = function(grunt) {
     'shell:copy_bower',
     'babel:dev',
     'watch'
+  ]);
+
+  grunt.registerTask('before_push_test', [
+    'jscs',
+    'jshint'
   ]);
 
   /*grunt.registerTask('other', [
