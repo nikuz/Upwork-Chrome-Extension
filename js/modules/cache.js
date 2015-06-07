@@ -10,19 +10,13 @@ var nameGet = name => {
   return name.replace(/\s/g, '_');
 };
 
-var validate = name => {
-  var curCache = pGet(name),
-    response = {
-      valid: false
-    };
+var validate = () => {
+  var cacheTime = parseInt(pGet('validate'), 10),
+    response = false;
 
-  if (curCache) {
-    response.exist = true;
-    var timeStamp = Date.now(),
-      lastJobTime = new Date(curCache[curCache.length - 1].date_created).getTime();
-
+  if (cacheTime) {
     // valid if less than two hours after update
-    response.valid = (timeStamp - lastJobTime) / 1000 / 60 / 60 < 2;
+    response = (Date.now() - cacheTime) / 1000 / 60 / 60 < 2;
   }
   return response;
 };
@@ -60,6 +54,7 @@ var fill = (options, callback) => {
         data = curCache.concat(data);
       }
       pSet(query, data);
+      pSet('validate', Date.now());
       cb();
     }
   });
@@ -95,11 +90,9 @@ var request = (options, callback) => {
 
 var pRequest = (options, callback) => {
   var opts = options || {},
-    cb = callback || noop,
-    query = opts.query,
-    cache = validate(query);
+    cb = callback || noop;
 
-  if (cache.valid) {
+  if (validate()) {
     request(opts, cb);
   } else {
     opts.update = true;
