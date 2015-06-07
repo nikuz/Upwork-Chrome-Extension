@@ -1,28 +1,28 @@
 'use strict';
 
 import * as config from 'config';
-import * as storage from 'services/localStorage';
+import * as storage from 'modules/storage';
 import * as odesk from 'modules/odesk';
 
-var noop = () => {};
+var noop = function() {};
 
 var nameGet = name => {
   return name.replace(/\s/g, '_');
 };
 
-var check = name => {
+var validate = name => {
   var curCache = pGet(name),
     response = {
       valid: false
     };
 
-  if(curCache){
+  if (curCache) {
     response.exist = true;
     var timeStamp = Date.now(),
       lastJobTime = new Date(curCache[curCache.length - 1].date_created).getTime();
 
     // valid if less than two hours after update
-    response.valid = (timeStamp - lastJobTime) /1000/60/60 < 2;
+    response.valid = (timeStamp - lastJobTime) / 1000 / 60 / 60 < 2;
   }
   return response;
 };
@@ -97,7 +97,7 @@ var pRequest = (options, callback) => {
   var opts = options || {},
     cb = callback || noop,
     query = opts.query,
-    cache = check(query);
+    cache = validate(query);
 
   if (cache.valid) {
     request(opts, cb);

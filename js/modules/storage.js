@@ -10,7 +10,7 @@ var pGet = name => {
   var data = localStorage[name];
   try {
     data = JSON.parse(data);
-  } catch (e){}
+  } catch (e) {}
 
   return data;
 };
@@ -34,6 +34,6 @@ export {
   pGet as get,
   pSet as set,
   pCheck as check,
-  pClear as clear,
+  pClear as clear
 };
 

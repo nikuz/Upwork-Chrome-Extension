@@ -2,13 +2,36 @@
 
 import * as config from 'config';
 import * as async from 'async';
-import * as storage from 'services/localStorage';
+import * as _ from 'underscore';
+import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 import * as odesk from 'modules/odesk';
 import * as cache from 'modules/cache';
 
-var notifyInterval = .1; // TODO: should be undefined
-storage.set('feeds', 'javascript'); // TODO: should be removed
+var notifyInterval;
+
+var prevNotificationCount = 0;
+var notificationShow = count => {
+  if (!count || count === prevNotificationCount) {
+    return;
+  }
+  prevNotificationCount = count;
+  chrome.notifications.getPermissionLevel(permission => {
+    if (permission === 'granted') {
+      chrome.notifications.create(storage.get('feeds') + ':', {
+        type: 'basic',
+        title: config.APP_name,
+        iconUrl: '/images/icon128n.png',
+        message: `You have new ${count} vacancies`
+      });
+    }
+  });
+};
+chrome.notifications.onClicked.addListener(notificationId => {
+  if (notificationId === storage.get('feeds') + ':') {
+    window.open('popup.html');
+  }
+});
 
 var createNotifier = () => {
   var alarmName = 'newJobsNotifier';
@@ -64,43 +87,18 @@ var checkNewJobs = () => {
         }
       });
       cacheJobs.unshift(newJobs);
-      //cache.set(feeds, cacheJobs);
-      //notificationShow(newJobs.length);
-      notificationShow(1);
+      cache.set(feeds, cacheJobs);
+      notificationShow(newJobs.length);
     }
   });
 };
-
-var prevNotificationCount = 0;
-var notificationShow = count => {
-  if (!count || count === prevNotificationCount) {
-    return;
-  }
-  prevNotificationCount = count;
-  chrome.notifications.getPermissionLevel(permission => {
-    if (permission === 'granted') {
-      chrome.notifications.create(storage.get('feeds') + ':', {
-        type: 'basic',
-        title: config.APP_name,
-        iconUrl: '/images/icon128n.png',
-        message: `You have new ${count} vacancies`
-      });
-    }
-  });
-};
-chrome.notifications.onClicked.addListener(notificationId => {
-  if (notificationId === storage.get('feeds') + ':') {
-    window.open('popup.html');
-  }
-});
-
 
 chrome.alarms.create('settingsWatch', {
   periodInMinutes: 1
 });
 
 chrome.alarms.onAlarm.addListener(alarm => {
-  switch(alarm.name){
+  switch (alarm.name) {
     case 'settingsWatch':
       settingsCheck();
       break;

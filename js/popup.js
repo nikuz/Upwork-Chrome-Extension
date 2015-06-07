@@ -1,28 +1,30 @@
 'use strict';
 
 import * as $ from 'jquery';
-import * as React from 'react';
-import * as cache from 'modules/cache';
+import * as storage from 'modules/storage';
+import * as Page from 'components/page';
 
-cache.request({
-  query: 'javascript',
-  page: 6
-}, (err, response) => {
-  console.log(err);
-  console.log(response);
-});
-
-// tutorial1.js
-var CommentBox = React.createClass({
-  render: function() {
-    return (
-      <div className="commentBox">
-        Hello, world! I am a CommentBox.
-      </div>
-    );
+var searchInit = () => {
+  var searchForm = $('#search');
+  searchForm.on('submit', function(e) {
+    e.preventDefault();
+    if (!Page.has('load')) {
+      var value = this.search.value.trim();
+      value = value.replace(/\/|\"|\'|\`|\^|\&|\$|\%|\*|\(|\)|\[|\]|\{|\}|\?|\;|\:|<|>|\+|\=|\#|\@|\!/g, '').replace(/\s+/g, ' ');
+      if (value.length !== 0) {
+        storage.set('feeds', value);
+        GlobalEvents.feedsAdded();
+      }
+    }
+  });
+  var curFeeds = storage.get('feeds');
+  if (curFeeds) {
+    GlobalEvents.feedsAdded();
+    searchForm[0].search.value = curFeeds;
   }
+};
+searchInit();
+
+$('#stngs_trigger').on('click', () => {
+  GlobalEvents.settingsInit();
 });
-React.render(
-  <CommentBox />,
-  $('#content')[0]
-);

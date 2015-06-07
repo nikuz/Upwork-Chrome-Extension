@@ -38,22 +38,22 @@ module.exports = function(grunt) {
                 '*.js'
               ]
             },
-            'jquery': {
+            jquery: {
               files: [
                 'dist/jquery.min.js'
               ]
             },
-            'underscore': {
+            underscore: {
               files: [
                 'underscore-min.js'
               ]
             },
-            'reflux': {
+            reflux: {
               files: [
                 'dist/reflux.min.js'
               ]
             },
-            'react': {
+            react: {
               files: [
                 'react-with-addons.min.js'
               ]
@@ -170,7 +170,7 @@ module.exports = function(grunt) {
       options: {
         archive: function() {
           var manifest = grunt.file.readJSON('release/manifest.json');
-          return 'release/' + ( manifest.short_name.replace(/\s/g, '_') + '_' + manifest.version ) + '.zip';
+          return 'release/' + (manifest.short_name.replace(/\s/g, '_') + '_' + manifest.version) + '.zip';
         }
       },
       files: {

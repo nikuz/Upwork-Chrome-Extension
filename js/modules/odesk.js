@@ -4,26 +4,26 @@ import * as config from 'config';
 import * as $ from 'jquery';
 import * as _ from 'underscore';
 import * as async from 'async';
-import * as storage from 'services/localStorage';
+import * as storage from 'modules/storage';
 import * as OAuth from 'modules/oauth';
 import * as constants from 'modules/constants';
 
-var noop = () => {};
+var noop = function() {};
 var oauth;
 
 var storeResponse = (name, targetName, data) => {
   var set = (name, value) => {
     value = 'oauth_' + value;
-    if(data[value]){
+    if (data[value]) {
       storage.set(name, data[value]);
     }
   };
-  if(!data){
+  if (!data) {
     data = targetName;
     targetName = name;
   }
   data = oauth.deParam(data);
-  if(_.isArray(name)){
+  if (_.isArray(name)) {
     _.each(name, (val, key) => {
       set(targetName[key], name[key]);
     });
@@ -36,8 +36,8 @@ var init = callback => {
   if (!oauth) {
     oauth = OAuth.init({
       consumer: {
-        'public': config.API_key,
-        'secret': config.API_secret
+        public: config.API_key,
+        secret: config.API_secret
       }
     });
   }
@@ -56,7 +56,7 @@ var getToken = callback => {
       url: config.API_token_url,
       method: 'POST',
       data: {
-        'oauth_callback': chrome.runtime.getURL(config.API_verifier_page)
+        oauth_callback: chrome.runtime.getURL(config.API_verifier_page)
       }
     }, (err, response) => {
       if (err) {
@@ -77,7 +77,7 @@ var getVerifier = callback => {
     cb(null, verifier);
   } else {
     chrome.tabs.create({
-      'url': chrome.runtime.getURL(config.API_verifier_page + '?request=1')
+      url: chrome.runtime.getURL(config.API_verifier_page + '?request=1')
     });
     cb();
   }
@@ -132,7 +132,7 @@ var request = (options, callback) => {
       request_data = {
         url: config.API_url + url,
         method: method,
-        data: _.extend(opts.data || {}, token && {'oauth_token': token})
+        data: _.extend(opts.data || {}, token && {oauth_token: token})
       };
 
     $.ajax({
@@ -140,7 +140,7 @@ var request = (options, callback) => {
       method: method,
       dataType: opts.dataType || 'text',
       data: oauth.authorize(request_data, {
-        'secret': storage.get('token_secret')
+        secret: storage.get('token_secret')
       }),
       success: data => {
         cb(null, data);

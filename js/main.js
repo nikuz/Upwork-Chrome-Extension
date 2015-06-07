@@ -4,8 +4,12 @@ require.config({
     jquery: '../bower_components/jquery/dist/jquery.min',
     underscore: '../bower_components/underscore/underscore-min',
     async: '../bower_components/async/lib/async',
-    reflux: '../bower_components/reflux/dist/reflux.min',
-    react: '../bower_components/react/react-with-addons.min'
+    reflux: '../bower_components/reflux/dist/reflux.min'
+  },
+  shim: {
+    popup: {
+      deps: ['components/settings', 'components/inbox']
+    }
   },
   packages: [{
     name: 'crypto-js',
@@ -14,4 +18,11 @@ require.config({
   }]
 });
 
-require(['popup'], function() {});
+var GlobalEvents;
+require(['reflux'], function(Reflux) {
+  GlobalEvents = Reflux.createActions([
+    'feedsAdded',
+    'settingsInit'
+  ]);
+  require(['popup', 'components/settings', 'components/inbox']);
+});

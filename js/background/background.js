@@ -3,9 +3,7 @@ require.config({
   paths: {
     jquery: '../bower_components/jquery/dist/jquery.min',
     underscore: '../bower_components/underscore/underscore-min',
-    async: '../bower_components/async/lib/async',
-    reflux: '../bower_components/reflux/dist/reflux.min',
-    react: '../bower_components/react/react-with-addons.min'
+    async: '../bower_components/async/lib/async'
   },
   packages: [{
     name: 'crypto-js',

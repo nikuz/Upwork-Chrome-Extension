@@ -7,15 +7,15 @@ import * as CryptoJS from 'crypto-js';
  * @param {Object} opts consumer key and secret
  */
 function OAuth(opts) {
-  if(!(this instanceof OAuth)) {
+  if (!(this instanceof OAuth)) {
     return new OAuth(opts);
   }
 
-  if(!opts) {
+  if (!opts) {
     opts = {};
   }
 
-  if(!opts.consumer) {
+  if (!opts.consumer) {
     throw new Error('consumer option is required');
   }
 
@@ -25,7 +25,7 @@ function OAuth(opts) {
   this.version             = opts.version || '1.0';
   this.parameter_seperator = opts.parameter_seperator || ', ';
 
-  if(typeof opts.last_ampersand === 'undefined') {
+  if (typeof opts.last_ampersand === 'undefined') {
     this.last_ampersand = true;
   } else {
     this.last_ampersand = opts.last_ampersand;
@@ -77,15 +77,15 @@ OAuth.prototype.authorize = function(request, token) {
     oauth_version: this.version
   };
 
-  if(!token) {
+  if (!token) {
     token = {};
   }
 
-  if(token.public) {
+  if (token.public) {
     oauth_data.oauth_token = token.public;
   }
 
-  if(!request.data) {
+  if (!request.data) {
     request.data = {};
   }
 
@@ -131,7 +131,7 @@ OAuth.prototype.getParameterString = function(request, oauth_data) {
   var data_str = '';
 
   //base_string_data to string
-  for(var key in base_string_data) {
+  for (var key in base_string_data) {
     data_str += key + '=' + base_string_data[key] + '&';
   }
 
@@ -148,7 +148,7 @@ OAuth.prototype.getParameterString = function(request, oauth_data) {
 OAuth.prototype.getSigningKey = function(token_secret) {
   token_secret = token_secret || '';
 
-  if(!this.last_ampersand && !token_secret) {
+  if (!this.last_ampersand && !token_secret) {
     return this.percentEncode(this.consumer.secret);
   }
 
@@ -173,7 +173,7 @@ OAuth.prototype.deParam = function(string) {
   var arr = decodeURIComponent(string).split('&');
   var data = {};
 
-  for(var i = 0; i < arr.length; i++) {
+  for (var i = 0; i < arr.length; i += 1) {
     var item = arr[i].split('=');
     data[item[0]] = item[1];
   }
@@ -188,8 +188,9 @@ OAuth.prototype.deParam = function(string) {
 OAuth.prototype.deParamUrl = function(url) {
   var tmp = url.split('?');
 
-  if (tmp.length === 1)
+  if (tmp.length === 1) {
     return {};
+  }
 
   return this.deParam(tmp[1]);
 };
@@ -201,11 +202,11 @@ OAuth.prototype.deParamUrl = function(url) {
  */
 OAuth.prototype.percentEncode = function(str) {
   return encodeURIComponent(str)
-    .replace(/\!/g, "%21")
-    .replace(/\*/g, "%2A")
-    .replace(/\'/g, "%27")
-    .replace(/\(/g, "%28")
-    .replace(/\)/g, "%29");
+    .replace(/\!/g, '%21')
+    .replace(/\*/g, '%2A')
+    .replace(/\'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29');
 };
 
 /**
@@ -216,7 +217,7 @@ OAuth.prototype.percentEncode = function(str) {
 OAuth.prototype.percentEncodeData = function(data) {
   var result = {};
 
-  for(var key in data) {
+  for (var key in data) {
     result[this.percentEncode(key)] = this.percentEncode(data[key]);
   }
 
@@ -233,9 +234,10 @@ OAuth.prototype.toHeader = function(oauth_data) {
 
   var header_value = 'OAuth ';
 
-  for(var key in oauth_data) {
-    if (key.indexOf('oauth_') === -1)
+  for (var key in oauth_data) {
+    if (key.indexOf('oauth_') === -1) {
       continue;
+    }
     header_value += this.percentEncode(key) + '="' + this.percentEncode(oauth_data[key]) + '"' + this.parameter_seperator;
   }
 
@@ -252,7 +254,7 @@ OAuth.prototype.getNonce = function() {
   var word_characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   var result = '';
 
-  for(var i = 0; i < this.nonce_length; i++) {
+  for (var i = 0; i < this.nonce_length; i += 1) {
     result += word_characters[parseInt(Math.random() * word_characters.length, 10)];
   }
 
@@ -264,7 +266,7 @@ OAuth.prototype.getNonce = function() {
  * @return {Int} current unix timestamp
  */
 OAuth.prototype.getTimeStamp = function() {
-  return parseInt(new Date().getTime()/1000, 10);
+  return parseInt(new Date().getTime() / 1000, 10);
 };
 
 ////////////////////// HELPER FUNCTIONS //////////////////////
@@ -277,7 +279,7 @@ OAuth.prototype.getTimeStamp = function() {
  */
 OAuth.prototype.mergeObject = function(obj1, obj2) {
   var merged_obj = obj1;
-  for(var key in obj2) {
+  for (var key in obj2) {
     merged_obj[key] = obj2[key];
   }
   return merged_obj;
@@ -294,7 +296,7 @@ OAuth.prototype.sortObject = function(data) {
 
   keys.sort();
 
-  for(var i = 0; i < keys.length; i++) {
+  for (var i = 0; i < keys.length; i += 1) {
     var key = keys[i];
     result[key] = data[key];
   }
@@ -304,4 +306,4 @@ OAuth.prototype.sortObject = function(data) {
 
 export {
   OAuth as init
-}
+};

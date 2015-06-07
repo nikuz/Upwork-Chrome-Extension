@@ -2,5 +2,6 @@
   "disallowMultipleLineBreaks": null,
   "requireCamelCaseOrUpperCaseIdentifiers": null,
   "requireMultipleVarDecl": null,
-  "validateLineBreaks": null
+  "validateLineBreaks": null,
+  "esnext": true
 }

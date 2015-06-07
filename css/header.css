@@ -69,13 +69,13 @@ header {
     margin-top: -12px;
     background-position: 0 -21px
 }
-.jobSearch {
+#search {
     float: right;
     padding: 2px;
     margin: 10px;
     background-color: #efefef;
 }
-.appSettingsMode .jobSearch { display: none }
+.appSettingsMode #search { display: none }
 .js_text {
     width: 190px;
     height: 28px;

@@ -7,10 +7,10 @@ require.config({
   }
 });
 
-require(['config', 'services/localStorage', 'underscore'], function(config, storage, _) {
+require(['config', 'modules/storage', 'underscore'], function(config, storage, _) {
   var location = window.location.href;
 
-  if(location.indexOf('request') !== -1){
+  if (location.indexOf('request') !== -1) {
     window.location.href = config.API_url + config.API_verifier_url + '?oauth_token=' + storage.get('token');
   } else {
     var response = window.location.search.split('&');

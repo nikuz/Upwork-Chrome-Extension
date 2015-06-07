@@ -1,19 +1,19 @@
 'use strict';
 
-import * as storage from 'services/localStorage';
+import * as storage from 'modules/storage';
 import * as _ from 'underscore';
 
 var preset = {
-  curPage: 0,
-  jobsPerPage: 10,
-  budgetFrom: 0,
-  budgetTo: 1000000,
-  daysPosted: 50,
+  curPage:        0,
+  jobsPerPage:    10,
+  budgetFrom:     0,
+  budgetTo:       1000000,
+  daysPosted:     50,
   notifyInterval: 5,
   notifyDisabled: false,
-  duration: 'All',
-  jobType: 'All',
-  workload: 'All'
+  duration:       'All',
+  jobType:        'All',
+  workload:       'All'
 };
 
 // ----------------

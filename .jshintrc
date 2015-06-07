@@ -6,17 +6,16 @@
   "eqeqeq": true,
   "immed": true,
   "jquery": true,
-  "latedef": true,
   "newcap": false,
   "noarg": true,
   "node": true,
   "nonew": true,
   "onevar": false,
   "plusplus": true,
-  "regexp": true,
   "trailing": true,
   "undef": true,
   "white": false,
+  "esnext": true,
   "globals": {
     "define": true,
     "require": true,
@@ -25,6 +24,8 @@
     "before": true,
     "beforeEach": true,
     "after": true,
-    "afterEach": true
+    "afterEach": true,
+    "chrome": true,
+    "GlobalEvents": true
   }
 }
