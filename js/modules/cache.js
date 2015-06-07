@@ -9,15 +9,9 @@ var noop = () => {};
 var nameGet = name => {
   return name.replace(/\s/g, '_');
 };
-var get = name => {
-  return storage.get('cache_' + nameGet(name));
-};
-var set = (name, data) => {
-  return storage.set('cache_' + nameGet(name), data);
-};
 
 var check = name => {
-  var curCache = get(name),
+  var curCache = pGet(name),
     response = {
       valid: false
     };
@@ -38,25 +32,25 @@ var fill = (options, callback) => {
     cb = callback,
     query = opts.query,
     update = opts.update,
-    page,
+    start,
     curCache;
 
   // API pager format is `$offset;$count`.
   // Page size is restricted to be <= 100.
   // Example: page=100;99.
   if (!update) {
-    curCache = get(query) || [];
-    page = curCache.length;
+    curCache = pGet(query) || [];
+    start = curCache.length;
   } else {
-    page = 0;
+    start = 0;
   }
 
   odesk.request({
     url: config.API_jobs_url,
     dataType: 'json',
     query: query,
-    page: page,
-    per_page: config.cache_per_page
+    start: start,
+    end: config.cache_per_page
   }, (err, response) => {
     if (err) {
       cb(err);
@@ -65,7 +59,7 @@ var fill = (options, callback) => {
       if (!update) {
         data = curCache.concat(data);
       }
-      set(query, data);
+      pSet(query, data);
       cb();
     }
   });
@@ -77,7 +71,7 @@ var request = (options, callback) => {
     query = opts.query,
     page = opts.page || 1,
     per_page = opts.per_page || 20,
-    curCache = get(query),
+    curCache = pGet(query),
     start = (page - 1) * per_page,
     end = page * per_page,
     cacheSlice = curCache.slice(start, end);
@@ -99,7 +93,7 @@ var request = (options, callback) => {
 // public methods
 // ----------------
 
-var pGet = (options, callback) => {
+var pRequest = (options, callback) => {
   var opts = options || {},
     cb = callback || noop,
     query = opts.query,
@@ -120,10 +114,20 @@ var pGet = (options, callback) => {
   }
 };
 
+var pGet = name => {
+  return storage.get('cache_' + nameGet(name));
+};
+
+var pSet = (name, data) => {
+  return storage.set('cache_' + nameGet(name), data);
+};
+
 // ---------
 // interface
 // ---------
 
 export {
-  pGet as get
+  pRequest as request,
+  pGet as get,
+  pSet as set
 };

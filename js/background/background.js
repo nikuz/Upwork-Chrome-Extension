@@ -14,4 +14,4 @@ require.config({
   }]
 });
 
-require(['popup'], function() {});
+require(['background/background'], function() {});

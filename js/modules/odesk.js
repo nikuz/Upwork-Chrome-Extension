@@ -1,7 +1,6 @@
 'use strict';
 
 import * as config from 'config';
-import * as Reflux from 'reflux';
 import * as $ from 'jquery';
 import * as _ from 'underscore';
 import * as async from 'async';
@@ -114,13 +113,9 @@ var request = (options, callback) => {
   var opts = options,
     cb = callback,
     url = opts.url,
-    method = opts.method || 'GET',
-    actions = Reflux.createActions([
-      'validateParams',
-      'makeRequest'
-    ]);
+    method = opts.method || 'GET';
 
-  actions.validateParams.listen(() => {
+  var validateParams = () => {
     var errors = [];
     if (!url) {
       errors.push(constants.get('REQUIRED', 'url'));
@@ -128,11 +123,11 @@ var request = (options, callback) => {
     if (errors.length) {
       cb(errors);
     } else {
-      actions.makeRequest();
+      makeRequest();
     }
-  });
+  };
 
-  actions.makeRequest.listen(() => {
+  var makeRequest = () => {
     var token = storage.get('token'),
       request_data = {
         url: config.API_url + url,
@@ -154,9 +149,9 @@ var request = (options, callback) => {
         cb(textStatus);
       }
     });
-  });
+  };
 
-  actions.validateParams();
+  validateParams();
 };
 
 // ----------------
@@ -184,9 +179,12 @@ var pRequest = (options, callback) => {
       getAccess(internalCallback);
     },
     internalCallback => {
+      var start = opts.start || 0,
+        end = opts.end || 20;
+
       opts.data = {
         q: opts.query,
-        paging: opts.page + ';' + opts.per_page
+        paging: start + ';' + end
       };
       request(opts, (err, response) => {
         result = response;

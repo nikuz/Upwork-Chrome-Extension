@@ -17,7 +17,8 @@ module.exports = function(grunt) {
       copy_js: {
         command: [
           'cp --parents js/main.js release/',
-          'cp --parents js/verifier.js release/'
+          'cp --parents js/verifier.js release/',
+          'cp --parents js/background/background.js release/'
         ].join(' && ')
       },
       copy_css: {
@@ -71,7 +72,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'js',
-          src: ['**/*.js', '!verifier.js'],
+          src: ['**/*.js', '!main.js', '!verifier.js', '!background/background.js'],
           dest: 'release/js'
         }]
       },

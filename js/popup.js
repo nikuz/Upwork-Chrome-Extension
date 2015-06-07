@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import * as React from 'react';
 import * as cache from 'modules/cache';
 
-cache.get({
+cache.request({
   query: 'javascript',
   page: 6
 }, (err, response) => {
