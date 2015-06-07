@@ -23,7 +23,7 @@
         "https://www.upwork.com/*"
     ],
     "web_accessible_resources": [
-        "verifierRequest.html"
+        "verifier.html"
     ],
     "background": {
         "page": "background.html",

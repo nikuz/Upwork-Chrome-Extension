@@ -5,7 +5,7 @@ var dictionary = {
 };
 
 // ----------------
-// public functions
+// public methods
 // ----------------
 
 var pGet = (entry, vars) => {

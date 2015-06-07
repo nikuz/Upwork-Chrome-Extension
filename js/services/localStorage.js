@@ -3,7 +3,7 @@
 import * as _ from 'underscore';
 
 // ----------------
-// public functions
+// public methods
 // ----------------
 
 var pGet = name => {

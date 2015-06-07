@@ -54,7 +54,7 @@ var update = function() {
 };
 
 // ----------------
-// public functions
+// public methods
 // ----------------
 
 var pGet = function(options) {

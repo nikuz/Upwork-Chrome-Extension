@@ -37,8 +37,8 @@ var init = callback => {
   if (!oauth) {
     oauth = OAuth.init({
       consumer: {
-        'public': config.key,
-        'secret': config.secret
+        'public': config.API_key,
+        'secret': config.API_secret
       }
     });
   }
@@ -54,10 +54,10 @@ var getToken = callback => {
     cb();
   } else {
     request({
-      url: '/api/auth/v1/oauth/token/request',
+      url: config.API_token_url,
       method: 'POST',
       data: {
-        'oauth_callback': chrome.runtime.getURL(config.verifierPage)
+        'oauth_callback': chrome.runtime.getURL(config.API_verifier_page)
       }
     }, (err, response) => {
       if (err) {
@@ -78,7 +78,7 @@ var getVerifier = callback => {
     cb(null, verifier);
   } else {
     chrome.tabs.create({
-      'url': chrome.runtime.getURL(config.verifierPage + '?request=1')
+      'url': chrome.runtime.getURL(config.API_verifier_page + '?request=1')
     });
     cb();
   }
@@ -92,7 +92,7 @@ var getAccess = callback => {
     cb();
   } else {
     request({
-      url: '/api/auth/v1/oauth/token/access',
+      url: config.API_access_url,
       method: 'POST',
       data: {
         oauth_token: storage.get('token'),
@@ -135,13 +135,13 @@ var request = (options, callback) => {
   actions.makeRequest.listen(() => {
     var token = storage.get('token'),
       request_data = {
-        url: config.APIURL + url,
+        url: config.API_url + url,
         method: method,
         data: _.extend(opts.data || {}, token && {'oauth_token': token})
       };
 
     $.ajax({
-      url: config.APIURL + url,
+      url: config.API_url + url,
       method: method,
       dataType: opts.dataType || 'text',
       data: oauth.authorize(request_data, {
@@ -160,7 +160,7 @@ var request = (options, callback) => {
 };
 
 // ----------------
-// public functions
+// public methods
 // ----------------
 
 var pRequest = (options, callback) => {
@@ -184,6 +184,10 @@ var pRequest = (options, callback) => {
       getAccess(internalCallback);
     },
     internalCallback => {
+      opts.data = {
+        q: opts.query,
+        paging: opts.page + ';' + opts.per_page
+      };
       request(opts, (err, response) => {
         result = response;
         internalCallback(err);
@@ -197,17 +201,6 @@ var pRequest = (options, callback) => {
     }
   });
 };
-
-pRequest({
-  url: '/api/profiles/v2/search/jobs.json',
-  dataType: 'json',
-  data: {
-    q: 'javascript'
-  }
-}, (err, response) => {
-  console.log(err);
-  console.log(response);
-});
 
 // ---------
 // interface
