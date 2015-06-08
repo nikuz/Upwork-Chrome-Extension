@@ -12,4 +12,4 @@ require.config({
   }]
 });
 
-require(['background/background'], function() {});
+require(['background/daemon'], function() {});

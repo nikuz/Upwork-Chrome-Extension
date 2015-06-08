@@ -53,9 +53,9 @@ module.exports = function(grunt) {
                 'dist/reflux.min.js'
               ]
             },
-            react: {
+            mustache: {
               files: [
-                'react-with-addons.min.js'
+                'mustache.min.js'
               ]
             }
           }

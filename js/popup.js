@@ -26,5 +26,9 @@ var searchInit = () => {
 searchInit();
 
 $('#stngs_trigger').on('click', () => {
-  GlobalEvents.settingsInit();
+  if (Page.has('settings')) {
+    GlobalEvents.settingsHide();
+  } else {
+    GlobalEvents.settingsInit();
+  }
 });

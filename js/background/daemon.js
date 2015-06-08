@@ -11,7 +11,7 @@ import * as cache from 'modules/cache';
 var notifyInterval;
 
 var prevNotificationCount = 0;
-var notificationShow = count => {
+var notificationShow = function(count) {
   if (!count || count === prevNotificationCount) {
     return;
   }
@@ -33,7 +33,7 @@ chrome.notifications.onClicked.addListener(notificationId => {
   }
 });
 
-var createNotifier = () => {
+var createNotifier = function() {
   var alarmName = 'newJobsNotifier';
   chrome.alarms.clear(alarmName);
   chrome.alarms.create(alarmName, {
@@ -41,15 +41,16 @@ var createNotifier = () => {
   });
 };
 
-var settingsCheck = () => {
+var settingsCheck = function() {
   var newInterval = settings.get('notifyInterval');
   if (newInterval !== notifyInterval) {
+    notifyInterval = newInterval;
     createNotifier();
   }
 };
 settingsCheck();
 
-var checkNewJobs = () => {
+var checkNewJobs = function() {
   var feeds = storage.get('feeds'),
     API_access = storage.get('access');
 
@@ -72,7 +73,7 @@ var checkNewJobs = () => {
         favoritesJobs = storage.get('favorites') || [],
         trashJobs = storage.get('trash') || [],
         localJobs = [].concat(cacheJobs).concat(favoritesJobs).concat(trashJobs),
-        newJobs = [];
+        newJobs = 0;
 
       _.each(downloadedJobs, downloaded => {
         var included;
@@ -82,11 +83,14 @@ var checkNewJobs = () => {
           }
         });
         if (!included) {
+          newJobs += 1;
           downloaded.is_new = true;
-          newJobs.push(downloaded);
+          cacheJobs.unshift(downloaded);
         }
       });
-      cacheJobs.unshift(newJobs);
+      if (cacheJobs.length > config.cache_limit) {
+        cacheJobs.length = config.cache_limit;
+      }
       cache.set(feeds, cacheJobs);
       notificationShow(newJobs.length);
     }

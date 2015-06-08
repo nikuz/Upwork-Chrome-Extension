@@ -14,3 +14,4 @@ export var API_verifier_page = 'verifier.html';
 
 // cache
 export var cache_per_page = 100;
+export var cache_limit = 500;

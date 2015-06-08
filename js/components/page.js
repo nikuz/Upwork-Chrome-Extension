@@ -1,5 +1,7 @@
 'use strict';
 
+import * as $ from 'jquery';
+
 var modes = {
   init: 'pageInitialMode',
   data: 'pageDataExistsMode',
@@ -12,38 +14,75 @@ var modes = {
   extraInitial: 'pageExtraInitial'
 };
 
-var container = document.querySelector('body');
+var container = $('body');
 var getClass = mode => {
   return modes[mode] || '';
 };
+
+// ----------------
+// init global events listeners
+// ----------------
+
+GlobalEvents.settingsInit.listen(() => {
+  pAdd('settings');
+});
+GlobalEvents.settingsSaved.listen(() => {
+  pRemove('settings');
+});
+GlobalEvents.settingsHide.listen(() => {
+  pRemove('settings');
+});
+
+GlobalEvents.feedsAdded.listen(() => {
+  pRemove('init');
+});
+
+GlobalEvents.jobsPending.listen(() => {
+  pAdd('load');
+});
+
+GlobalEvents.inboxError.listen(() => {
+  pAdd('error');
+});
+
+GlobalEvents.jobsReceived.listen(() => {
+  pRemove('load');
+  pAdd('data');
+});
 
 // ----------------
 // public methods
 // ----------------
 
 var pSet = mode => {
-  container.className = getClass(mode);
+  container[0].className = getClass(mode);
 };
 
 var pGet = () => {
-  return container.className;
+  return container[0].className;
 };
 
 var pAdd = mode => {
-  container.classList.add(getClass(mode));
+  container.addClass(getClass(mode));
 };
 
 var pRemove = mode => {
-  container.classList.remove(getClass(mode));
+  container.removeClass(getClass(mode));
 };
 
 var pHas = mode => {
-  return container.className.indexOf(getClass(mode)) !== -1;
+  return container.hasClass(getClass(mode));
 };
 
 var pToggle = mode => {
-  container.classList.toggle(getClass(mode));
+  container.toggleClass(getClass(mode));
 };
+
+$(() => {
+  if (window.innerWidth > 800) {
+    pAdd('wide');
+  }
+});
 
 // ---------
 // interface

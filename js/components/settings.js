@@ -14,13 +14,12 @@ var formInit = () => {
       sData[key] = $('#' + key).val();
     });
     settings.set(sData);
-    Page.remove('settings');
+    GlobalEvents.settingsSaved();
   });
 };
 
 var initialized;
 var init = () => {
-  Page.set('settings');
   if (initialized) {
     return;
   }

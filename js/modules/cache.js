@@ -2,6 +2,7 @@
 
 import * as config from 'config';
 import * as storage from 'modules/storage';
+import * as settings from 'modules/settings';
 import * as odesk from 'modules/odesk';
 
 var noop = function() {};
@@ -65,7 +66,7 @@ var request = (options, callback) => {
     cb = callback,
     query = opts.query,
     page = opts.page || 1,
-    per_page = opts.per_page || 20,
+    per_page = settings.get('jobsPerPage'),
     curCache = pGet(query),
     start = (page - 1) * per_page,
     end = page * per_page,
@@ -91,6 +92,8 @@ var request = (options, callback) => {
 var pRequest = (options, callback) => {
   var opts = options || {},
     cb = callback || noop;
+
+  opts.query = storage.get('feeds');
 
   if (validate()) {
     request(opts, cb);

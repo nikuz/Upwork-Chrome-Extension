@@ -18,75 +18,43 @@
   You can close this window tab and work through extension popup.
 </div>
 <div id="wrap">
-  <div>
-    <header>
-      <div id="stngs_trigger" title="Settings"></div>
-      <div id="logo">
-        <img src="/images/logo.png" width="140" height="21" alt="" title="Watch Desk. oDesk job watcher.">
-      </div>
-    </header>
-    <form id="search">
-      <input type="text" name="search" placeholder="Find Jobs" class="js_text">
-      <input type="submit" value="" class="js_submit" title="Find">
-    </form>
-    <div id="menu">
-      <label class="msitem m_select" title="Select All">
-        <span class="msis_check">
-          <input type="checkbox" class="fch_cust" id="jl_all" ng-model="selectAllModel" ng-change="selectAll(selectAllModel)">
-          <label for="jl_all" class="fl_cust"></label>
-        </span>
-      </label>
-      <span class="msitem m_favorites" ng-click="moveJobsToFolder('favorites')" title="Add selected to Favorites"></span>
-      <span class="msitem m_delete" ng-click="moveJobsToFolder('trash')" title="Delete selected"></span>
+  <header>
+    <div id="stngs_trigger" title="Settings"></div>
+    <div id="logo">
+      <img src="/images/logo.png" width="140" height="21" alt="" title="Watch Desk. oDesk job watcher.">
     </div>
+  </header>
+  <form id="search">
+    <input type="text" name="search" placeholder="Find Jobs" class="js_text">
+    <input type="submit" value="" class="js_submit" title="Find">
+  </form>
+  <div id="menu">
+    <label class="msitem m_select" title="Select All">
+      <span class="msis_check">
+        <input type="checkbox" class="fch_cust" id="jl_all" ng-model="selectAllModel" ng-change="selectAll(selectAllModel)">
+        <label for="jl_all" class="fl_cust"></label>
+      </span>
+    </label>
+    <span class="msitem m_favorites" ng-click="moveJobsToFolder('favorites')" title="Add selected to Favorites"></span>
+    <span class="msitem m_delete" ng-click="moveJobsToFolder('trash')" title="Delete selected"></span>
   </div>
 
   <!-- Job List -->
   <div class="serverError">
     Odesk.com server internal error. Try to repeat the request.
   </div>
-  <div class="jobs_list" ng-controller="jobsList" id="jobsList" ng-class="jobListClass">
+  <div id="jobs_list_wrap">
     <div class="jl_data">
-      <ul>
-        <li class="jl_item" ng-repeat="job in jobList" ng-class="job.new ? 'jli_is_new' : ''">
-          <div class="jl_item_cont" ng-if="job.id" ng-class="job.selected ? 'job_selected' : ''">
-            <div class="jl_check">
-              <input type="checkbox" class="fch_cust" value="{{job.id}}" ng-model="job.selected" id="jl_{{job.id}}">
-              <label for="jl_{{job.id}}" class="fl_cust"></label>
-            </div>
-            <div class="jli_name">
-              <a href="{{job.url}}" ng-click="makeViewed(job.url, job.id)">{{job.title}}</a>
-            </div>
-            <div class="jli_params">
-              <strong>{{job.job_type}} - </strong>
-              <span ng-if="job.duration">Est. Time: {{job.duration}} - </span>
-              <span ng-if="job.budget">Est. Budget: ${{job.budget}} - </span>
-              {{job.date_created | timeAgo}}
-            </div>
-            <div class="jli_skills">
-              <span class="jl_skill" ng-repeat="skill in job.skills">
-                {{skill}}
-              </span>
-            </div>
-            <div class="jli_new" ng-if="job.new">new</div>
-          </div>
-          <div class="jl_pager" ng-if="job.pageNum" id="page_{{job.pageNum}}">
-            Page {{job.pageNum}}
-          </div>
-        </li>
-      </ul>
-      <div class="jl_more_wrap">
-        <button class="ajax_btn jl_more_btn" ng-class="jobsLoaded ? 'el-loading' : ''" ng-click="moreJobsGet()">Load More Jobs</button>
-      </div>
+      <ul id="jobs_list"></ul>
       <div class="jl_full">No more jobs that match your search</div>
     </div>
     <div class="jl_empty">Empty Folder</div>
     <div class="jl_response_empty">oDesk didn't find any jobs that match your search. Please modify your search to expand it.</div>
   </div>
-  <ul class="jobFolders" ng-controller="jobsFolders">
-    <li class="jf_item selected" data-value="inbox" ng-click="folderChange($event)">Inbox</li>
-    <li class="jf_item" data-value="favorites" ng-click="folderChange($event)">Favorites</li>
-    <li class="jf_item" data-value="trash" ng-click="folderChange($event)">Trash</li>
+  <ul class="jobFolders">
+    <li class="jf_item selected" data-value="inbox">Inbox</li>
+    <li class="jf_item" data-value="favorites">Favorites</li>
+    <li class="jf_item" data-value="trash">Trash</li>
   </ul>
 
   <!-- Settings -->
@@ -156,4 +124,36 @@
     </div>
   </form>
 </div>
+
+<script type="text/template" id="job_tpl">
+  <li class="jl_item {{{new_cl}}}">
+    <div class="jl_item_cont">
+      <div class="jl_check">
+        <input type="checkbox" class="fch_cust" value="{{{id}}}" id="jl_{{{id}}}">
+          <label for="jl_{{{id}}}" class="fl_cust"></label>
+        </div>
+        <div class="jli_name">
+          <a href="{{url}}" class="jl_link">{{{title}}}</a>
+        </div>
+        <div class="jli_params">
+          <strong>{{{job_type}}} - </strong>
+          {{#duration}}
+            <span>Est. Time: {{{duration}}} - </span>
+          {{/duration}}
+          {{#budget}}
+          <span>Est. Budget: {{{budget}}} - </span>
+          {{/budget}}
+          {{{date_created}}}
+        </div>
+        <div class="jli_skills">
+          {{#skills}}
+          <span class="jl_skill">
+            {{.}}
+          </span>
+          {{/skills}}
+        </div>
+        <div class="jli_new">new</div>
+      </div>
+    </li>
+</script>
 </body>

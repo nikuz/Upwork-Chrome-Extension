@@ -1,4 +1,4 @@
-.jobs_list {
+#jobs_list_wrap {
     clear: both;
     min-height: 300px;
     max-height: 438px;
@@ -6,13 +6,13 @@
     margin-bottom: 60px;
     border-top: 1px solid #e5e5e5;
 }
-.pageWideMode .jobs_list {
+.pageWideMode #jobs_list_wrap {
     max-height: calc(100% - 162px);
 }
-.appSettingsMode .jobs_list,
-.pageInitialMode .jobs_list,
-.pageErrorMode .jobs_list { display: none }
-.pageInitialMode .jobs_list {
+.appSettingsMode #jobs_list_wrap,
+.pageInitialMode #jobs_list_wrap,
+.pageErrorMode #jobs_list_wrap { display: none }
+.pageInitialMode #jobs_list_wrap {
     min-height: 0;
 }
 .jl_response_empty,

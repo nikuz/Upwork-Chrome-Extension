@@ -6,8 +6,9 @@
     "reflux": "latest",
     "requirejs": "latest",
     "underscore": "latest",
-    "react": "latest",
     "crypto-js": "latest",
-    "async": "latest"
+    "async": "latest",
+    "mustache": "latest",
+    "jquery-timeago": "latest"
   }
 }
