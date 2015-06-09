@@ -183,7 +183,7 @@ var pRequest = (options, callback) => {
         end = opts.end || 20;
 
       opts.data = {
-        q: opts.query,
+        q: encodeURI(opts.query),
         paging: start + ';' + end
       };
       request(opts, (err, response) => {

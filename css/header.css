@@ -112,12 +112,12 @@ header {
     font-size: 1.25rem;
     z-index: 10;
 }
-.pageExtraInitial #popup_helper { display: block }
+.pageWideMode #popup_helper { display: block }
 #popup_helper:after {
     content: '';
     position: absolute;
     right: 32px;
-    top: -6px;
+    top: -5px;
     width: 12px;
     height: 6px;
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAGCAQAAABd57cKAAAAPElEQVR4XlXJuwEAIAhDQd3/h1tpLV1aXIAFlAajSXev5FAh8Zrw8kC/iWy6fbspEznGFIyW/CUy05qQA9aOUhY20QbyAAAAAElFTkSuQmCC') 0 0 no-repeat;

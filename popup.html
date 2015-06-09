@@ -31,12 +31,12 @@
   <div id="menu">
     <label class="msitem m_select" title="Select All">
       <span class="msis_check">
-        <input type="checkbox" class="fch_cust" id="jl_all" ng-model="selectAllModel" ng-change="selectAll(selectAllModel)">
+        <input type="checkbox" class="fch_cust" id="jl_all">
         <label for="jl_all" class="fl_cust"></label>
       </span>
     </label>
-    <span class="msitem m_favorites" ng-click="moveJobsToFolder('favorites')" title="Add selected to Favorites"></span>
-    <span class="msitem m_delete" ng-click="moveJobsToFolder('trash')" title="Delete selected"></span>
+    <span class="msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
+    <span class="msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
   </div>
 
   <!-- Job List -->
@@ -51,7 +51,7 @@
     <div class="jl_empty">Empty Folder</div>
     <div class="jl_response_empty">oDesk didn't find any jobs that match your search. Please modify your search to expand it.</div>
   </div>
-  <ul class="jobFolders">
+  <ul id="jobFolders">
     <li class="jf_item selected" data-value="inbox">Inbox</li>
     <li class="jf_item" data-value="favorites">Favorites</li>
     <li class="jf_item" data-value="trash">Trash</li>
@@ -128,32 +128,33 @@
 <script type="text/template" id="job_tpl">
   <li class="jl_item {{{new_cl}}}">
     <div class="jl_item_cont">
+      <div class="jl_num">{{num}}</div>
       <div class="jl_check">
-        <input type="checkbox" class="fch_cust" value="{{{id}}}" id="jl_{{{id}}}">
-          <label for="jl_{{{id}}}" class="fl_cust"></label>
-        </div>
-        <div class="jli_name">
-          <a href="{{url}}" class="jl_link">{{{title}}}</a>
-        </div>
-        <div class="jli_params">
-          <strong>{{{job_type}}} - </strong>
-          {{#duration}}
-            <span>Est. Time: {{{duration}}} - </span>
-          {{/duration}}
-          {{#budget}}
-          <span>Est. Budget: {{{budget}}} - </span>
-          {{/budget}}
-          {{{date_created}}}
-        </div>
-        <div class="jli_skills">
-          {{#skills}}
-          <span class="jl_skill">
-            {{.}}
-          </span>
-          {{/skills}}
-        </div>
-        <div class="jli_new">new</div>
+        <input type="checkbox" class="fch_cust" value="{{{id}}}" id="jl_{{cut_id}}">
+        <label for="jl_{{cut_id}}" class="fl_cust"></label>
       </div>
-    </li>
+      <div class="jli_name">
+        <a href="{{url}}" class="jl_link" data-value="{{{id}}}">{{{title}}}</a>
+      </div>
+      <div class="jli_params">
+        <strong>{{{job_type}}} - </strong>
+        {{#duration}}
+          <span>Est. Time: {{{duration}}} - </span>
+        {{/duration}}
+        {{#budget}}
+        <span>Est. Budget: {{{budget}}} - </span>
+        {{/budget}}
+        {{{date}}}
+      </div>
+      <div class="jli_skills">
+        {{#skills}}
+        <span class="jl_skill">
+          {{.}}
+        </span>
+        {{/skills}}
+      </div>
+      <div class="jli_new">new</div>
+    </div>
+  </li>
 </script>
 </body>

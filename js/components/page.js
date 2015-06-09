@@ -10,8 +10,7 @@ var modes = {
   settings: 'appSettingsMode',
   empty: 'pageDataEmpty',
   wide: 'pageWideMode',
-  full: 'pageNoMoreJobs',
-  extraInitial: 'pageExtraInitial'
+  full: 'pageNoMoreJobs'
 };
 
 var container = $('body');
@@ -42,11 +41,23 @@ GlobalEvents.jobsPending.listen(() => {
 });
 
 GlobalEvents.inboxError.listen(() => {
+  pRemove('load');
   pAdd('error');
+});
+GlobalEvents.inboxFull.listen(() => {
+  pRemove('load');
+  pAdd('full');
+});
+GlobalEvents.inboxEmpty.listen(() => {
+  pRemove('load');
+  pAdd('empty');
 });
 
 GlobalEvents.jobsReceived.listen(() => {
   pRemove('load');
+  pRemove('full');
+  pRemove('empty');
+  pRemove('error');
   pAdd('data');
 });
 

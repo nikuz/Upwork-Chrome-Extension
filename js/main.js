@@ -10,7 +10,7 @@ require.config({
   },
   shim: {
     popup: {
-      deps: ['components/page', 'components/settings', 'components/inbox']
+      deps: ['components/page', 'components/settings', 'components/jobs_list', 'components/folders']
     }
   },
   packages: [{
@@ -29,7 +29,9 @@ require(['reflux'], function(Reflux) {
     'settingsSaved',
     'inboxError',
     'jobsReceived',
-    'jobsPending'
+    'jobsPending',
+    'inboxFull',
+    'inboxEmpty'
   ]);
-  require(['popup', 'components/settings', 'components/inbox']);
+  require(['popup']);
 });

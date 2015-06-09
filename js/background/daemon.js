@@ -69,7 +69,7 @@ var checkNewJobs = function() {
       console.log(err);
     } else {
       var downloadedJobs = response.jobs,
-        cacheJobs = cache.get(feeds) || [],
+        cacheJobs = cache.get() || [],
         favoritesJobs = storage.get('favorites') || [],
         trashJobs = storage.get('trash') || [],
         localJobs = [].concat(cacheJobs).concat(favoritesJobs).concat(trashJobs),
@@ -91,7 +91,10 @@ var checkNewJobs = function() {
       if (cacheJobs.length > config.cache_limit) {
         cacheJobs.length = config.cache_limit;
       }
-      cache.set(feeds, cacheJobs);
+      cacheJobs = _.sortBy(cacheJobs, item => {
+        return -new Date(item.date_created).getTime();
+      });
+      cache.set(cacheJobs);
       notificationShow(newJobs.length);
     }
   });

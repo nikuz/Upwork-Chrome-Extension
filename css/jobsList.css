@@ -1,13 +1,10 @@
 #jobs_list_wrap {
     clear: both;
     min-height: 300px;
-    max-height: 438px;
+    max-height: calc(100% - 162px);
     overflow: auto;
     margin-bottom: 60px;
     border-top: 1px solid #e5e5e5;
-}
-.pageWideMode #jobs_list_wrap {
-    max-height: calc(100% - 162px);
 }
 .appSettingsMode #jobs_list_wrap,
 .pageInitialMode #jobs_list_wrap,
@@ -45,10 +42,17 @@
 .jli_is_new {
     background-color: #EDF6FF;
 }
+.jl_num {
+    position: absolute;
+    width: 22px;
+    text-align: center;
+    left: 5px;
+    top: 13px;
+}
 .jl_check {
     position: absolute;
     left: 8px;
-    top: 50%;
+    top: 55%;
     margin-top: -8px;
     -webkit-user-select: none;
 }
@@ -86,15 +90,8 @@
 .jl_more_btn {
     margin: 10px 0;
 }
-.jl_pager {
-    padding: 10px 10px 10px 35px;
-    background-color: #FFDCB8;
-    text-align: center;
-    font-size: 1.25rem;
-    font-weight: bold;
-}
 
-.jobFolders {
+#jobFolders {
     display: none;
     position: absolute;
     left: 0;
@@ -107,10 +104,10 @@
     font-family: sans-serif;
     border-top: 1px solid #e5e5e5;
 }
-.pageDataExistsMode .jobFolders {
+.pageDataExistsMode #jobFolders {
     display: block;
 }
-.appSettingsMode .jobFolders { display: none }
+.appSettingsMode #jobFolders { display: none }
 .jf_item {
     display: inline-block;
     padding: 7px 12px;
@@ -134,6 +131,7 @@
     display: block;
 }
 .jli_new {
+    display: none;
     position: absolute;
     right: 10px;
     top: 10px;
@@ -143,3 +141,4 @@
     font-weight: bold;
     font-size: .833rem;
 }
+.is_new_job .jli_new { display: block }

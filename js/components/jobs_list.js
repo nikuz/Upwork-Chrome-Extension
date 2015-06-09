@@ -12,30 +12,30 @@ var template = $('#job_tpl').text(),
   wrapper = $('#jobs_list_wrap'),
   container = $('#jobs_list'),
   curPage,
-  curFolder;
-
-var containerHeightFixed;
-var containerHeightFix = function() {
-  if (!containerHeightFixed) {
-    var wh = window.innerHeight;
-    if (wh < 600) {
-      wrapper.css('max-height', wh - 161 + 'px');
-    }
-    containerHeightFixed = true;
-  }
-};
-GlobalEvents.jobsReceived.listen(() => {
-  containerHeightFix();
-});
+  curFolder,
+  curCache = [],
+  newJobCl = 'is_new_job';
 
 var update = function(jobsList) {
-  var result = '';
-  _.each(jobsList, item => {
-    item.date_created = $.timeago(item.date_created);
+  var result = '',
+    keyShift = (curPage - 1) * settings.get('jobsPerPage');
+  _.each(jobsList, (item, key) => {
+    key += 1;
+    item.cut_id = item.id.replace('~', '');
+    item.date = $.timeago(item.date_created);
+    item.num = keyShift + key;
+    if (item.is_new) {
+      item.new_cl = newJobCl;
+    }
     result += Mustache.render(template, item);
   });
-  container.append(result);
-  GlobalEvents.jobsReceived();
+  if (curPage === 1) {
+    container.html(result);
+    curCache = jobsList;
+  } else {
+    container.append(result);
+    curCache = curCache.concat(jobsList);
+  }
 };
 
 var getJobs = function() {
@@ -47,17 +47,28 @@ var getJobs = function() {
       if (err) {
         GlobalEvents.inboxError();
       } else {
-        update(jobs);
+        if (jobs) {
+          update(jobs);
+          GlobalEvents.jobsReceived();
+        } else {
+          update([]);
+          if (curCache.length) {
+            GlobalEvents.inboxFull();
+          } else {
+            GlobalEvents.inboxEmpty();
+          }
+        }
       }
     });
   } else {
-    var jobs = storage.get(curFolder),
+    var jobs = storage.get(curFolder) || [],
       per_page = settings.get('jobsPerPage'),
       start = (curPage - 1) * per_page,
       end = curPage * per_page;
 
     jobs = jobs.slice(start, end);
     update(jobs);
+    GlobalEvents.jobsReceived();
   }
 };
 
@@ -65,6 +76,9 @@ GlobalEvents.feedsAdded.listen(() => {
   container.on('click', e => {
     var target = $(e.target);
     if (target.hasClass('jl_link')) {
+      cache.update(target.attr('data-value'), {
+        is_new: false
+      });
       chrome.tabs.create({
         url: target.attr('href')
       });
@@ -72,11 +86,12 @@ GlobalEvents.feedsAdded.listen(() => {
   });
   wrapper.on('scroll', function() {
     var sHeight = this.scrollTop + this.clientHeight;
-    if (sHeight > container.height() - 100) {
+    if (sHeight > container.height() - 20) {
       curPage += 1;
       getJobs();
     }
   });
+  pInit('inbox');
 });
 
 // ----------------
@@ -86,7 +101,12 @@ GlobalEvents.feedsAdded.listen(() => {
 var pInit = function(folder) {
   curPage = 1;
   curFolder = folder;
+  curCache = [];
   getJobs();
+};
+
+var pGetCached = function() {
+  return curCache;
 };
 
 // ---------
@@ -94,5 +114,6 @@ var pInit = function(folder) {
 // ---------
 
 export {
-  pInit as init
+  pInit as init,
+  pGetCached as getCached
 };

@@ -1,18 +1,20 @@
 'use strict';
 
 import * as config from 'config';
+import * as _ from 'underscore';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 import * as odesk from 'modules/odesk';
 
 var noop = function() {};
 
-var nameGet = name => {
+var nameGet = function() {
+  var name = storage.get('feeds');
   return name.replace(/\s/g, '_');
 };
 
-var validate = () => {
-  var cacheTime = parseInt(pGet('validate'), 10),
+var validate = function() {
+  var cacheTime = parseInt(storage.get('validate'), 10),
     response = false;
 
   if (cacheTime) {
@@ -22,7 +24,7 @@ var validate = () => {
   return response;
 };
 
-var fill = (options, callback) => {
+var fill = function(options, callback) {
   var opts = options,
     cb = callback,
     query = opts.query,
@@ -34,7 +36,7 @@ var fill = (options, callback) => {
   // Page size is restricted to be <= 100.
   // Example: page=100;99.
   if (!update) {
-    curCache = pGet(query) || [];
+    curCache = pGet() || [];
     start = curCache.length;
   } else {
     start = 0;
@@ -50,24 +52,25 @@ var fill = (options, callback) => {
     if (err) {
       cb(err);
     } else {
-      var data = response.jobs;
+      var data = response.jobs,
+        jobsCount = data.length;
+
       if (!update) {
         data = curCache.concat(data);
       }
-      pSet(query, data);
-      pSet('validate', Date.now());
-      cb();
+      pSet(data);
+      storage.set('validate', Date.now());
+      cb(null, jobsCount);
     }
   });
 };
 
-var request = (options, callback) => {
+var request = function(options, callback) {
   var opts = options,
     cb = callback,
-    query = opts.query,
     page = opts.page || 1,
     per_page = settings.get('jobsPerPage'),
-    curCache = pGet(query),
+    curCache = pGet() || [],
     start = (page - 1) * per_page,
     end = page * per_page,
     cacheSlice = curCache.slice(start, end);
@@ -75,11 +78,15 @@ var request = (options, callback) => {
   if (cacheSlice.length === per_page) {
     callback(null, cacheSlice);
   } else {
-    fill(opts, err => {
+    fill(opts, (err, response) => {
       if (err) {
         cb(err);
       } else {
-        request(opts, cb);
+        if (response > 0) {
+          request(opts, cb);
+        } else {
+          cb(null, null);
+        }
       }
     });
   }
@@ -89,7 +96,7 @@ var request = (options, callback) => {
 // public methods
 // ----------------
 
-var pRequest = (options, callback) => {
+var pRequest = function(options, callback) {
   var opts = options || {},
     cb = callback || noop;
 
@@ -110,12 +117,23 @@ var pRequest = (options, callback) => {
   }
 };
 
-var pGet = name => {
-  return storage.get('cache_' + nameGet(name));
+var pGet = function() {
+  return storage.get('cache_' + nameGet());
 };
 
-var pSet = (name, data) => {
-  return storage.set('cache_' + nameGet(name), data);
+var pSet = function(data) {
+  return storage.set('cache_' + nameGet(), data);
+};
+
+var pUpdate = function(id, data) {
+  var cacheName = storage.get('feeds'),
+    curCache = pGet(cacheName);
+  _.each(curCache, item => {
+    if (item.id === id) {
+      _.extend(item, data);
+    }
+  });
+  pSet(curCache);
 };
 
 // ---------
@@ -125,5 +143,6 @@ var pSet = (name, data) => {
 export {
   pRequest as request,
   pGet as get,
-  pSet as set
+  pSet as set,
+  pUpdate as update
 };
