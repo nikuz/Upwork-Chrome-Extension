@@ -1,22 +1,20 @@
-.jobs_list {
+#jobs_list_wrap {
     clear: both;
     min-height: 300px;
-    max-height: 438px;
+    max-height: calc(100% - 142px);
     overflow: auto;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     border-top: 1px solid #e5e5e5;
 }
-.pageWideMode .jobs_list {
-    max-height: calc(100% - 162px);
-}
-.appSettingsMode .jobs_list,
-.pageInitialMode .jobs_list,
-.pageErrorMode .jobs_list { display: none }
-.pageInitialMode .jobs_list {
+.appSettingsMode #jobs_list_wrap,
+.pageInitialMode #jobs_list_wrap,
+.pageErrorMode #jobs_list_wrap { display: none }
+.pageInitialMode #jobs_list_wrap {
     min-height: 0;
 }
 .jl_response_empty,
-.jl_empty {
+.jl_empty,
+.jl_folder_empty {
     padding: 10px 20px;
     text-align: center;
     font-size: 1.75rem;
@@ -45,10 +43,17 @@
 .jli_is_new {
     background-color: #EDF6FF;
 }
+.jl_num {
+    position: absolute;
+    width: 22px;
+    text-align: center;
+    left: 5px;
+    top: 13px;
+}
 .jl_check {
     position: absolute;
     left: 8px;
-    top: 50%;
+    top: 55%;
     margin-top: -8px;
     -webkit-user-select: none;
 }
@@ -86,39 +91,33 @@
 .jl_more_btn {
     margin: 10px 0;
 }
-.jl_pager {
-    padding: 10px 10px 10px 35px;
-    background-color: #FFDCB8;
-    text-align: center;
-    font-size: 1.25rem;
-    font-weight: bold;
-}
 
-.jobFolders {
+#jobFolders {
     display: none;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 10px;
     background-color: #f5f5f2;
     font-size: 1.417rem;
     font-weight: bold;
     font-family: sans-serif;
     border-top: 1px solid #e5e5e5;
 }
-.pageDataExistsMode .jobFolders {
+.pageDataExistsMode #jobFolders {
     display: block;
 }
-.appSettingsMode .jobFolders { display: none }
+.appSettingsMode #jobFolders { display: none }
 .jf_item {
-    display: inline-block;
+    float: left;
     padding: 7px 12px;
-    border-radius: 7px;
     cursor: pointer;
+    list-style: none;
+    color: #666;
 }
 .jf_item:hover {
     background-color: #CCC;
+    color: #333;
 }
 .jf_item.selected {
     background-color: #333;
@@ -134,6 +133,7 @@
     display: block;
 }
 .jli_new {
+    display: none;
     position: absolute;
     right: 10px;
     top: 10px;
@@ -142,4 +142,27 @@
     color: #fff;
     font-weight: bold;
     font-size: .833rem;
+}
+.is_new_job .jli_new { display: block }
+
+#jl_get_new {
+    position: absolute;
+    overflow: hidden;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 102px;
+    padding: 0 20px;
+    background-color: #ffeb99;
+    box-shadow: 0 1px 5px #333;
+    line-height: 24px;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+        height 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946),
+        opacity 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+}
+.pageNewJobsFromBg #jl_get_new {
+    height: 25px;
+    opacity: 1;
 }

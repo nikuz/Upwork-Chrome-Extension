@@ -1,73 +1,51 @@
-(function(){
-    var settings = {
-        curPage: 0,
-        jobsPerPage: 10,
-        budgetFrom: 0,
-        budgetTo: 1000000,
-        daysPosted: 50,
-        notifyInterval: 5,
-        notifyDisabled: false,
-        duration: {
-            value: 'All',
-            values: [
-                'All',
-                'Week',
-                'Month',
-                'Quarter',
-                'Semester',
-                'Ongoing'
-            ]
-        },
-        jobType: {
-            value: 'All',
-            values: [
-                'All',
-                'Hourly',
-                'Fixed'
-            ]
-        },
-        workload: {
-            value: 'All',
-            values: [
-                'All',
-                'As needed',
-                'Part time',
-                'Full time'
-            ]
-        }
-    };
-    window.pageSettings = {
-        get: function(full){
-            var _s = storage.get('settings');
-            if(full){
-                _s = _s ? this.sync(_s, null, 'expand') : settings;
-            } else {
-                _s = _s ? _s : this.sync(settings, null, 'cut');
-            }
+'use strict';
 
-            return _s;
-        },
-        sync: function(from, to, type){
-            to = to || JSON.parse(JSON.stringify(settings));
-            for(var i in from){
-                if(from.hasOwnProperty(i)){
-                    if(type === 'expand'){
-                        if(to[i].value) to[i].value = from[i];
-                        else to[i] = from[i];
-                    } else {
-                        to[i] = from[i].value || from[i];
-                    }
-                }
-            }
-            return to;
-        },
-        set: function(_s){
-            _s = this.sync(_s, null, 'cut');
-            storage.set('settings', _s);
-        },
-        setOne: function(_s, props){
-            extend(_s, props);
-            this.set(_s);
-        }
-    };
-})();
+import * as storage from 'modules/storage';
+import * as _ from 'underscore';
+
+var preset = {
+  curPage:        0,
+  jobsPerPage:    10,
+  budgetFrom:     0,
+  budgetTo:       1000000,
+  daysPosted:     50,
+  notifyInterval: 5,
+  notifyDisabled: false,
+  duration:       'All',
+  jobType:        'All',
+  workload:       'All'
+};
+
+// ----------------
+// public methods
+// ----------------
+
+var pGet = function(field) {
+  var settings = storage.get('settings');
+  if (!settings) {
+    settings = _.clone(preset);
+  }
+  if (field) {
+    settings = settings[field];
+  }
+  return settings;
+};
+
+var pSet = function(data) {
+  var settings = storage.get('settings');
+  if (!settings) {
+    settings = _.clone(preset);
+  }
+  _.extend(settings, data);
+  storage.set('settings', settings);
+  return settings;
+};
+
+// ---------
+// interface
+// ---------
+
+export {
+  pGet as get,
+  pSet as set
+};

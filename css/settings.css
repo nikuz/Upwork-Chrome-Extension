@@ -1,4 +1,4 @@
-.stngs_trigger {
+#stngs_trigger {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -9,12 +9,12 @@
     cursor: pointer;
     -webkit-transition: all 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
 }
-.appSettingsMode .stngs_trigger {
+.appSettingsMode #stngs_trigger {
     right: 10px;
     background-color: #fff;
     background-image: url('data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMwMEFFRUMiIGQ9Ik0yMS44ODIsMTQuMTQxaC0xLjM2NWMtMC4yMjQsMC44NDQtMC41NTksMS42NDItMS4wMDQsMi4zNjkNCglsMC45ODEsMC45ODFjMC44MjcsMC44MjcsMC44MjcsMi4xNjcsMCwyLjk5NWMtMC44MjcsMC44MjYtMi4xNjgsMC44MjYtMi45OTUsMGwtMC45OTktMWMtMC43MzMsMC40MzYtMS41MjMsMC43ODYtMi4zNzMsMC45OTZ2MS40DQoJYzAsMS4xNy0wLjk0OCwyLjExNy0yLjExOCwyLjExN3MtMi4xMTctMC45NDctMi4xMTctMi4xMTd2LTEuNDA1Yy0wLjg0Ny0wLjIxLTEuNjM2LTAuNTUzLTIuMzYzLTAuOTg5bC0xLjAzMiwxLjAzMw0KCWMtMC44MjcsMC44MjYtMi4xNjcsMC44MjYtMi45OTQsMGMtMC44MjctMC44MjgtMC44MjctMi4xNjksMC0yLjk5NmwxLjAyOS0xLjAyOWMtMC40MzgtMC43MjUtMC43ODUtMS41MTQtMS4wMDMtMi4zNTVIMi4xMTcNCglDMC45NDgsMTQuMTQxLDAsMTMuMTkxLDAsMTIuMDIyYzAtMS4xNjksMC45NDgtMi4xMTgsMi4xMTctMi4xMThoMS4zNjdjMC4yMTQtMC44NywwLjU0My0xLjY5NCwwLjk5MS0yLjQ0M0wzLjUyMyw2LjUxDQoJYy0wLjgyNy0wLjgyNy0wLjgyNy0yLjE2NywwLTIuOTk1YzAuODI3LTAuODI3LDIuMTY4LTAuODI3LDIuOTk1LDBMNy40Niw0LjQ1N2MwLjc0OC0wLjQ1NSwxLjU2LTAuODE2LDIuNDMyLTEuMDMzVjIuMTE4DQoJQzkuODkyLDAuOTQ5LDEwLjgzOSwwLDEyLjAwOSwwczIuMTE4LDAuOTQ4LDIuMTE4LDIuMTE4djEuMzAxYzAuODc4LDAuMjE2LDEuNjk1LDAuNTc3LDIuNDQ1LDEuMDM2bDAuOTA1LTAuOTA1DQoJYzAuODI3LTAuODI3LDIuMTY4LTAuODI3LDIuOTk0LDBjMC44MjcsMC44MjgsMC44MjcsMi4xNjgsMCwyLjk5NWwtMC45MjcsMC45MjdjMC40NDQsMC43NDksMC43OTEsMS41NjIsMSwyLjQzM2gxLjMzNw0KCWMxLjE3LDAsMi4xMTgsMC45NDgsMi4xMTgsMi4xMThDMjQsMTMuMTkxLDIzLjA1MiwxNC4xNDEsMjEuODgyLDE0LjE0MXogTTEyLjAwNCw3LjAwOWMtMi43NTcsMC00Ljk5MiwyLjIzNS00Ljk5Miw0Ljk5Mw0KCXMyLjIzNSw0Ljk5Miw0Ljk5Miw0Ljk5MnM0Ljk5Mi0yLjIzNCw0Ljk5Mi00Ljk5MlMxNC43NjEsNy4wMDksMTIuMDA0LDcuMDA5eiIvPg0KPC9zdmc+DQo=');
 }
-.settings {
+#settings {
     display: none;
     left: 0;
     right: 0;
@@ -23,7 +23,7 @@
     background: #FFF;
     z-index: 5;
 }
-.appSettingsMode .settings { display: block }
+.appSettingsMode #settings { display: block }
 
 .st_column {
     float: left;

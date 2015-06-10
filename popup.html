@@ -1,159 +1,174 @@
-<!doctype html>
-<html ng-app="myApp" ng-csp lang="en_US">
-<title>Watch Desk. oDesk job watcher.</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<link rel="stylesheet" href="/css/basic.css">
-<link rel="stylesheet" href="/css/form.css">
-<link rel="stylesheet" href="/css/header.css">
-<link rel="stylesheet" href="/css/jobsList.css">
-<link rel="stylesheet" href="/css/error.css">
-<link rel="stylesheet" href="/css/settings.css">
+<!DOCTYPE html>
+<head>
+  <title>Watch Desk. oDesk job watcher.</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="/css/basic.css">
+  <link rel="stylesheet" href="/css/form.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/jobsList.css">
+  <link rel="stylesheet" href="/css/error.css">
+  <link rel="stylesheet" href="/css/settings.css">
+  <script src="/bower_components/requirejs/require.js" data-main="js/main"></script>
+</head>
 
-<script src="/js/core/angular.1.4.min.js"></script>
-
-<script src="/js/modules/timeAgo.js"></script>
-<script src="/js/app.js"></script>
-<script src="/js/services/localStorage.js"></script>
-<script src="/js/modules/settings.js"></script>
-<script src="/js/services/share.js"></script>
-<script src="/js/services/pageMode.js"></script>
-<script src="/js/services/scrollAnimate.js"></script>
-<script src="/js/services/jobsListHeight.js"></script>
-<script src="/js/services/jobsPager.js"></script>
-<script src="/js/services/jobsFolders.js"></script>
-<script src="/js/popup.js"></script>
-
-<body ng-controller="wrap" ng-class="pageStateCL">
+<body class="pageInitialMode">
 <div id="popup_helper">
-    <img src="/images/ext_icon_help.png" alt="">
-    You can close this window tab and work through extension popup.
+  <img src="/images/ext_icon_help.png" alt="">
+  You can close this tab and work through extension popup.
 </div>
 <div id="wrap">
-    <div ng-controller="manager">
-        <header>
-            <div class="stngs_trigger" ng-click="settingsShow()" title="Settings"></div>
-            <div id="logo">
-                <img src="/images/logo.png" width="140" height="21" alt="" title="Watch Desk. oDesk job watcher.">
-            </div>
-        </header>
-        <form class="jobSearch" ng-submit="feedsSubmit(feedsValue)">
-            <input type="text" name="search" ng-model="feedsValue" placeholder="Find Jobs" class="js_text">
-            <input type="submit" value="" class="js_submit" title="Find">
-        </form>
-        <div id="menu">
-            <label class="msitem m_select" title="Select All">
-                <span class="msis_check">
-                    <input type="checkbox" class="fch_cust" id="jl_all" ng-model="selectAllModel" ng-change="selectAll(selectAllModel)">
-                    <label for="jl_all" class="fl_cust"></label>
-                </span>
-            </label>
-            <span class="msitem m_favorites" ng-click="moveJobsToFolder('favorites')" title="Add selected to Favorites"></span>
-            <span class="msitem m_delete" ng-click="moveJobsToFolder('trash')" title="Delete selected"></span>
-        </div>
+  <header>
+    <div id="stngs_trigger" title="Settings"></div>
+    <div id="logo">
+      <img src="/images/logo.png" width="140" height="21" alt="" title="Watch Desk. oDesk job watcher.">
     </div>
+  </header>
+  <form id="search">
+    <input type="text" name="search" placeholder="Find Jobs" class="js_text">
+    <input type="submit" value="" class="js_submit" title="Find">
+  </form>
+  <div id="menu">
+    <div class="msiw">
+      <label class="msitem m_select" title="Select All">
+        <span class="msis_check">
+          <input type="checkbox" class="fch_cust" id="jl_all">
+          <span class="fl_cust"></span>
+        </span>
+      </label>
+    </div>
+    <div class="msiw msiw_faworites">
+      <span class="msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
+      <div class="menu_blocker"></div>
+    </div>
+    <div class="msiw">
+      <span class="msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
+      <div class="menu_blocker"></div>
+    </div>
+  </div>
 
-    <!-- Job List -->
-    <div class="serverError">
-        Odesk.com server internal error. Try to repeat the request.
+  <!-- Job List -->
+  <div class="serverError">
+    Odesk.com server internal error. Try to repeat the request.
+  </div>
+  <div id="jobs_list_wrap">
+    <div class="jl_data">
+      <ul id="jobs_list"></ul>
+      <div class="jl_full">No more jobs that match your search</div>
     </div>
-    <div class="jobs_list" ng-controller="jobsList" id="jobsList" ng-class="jobListClass">
-        <div class="jl_data">
-            <ul>
-                <li class="jl_item" ng-repeat="job in jobList" ng-class="job.new ? 'jli_is_new' : ''">
-                    <div class="jl_item_cont" ng-if="job.id" ng-class="job.selected ? 'job_selected' : ''">
-                        <div class="jl_check">
-                            <input type="checkbox" class="fch_cust" value="{{job.id}}" ng-model="job.selected" id="jl_{{job.id}}">
-                            <label for="jl_{{job.id}}" class="fl_cust"></label>
-                        </div>
-                        <div class="jli_name">
-                            <a href="{{job.url}}" ng-click="makeViewed(job.url, job.id)">{{job.title}}</a>
-                        </div>
-                        <div class="jli_params">
-                            <strong>{{job.job_type}} - </strong>
-                            <span ng-if="job.duration">Est. Time: {{job.duration}} - </span>
-                            <span ng-if="job.budget">Est. Budget: ${{job.budget}} - </span>
-                            {{job.date_created | timeAgo}}
-                        </div>
-                        <div class="jli_skills">
-                            <span class="jl_skill" ng-repeat="skill in job.skills">
-                                {{skill}}
-                            </span>
-                        </div>
-                        <div class="jli_new" ng-if="job.new">new</div>
-                    </div>
-                    <div class="jl_pager" ng-if="job.pageNum" id="page_{{job.pageNum}}">
-                        Page {{job.pageNum}}
-                    </div>
-                </li>
-            </ul>
-            <div class="jl_more_wrap">
-                <button class="ajax_btn jl_more_btn" ng-class="jobsLoaded ? 'el-loading' : ''" ng-click="moreJobsGet()">Load More Jobs</button>
-            </div>
-            <div class="jl_full">No more jobs that match your search</div>
-        </div>
-        <div class="jl_empty">Empty Folder</div>
-        <div class="jl_response_empty">oDesk didn't find any jobs that match your search. Please modify your search to expand it.</div>
-    </div>
-    <ul class="jobFolders" ng-controller="jobsFolders">
-        <li class="jf_item selected" data-value="inbox" ng-click="folderChange($event)">Inbox</li>
-        <li class="jf_item" data-value="favorites" ng-click="folderChange($event)">Favorites</li>
-        <li class="jf_item" data-value="trash" ng-click="folderChange($event)">Trash</li>
-    </ul>
+    <div class="jl_empty">Empty Folder</div>
+    <div class="jl_response_empty">oDesk didn't find any jobs that match your search. Please modify your search to expand it.</div>
+    <div id="jl_get_new">Show new jobs</div>
+  </div>
+  <ul id="jobFolders">
+    <li class="jf_item selected" data-value="inbox">Inbox</li>
+    <li class="jf_item" data-value="favorites">Favorites</li>
+    <li class="jf_item" data-value="trash">Trash</li>
+  </ul>
 
-    <!-- Settings -->
-    <form class="settings" ng-controller="settings" ng-submit="settingsSubmit()">
-        <div class="st_column">
-            <div class="sg_item">
-                <label for="jobsPerPage" class="ft_label">Jobs per page</label>
-                <input type="number" ng-model="settings.jobsPerPage" class="f_text ft_small" id="jobsPerPage" min="10" max="100" required>
-                <div class="ft_descr">Between: 10 &ndash; 100</div>
-            </div>
-            <div class="sg_item">
-                <label for="jobsPerPage" class="ft_label">Budget interval</label>
-                <input type="number" ng-model="settings.budgetFrom" class="f_text ft_small" id="budgetFrom" min="0" max="10000">
-                &nbsp;&ndash;&nbsp;
-                <input type="number" ng-model="settings.budgetTo" class="f_text ft_small" id="budgetTo" min="1" max="1000000">
-                <div class="ft_descr">Default unlimited</div>
-            </div>
-            <div class="sg_item">
-                <label for="jobType" class="ft_label">Job type</label>
-                <select name="jobType" id="jobType" ng-model="settings.jobType.value">
-                    <option ng-repeat="type in settings.jobType.values">{{type}}</option>
-                </select>
-            </div>
-            <div class="sg_item">
-                <label for="notifyInterval" class="ft_label">Notify every</label>
-                <input type="number" ng-model="settings.notifyInterval" class="f_text ft_small" id="notifyInterval" min="1" max="300" required ng-disabled="settings.notifyDisabled">
-                <div class="ft_descr">Minutes between: 1 &ndash; 300</div>
-            </div>
-            <div class="sg_item sgi_ntf_disable">
-                <input type="checkbox" class="fch_cust" id="notifyDisabled" ng-model="settings.notifyDisabled">
-                <label for="notifyDisabled" class="fl_cust"></label>
-                <label for="notifyDisabled">Disable notification</label>
-            </div>
-        </div>
-        <div class="st_column stc_right">
-            <div class="sg_item">
-                <label for="jobsPerPage" class="ft_label">Days posted</label>
-                <input type="number" ng-model="settings.daysPosted" class="f_text ft_small" id="daysPosted" min="0" max="50">
-                <div class="ft_descr">Default unlimited</div>
-            </div>
-            <div class="sg_item">
-                <label for="duration" class="ft_label">Duration</label>
-                <select name="duration" id="duration" ng-model="settings.duration.value">
-                    <option ng-repeat="type in settings.duration.values">{{type}}</option>
-                </select>
-                <div class="ft_descr">&nbsp;</div>
-            </div>
-            <div class="sg_item">
-                <label for="workload" class="ft_label">Workload</label>
-                <select name="workload" id="workload" ng-model="settings.workload.value">
-                    <option ng-repeat="type in settings.workload.values">{{type}}</option>
-                </select>
-            </div>
-        </div>
-        <div class="fp_submit">
-            <button id="tokenApply">Apply</button>
-        </div>
-    </form>
+  <!-- Settings -->
+  <form id="settings">
+    <div class="st_column">
+      <div class="sg_item">
+        <label for="jobsPerPage" class="ft_label">Jobs per page</label>
+        <input type="number" name="jobsPerPage" class="f_text ft_small" id="jobsPerPage" min="10" max="100" required>
+        <div class="ft_descr">Between: 10 &ndash; 100</div>
+      </div>
+      <div class="sg_item">
+        <label for="budgetFrom" class="ft_label">Budget interval</label>
+        <input type="number" name="budgetFrom" class="f_text ft_small" id="budgetFrom" min="0" max="10000">
+        &nbsp;&ndash;&nbsp;
+        <input type="number" name="budgetTo" class="f_text ft_small" id="budgetTo" min="1" max="1000000">
+        <div class="ft_descr">Default unlimited</div>
+      </div>
+      <div class="sg_item">
+        <label for="jobType" class="ft_label">Job type</label>
+        <select name="jobType" id="jobType">
+          <option value="All">All</option>
+          <option value="Hourly">Hourly</option>
+          <option value="Fixed">Fixed</option>
+        </select>
+      </div>
+      <div class="sg_item">
+        <label for="notifyInterval" class="ft_label">Notify every</label>
+        <input type="number" name="notifyInterval" class="f_text ft_small" id="notifyInterval" min="1" max="300" required>
+        <div class="ft_descr">Minutes between: 1 &ndash; 300</div>
+      </div>
+      <div class="sg_item sgi_ntf_disable">
+        <input type="checkbox" class="fch_cust" id="notifyDisabled" name="notifyDisabled">
+        <label for="notifyDisabled" class="fl_cust"></label>
+        <label for="notifyDisabled">Disable notification</label>
+      </div>
+    </div>
+    <div class="st_column stc_right">
+      <div class="sg_item">
+        <label for="daysPosted" class="ft_label">Days posted</label>
+        <input type="number" name="daysPosted" class="f_text ft_small" id="daysPosted" min="0" max="50">
+        <div class="ft_descr">Default unlimited</div>
+      </div>
+      <div class="sg_item">
+        <label for="duration" class="ft_label">Duration</label>
+        <select name="duration" id="duration">
+          <option value="All">All</option>
+          <option value="Week">Week</option>
+          <option value="Month">Month</option>
+          <option value="Quarter">Quarter</option>
+          <option value="Semester">Semester</option>
+          <option value="Ongoing">Ongoing</option>
+        </select>
+        <div class="ft_descr">&nbsp;</div>
+      </div>
+      <div class="sg_item">
+        <label for="workload" class="ft_label">Workload</label>
+        <select name="workload" id="workload">
+          <option value="All">All</option>
+          <option value="As needed">As needed</option>
+          <option value="Part time">Part time</option>
+          <option value="Full time">Full time</option>
+        </select>
+      </div>
+    </div>
+    <div class="fp_submit">
+      <button id="tokenApply">Apply</button>
+    </div>
+  </form>
 </div>
+
+<script type="text/template" id="job_tpl">
+  {{#jobs}}
+  <li class="jl_item{{#is_new}} is_new_job{{/is_new}}">
+    <div class="jl_item_cont">
+      <div class="jl_num">{{num}}</div>
+      <div class="jl_check">
+        <input type="checkbox" class="fch_cust" value="{{{id}}}" id="jl_{{cut_id}}">
+        <label for="jl_{{cut_id}}" class="fl_cust"></label>
+      </div>
+      <div class="jli_name">
+        <a href="{{url}}" class="jl_link" data-value="{{{id}}}">{{{title}}}</a>
+      </div>
+      <div class="jli_params">
+        <strong>{{{job_type}}} - </strong>
+        {{#duration}}
+          <span>Est. Time: {{{duration}}} - </span>
+        {{/duration}}
+        {{#budget}}
+        <span>Est. Budget: {{{budget}}} - </span>
+        {{/budget}}
+        Posted: {{{date}}}
+      </div>
+      <div class="jli_skills">
+        {{#skills}}
+        <span class="jl_skill">
+          {{.}}
+        </span>
+        {{/skills}}
+      </div>
+      <div class="jli_new">new</div>
+    </div>
+  </li>
+  {{/jobs}}
+  {{#empty}}
+  <li class="jl_folder_empty">Folder is empty</li>
+  {{/empty}}
+</script>
+</body>

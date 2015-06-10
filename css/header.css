@@ -17,6 +17,11 @@ header {
 }
 .pageDataExistsMode #menu { display: block }
 .appSettingsMode #menu { display: none }
+.msiw {
+    position: relative;
+    float: left;
+    margin-right: 5px;
+}
 .msitem {
     position: relative;
     display: inline-block;
@@ -54,6 +59,10 @@ header {
     background: url(/images/icons.png) 0 0 no-repeat;
 }
 
+.m_select {
+    position: relative;
+    z-index: 15;
+}
 .m_select:after {
     display: none;
 }
@@ -64,18 +73,27 @@ header {
     margin: -10px 0 0 -9px;
     font-size: 0;
 }
+.m_favorites,
+.m_delete,
+.folder_favorites .menu_active .m_favorites {
+    opacity: .4;
+}
+.menu_active .m_favorites,
+.menu_active .m_delete {
+    opacity: 1;
+}
 .m_favorites:after { background-position: 0 -45px }
 .m_delete:after {
     margin-top: -12px;
     background-position: 0 -21px
 }
-.jobSearch {
+#search {
     float: right;
     padding: 2px;
     margin: 10px;
     background-color: #efefef;
 }
-.appSettingsMode .jobSearch { display: none }
+.appSettingsMode #search { display: none }
 .js_text {
     width: 190px;
     height: 28px;
@@ -112,12 +130,12 @@ header {
     font-size: 1.25rem;
     z-index: 10;
 }
-.pageExtraInitial #popup_helper { display: block }
+.pageWideMode #popup_helper { display: block }
 #popup_helper:after {
     content: '';
     position: absolute;
     right: 32px;
-    top: -6px;
+    top: -5px;
     width: 12px;
     height: 6px;
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAGCAQAAABd57cKAAAAPElEQVR4XlXJuwEAIAhDQd3/h1tpLV1aXIAFlAajSXev5FAh8Zrw8kC/iWy6fbspEznGFIyW/CUy05qQA9aOUhY20QbyAAAAAElFTkSuQmCC') 0 0 no-repeat;
@@ -126,3 +144,14 @@ header {
     float: right;
     margin-left: 10px;
 }
+
+.menu_blocker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+.menu_active .menu_blocker { display: none }
+.folder_favorites .msiw_faworites .menu_blocker { display: block!important }
