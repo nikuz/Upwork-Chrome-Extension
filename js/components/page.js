@@ -14,7 +14,7 @@ var modes = {
 };
 
 var container = $('body');
-var getClass = mode => {
+var getClass = function(mode) {
   return modes[mode] || '';
 };
 
@@ -65,27 +65,27 @@ GlobalEvents.jobsReceived.listen(() => {
 // public methods
 // ----------------
 
-var pSet = mode => {
+var pSet = function(mode) {
   container[0].className = getClass(mode);
 };
 
-var pGet = () => {
+var pGet = function() {
   return container[0].className;
 };
 
-var pAdd = mode => {
+var pAdd = function(mode) {
   container.addClass(getClass(mode));
 };
 
-var pRemove = mode => {
+var pRemove = function(mode) {
   container.removeClass(getClass(mode));
 };
 
-var pHas = mode => {
+var pHas = function(mode) {
   return container.hasClass(getClass(mode));
 };
 
-var pToggle = mode => {
+var pToggle = function(mode) {
   container.toggleClass(getClass(mode));
 };
 

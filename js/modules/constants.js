@@ -8,7 +8,7 @@ var dictionary = {
 // public methods
 // ----------------
 
-var pGet = (entry, vars) => {
+var pGet = function(entry, vars) {
   return dictionary[entry].replace('`%s`', vars);
 };
 

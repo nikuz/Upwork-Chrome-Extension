@@ -12,7 +12,7 @@ var curFolder = 'inbox';
 
 // Select all visible jobs in current folder
 var checkAllEl = $('#jl_all');
-checkAllEl.on('change', function(e) {
+checkAllEl.on('change', function() {
   var target = $(this),
     checked = target.is(':checked'),
     curCache = JobsList.getCached();
@@ -33,7 +33,7 @@ checkAllEl.on('change', function(e) {
 });
 
 // move jobs to favorites, trash, inbox (from trash back to inbox)
-$('#m_favorites, #m_trash').on('click', function(e) {
+$('#m_favorites, #m_trash').on('click', function() {
   var curCache = JobsList.getCached(),
     sourceFolder = curFolder,
     sourceFolderJobs,
@@ -103,7 +103,7 @@ $('#m_favorites, #m_trash').on('click', function(e) {
 });
 
 // check job item
-$('#jobs_list').on('click', e => {
+$('#jobs_list').on('click', function(e) {
   var target = $(e.target);
 
   if (!target.hasClass('jl_link') && !target.hasClass('fch_cust')) {

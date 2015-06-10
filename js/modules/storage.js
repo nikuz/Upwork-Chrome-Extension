@@ -6,9 +6,10 @@ import * as _ from 'underscore';
 // public methods
 // ----------------
 
-var pGet = name => {
+var pGet = function(name) {
+  var data;
   if (name) {
-    var data = localStorage[name];
+    data = localStorage[name];
     try {
       data = JSON.parse(data);
     } catch (e) {}
@@ -18,13 +19,13 @@ var pGet = name => {
   return data;
 };
 
-var pSet = (name, data) => {
+var pSet = function(name, data) {
   localStorage[name] = _.isObject(data) ? JSON.stringify(data) : data;
 };
-var pCheck = name => {
+var pCheck = function(name) {
   return !!localStorage[name];
 };
-var pClear = name => {
+var pClear = function(name) {
   delete localStorage[name];
 };
 

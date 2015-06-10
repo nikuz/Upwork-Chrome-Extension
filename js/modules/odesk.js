@@ -11,8 +11,8 @@ import * as constants from 'modules/constants';
 var noop = function() {};
 var oauth;
 
-var storeResponse = (name, targetName, data) => {
-  var set = (name, value) => {
+var storeResponse = function(name, targetName, data) {
+  var set = function(name, value) {
     value = 'oauth_' + value;
     if (data[value]) {
       storage.set(name, data[value]);
@@ -32,7 +32,7 @@ var storeResponse = (name, targetName, data) => {
   }
 };
 
-var init = callback => {
+var init = function(callback) {
   if (!oauth) {
     oauth = OAuth.init({
       consumer: {
@@ -44,7 +44,7 @@ var init = callback => {
   callback();
 };
 
-var getToken = callback => {
+var getToken = function(callback) {
   var cb = callback,
     token = storage.get('token'),
     token_secret = storage.get('token_secret');
@@ -69,7 +69,7 @@ var getToken = callback => {
   }
 };
 
-var getVerifier = callback => {
+var getVerifier = function(callback) {
   var cb = callback,
     verifier = storage.get('verifier');
 
@@ -83,7 +83,7 @@ var getVerifier = callback => {
   }
 };
 
-var getAccess = callback => {
+var getAccess = function(callback) {
   var cb = callback,
     access = storage.get('access');
 
@@ -109,13 +109,13 @@ var getAccess = callback => {
   }
 };
 
-var request = (options, callback) => {
+var request = function(options, callback) {
   var opts = options,
     cb = callback,
     url = opts.url,
     method = opts.method || 'GET';
 
-  var validateParams = () => {
+  var validateParams = function() {
     var errors = [];
     if (!url) {
       errors.push(constants.get('REQUIRED', 'url'));
@@ -173,7 +173,7 @@ var request = (options, callback) => {
 // public methods
 // ----------------
 
-var pRequest = (options, callback) => {
+var pRequest = function(options, callback) {
   var opts = options || {},
     cb = callback || noop,
     result;

@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import * as storage from 'modules/storage';
 import * as Page from 'components/page';
 
-var searchInit = () => {
+var searchInit = function() {
   var searchForm = $('#search');
   searchForm.on('submit', function(e) {
     e.preventDefault();
@@ -25,7 +25,7 @@ var searchInit = () => {
 };
 searchInit();
 
-$('#stngs_trigger').on('click', () => {
+$('#stngs_trigger').on('click', function() {
   if (Page.has('settings')) {
     GlobalEvents.settingsHide();
   } else {

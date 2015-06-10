@@ -20,7 +20,7 @@ var preset = {
 // public methods
 // ----------------
 
-var pGet = field => {
+var pGet = function(field) {
   var settings = storage.get('settings');
   if (!settings) {
     settings = _.clone(preset);
@@ -31,7 +31,7 @@ var pGet = field => {
   return settings;
 };
 
-var pSet = data => {
+var pSet = function(data) {
   var settings = storage.get('settings');
   if (!settings) {
     settings = _.clone(preset);
