@@ -11,7 +11,7 @@ import * as odeskR from 'modules/odesk_request';
 import * as cache from 'modules/cache';
 
 var notifyInterval,
-  prevNotificationCount = 0;
+  prevNotificationCount;
 
 var notificationShow = function(newestJob, count) {
   if (!count || count === prevNotificationCount) {
@@ -19,7 +19,6 @@ var notificationShow = function(newestJob, count) {
   }
   prevNotificationCount = count;
   var popup = chrome.extension.getViews({type: 'popup'})[0];
-  console.log(popup);
   if (popup) {
     popup.postMessage('newJobs', '*');
   } else {
@@ -74,7 +73,6 @@ var settingsCheck = function() {
     createNotifier();
   }
 };
-settingsCheck();
 
 var checkNewJobs = function() {
   var feeds = storage.get('feeds'),
@@ -136,10 +134,20 @@ var checkNewJobs = function() {
   });
 };
 
-chrome.alarms.create('settingsWatch', {
-  periodInMinutes: 1
-});
+var onInit = function() {
+  prevNotificationCount = 0;
+  settingsCheck();
+  var alarmName = 'settingsWatch';
+  chrome.alarms.clear(alarmName);
+  chrome.alarms.create(alarmName, {
+    periodInMinutes: 1
+  });
+};
 
+chrome.runtime.onStartup.addListener(function() {
+  console.log('Starting browser...');
+  onInit();
+});
 chrome.alarms.onAlarm.addListener(alarm => {
   switch (alarm.name) {
     case 'settingsWatch':

@@ -1,32 +1,32 @@
 {
-    "manifest_version": 2,
-    "name": "Watch desk. oDesk job watcher.",
-    "short_name": "Watch desk",
-    "description": "This extension use oDesk API for watching new jobs and showing notifications.",
-    "version": "1.1.0",
-    "browser_action": {
-        "default_icon": "/images/icon.png",
-        "default_popup": "popup.html"
-    },
-    "icons": {
-        "16": "/images/icon.png",
-        "48": "/images/icon48.png",
-        "128": "/images/icon128.png"
-    },
-    "content_security_policy": "script-src 'self'; object-src 'self'",
-    "permissions": [
-        "tabs",
-        "background",
-        "storage",
-        "notifications",
-        "alarms",
-        "https://www.upwork.com/*"
-    ],
-    "web_accessible_resources": [
-        "verifier.html"
-    ],
-    "background": {
-        "page": "background.html",
-        "persistent": false
-    }
+  "manifest_version": 2,
+  "name": "Watch desk. oDesk job watcher.",
+  "short_name": "Watch desk",
+  "description": "This extension use oDesk API for watching new jobs and showing notifications.",
+  "version": "1.1.0",
+  "browser_action": {
+    "default_icon": "/images/icon.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "/images/icon.png",
+    "48": "/images/icon48.png",
+    "128": "/images/icon128.png"
+  },
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "permissions": [
+    "tabs",
+    "background",
+    "storage",
+    "notifications",
+    "alarms",
+    "https://www.upwork.com/*"
+  ],
+  "web_accessible_resources": [
+    "verifier.html"
+  ],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  }
 }

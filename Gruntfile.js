@@ -222,8 +222,11 @@ module.exports = function(grunt) {
     var manifest = grunt.file.readJSON(manifestFile),
       version = manifest.version.split('.');
 
-    version[2] += 1;
+    version.forEach(function(value, key) {
+      version[key] = parseInt(value, 10);
+    });
 
+    version[2] += 1;
     if (version[2] > 9) {
       version[2] = 0;
       version[1] += 1;
@@ -235,7 +238,7 @@ module.exports = function(grunt) {
 
     manifest.version = version.join('.');
 
-    grunt.file.write(manifestFile, JSON.stringify(manifest, null, 4));
+    grunt.file.write(manifestFile, JSON.stringify(manifest, null, 2));
     grunt.file.write('release/' + manifestFile, JSON.stringify(manifest));
 
     console.log('Copy manifest: release/' + manifestFile);
