@@ -10,8 +10,6 @@ header {
 }
 
 #menu {
-    position: relative;
-    float: left;
     display: none;
     padding: 10px;
     height: 30px;
@@ -19,6 +17,11 @@ header {
 }
 .pageDataExistsMode #menu { display: block }
 .appSettingsMode #menu { display: none }
+.msiw {
+    position: relative;
+    float: left;
+    margin-right: 5px;
+}
 .msitem {
     position: relative;
     display: inline-block;
@@ -71,7 +74,8 @@ header {
     font-size: 0;
 }
 .m_favorites,
-.m_delete {
+.m_delete,
+.folder_favorites .menu_active .m_favorites {
     opacity: .4;
 }
 .menu_active .m_favorites,
@@ -141,7 +145,7 @@ header {
     margin-left: 10px;
 }
 
-#menu_blocker {
+.menu_blocker {
     position: absolute;
     left: 0;
     top: 0;
@@ -149,4 +153,5 @@ header {
     bottom: 0;
     z-index: 10;
 }
-.menu_active #menu_blocker { display: none }
+.menu_active .menu_blocker { display: none }
+.folder_favorites .msiw_faworites .menu_blocker { display: block!important }

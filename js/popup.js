@@ -10,6 +10,7 @@ import * as JobsList from 'components/jobs_list';
 var jobSelectedCl = 'job_selected',
   curFolder = 'inbox',
   menuWrapper = $('#menu'),
+  wrapper = $('#wrap'),
   menuActiveCl = 'menu_active';
 
 var searchInit = function() {
@@ -43,15 +44,15 @@ $('#stngs_trigger').on('click', function() {
 
 var badgeUpdate = function() {
   var curCache = cache.get(),
-    newCount = 0;
+    newsCount = 0;
 
   _.each(curCache, item => {
     if (item.is_new) {
-      newCount += 1;
+      newsCount += 1;
     }
   });
   chrome.browserAction.setBadgeText({
-    text: newCount.toString()
+    text: (newsCount || '').toString()
   });
 };
 
@@ -222,6 +223,7 @@ folders.on('click', function() {
   JobsList.init(folderType);
   checkAllEl.prop('checked', false);
   menuWrapper.removeClass(menuActiveCl);
+  wrapper.attr('class', 'folder_' + folderType);
   selectedJobs = 0;
 });
 

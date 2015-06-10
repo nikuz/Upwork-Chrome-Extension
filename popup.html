@@ -29,15 +29,22 @@
     <input type="submit" value="" class="js_submit" title="Find">
   </form>
   <div id="menu">
-    <label class="msitem m_select" title="Select All">
-      <span class="msis_check">
-        <input type="checkbox" class="fch_cust" id="jl_all">
-        <span class="fl_cust"></span>
-      </span>
-    </label>
-    <span class="msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
-    <span class="msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
-    <div id="menu_blocker"></div>
+    <div class="msiw">
+      <label class="msitem m_select" title="Select All">
+        <span class="msis_check">
+          <input type="checkbox" class="fch_cust" id="jl_all">
+          <span class="fl_cust"></span>
+        </span>
+      </label>
+    </div>
+    <div class="msiw msiw_faworites">
+      <span class="msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
+      <div class="menu_blocker"></div>
+    </div>
+    <div class="msiw">
+      <span class="msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
+      <div class="menu_blocker"></div>
+    </div>
   </div>
 
   <!-- Job List -->

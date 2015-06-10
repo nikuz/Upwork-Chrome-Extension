@@ -1,10 +1,10 @@
-﻿0) Tests
+﻿Tests
 TODO Написать тесты
 
-4) Settings
+Settings
 TODO Сбрасывать proxy cache только после изменения настроек влияющих на результаты выдачи
 TODO Ограничить по высоте так же как блок со списком работ
 
-5) Background
+Background
 TODO Проверять cache на количество сохраненных feeds. Не хранить больше 10 feeds
 

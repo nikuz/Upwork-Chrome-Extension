@@ -14,9 +14,9 @@ var notifyInterval,
   prevNotificationCount = 0;
 
 var notificationShow = function(newestJob, count) {
-  //if (!count || count === prevNotificationCount) {
-  //  return;
-  //}
+  if (!count || count === prevNotificationCount) {
+    return;
+  }
   prevNotificationCount = count;
   var popup = chrome.extension.getViews({type: 'popup'})[0];
   console.log(popup);
@@ -129,12 +129,9 @@ var checkNewJobs = function() {
           allNewJobsCount += 1;
         }
       });
-      //if (allNewJobsCount) {
-      //  notificationShow(newestJob, allNewJobsCount);
-      //}
-      notificationShow({
-        title: 'Core PHP , Codeigniter, HTML, Jquery, CSS'
-      }, 10);
+      if (allNewJobsCount) {
+        notificationShow(newestJob, allNewJobsCount);
+      }
     }
   });
 };
