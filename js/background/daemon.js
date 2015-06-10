@@ -16,16 +16,24 @@ var notificationShow = function(count) {
     return;
   }
   prevNotificationCount = count;
-  chrome.notifications.getPermissionLevel(permission => {
-    if (permission === 'granted') {
-      chrome.notifications.create(storage.get('feeds') + ':', {
-        type: 'basic',
-        title: config.APP_name,
-        iconUrl: '/images/icon128n.png',
-        message: `You have new ${count} vacancies`
-      });
-    }
-  });
+  var popup = chrome.extension.getViews({type: 'popup'})[0];
+  if (popup) {
+    popup.postMessage('newJobs', '*');
+  } else {
+    chrome.notifications.getPermissionLevel(permission => {
+      if (permission === 'granted') {
+        chrome.notifications.create(storage.get('feeds') + ':', {
+          type: 'basic',
+          title: storage.get('feeds') + ':',
+          iconUrl: '/images/icon128n.png',
+          message: `You have new ${count} vacancies`
+        });
+      }
+    });
+    chrome.browserAction.setBadgeText({
+      text: count.toString()
+    });
+  }
 };
 chrome.notifications.onClicked.addListener(notificationId => {
   if (notificationId === storage.get('feeds') + ':') {
@@ -93,7 +101,8 @@ var checkNewJobs = function() {
         return -new Date(item.date_created).getTime();
       });
       cache.set(cacheJobs);
-      notificationShow(newJobs.length);
+      console.log(newJobs);
+      notificationShow(1);
     }
   });
 };
