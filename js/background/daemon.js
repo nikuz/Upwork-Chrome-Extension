@@ -3,40 +3,58 @@
 import * as config from 'config';
 import * as async from 'async';
 import * as _ from 'underscore';
+import * as $ from 'jquery';
+import * as $time from 'timeago';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 import * as odeskR from 'modules/odesk_request';
 import * as cache from 'modules/cache';
 
-var notifyInterval;
+var notifyInterval,
+  prevNotificationCount = 0;
 
-var prevNotificationCount = 0;
-var notificationShow = function(count) {
-  if (!count || count === prevNotificationCount) {
-    return;
-  }
+var notificationShow = function(newestJob, count) {
+  //if (!count || count === prevNotificationCount) {
+  //  return;
+  //}
   prevNotificationCount = count;
   var popup = chrome.extension.getViews({type: 'popup'})[0];
+  console.log(popup);
   if (popup) {
     popup.postMessage('newJobs', '*');
   } else {
     chrome.notifications.getPermissionLevel(permission => {
       if (permission === 'granted') {
-        chrome.notifications.create(storage.get('feeds') + ':', {
+        let notificationId = config.APP_name + storage.get('feeds') + Date.now(),
+          notificationData = {
           type: 'basic',
           title: storage.get('feeds') + ':',
           iconUrl: '/images/icon128n.png',
           message: `You have new ${count} vacancies`
-        });
+        };
+        if (newestJob) {
+          count -= 1;
+          let updatedMessage;
+          if (count) {
+            updatedMessage = 'And +' + count + ' others...';
+          } else {
+            updatedMessage = 'Posted: ' + $.timeago(newestJob.date_created);
+          }
+          _.extend(notificationData, {
+            title: newestJob.title.substr(0, 300),
+            message: updatedMessage
+          });
+        }
+        chrome.notifications.create(notificationId, notificationData);
       }
     });
-    chrome.browserAction.setBadgeText({
-      text: count.toString()
-    });
   }
+  chrome.browserAction.setBadgeText({
+    text: count.toString()
+  });
 };
 chrome.notifications.onClicked.addListener(notificationId => {
-  if (notificationId === storage.get('feeds') + ':') {
+  if (notificationId.indexOf(storage.get('feeds')) !== -1) {
     window.open('popup.html');
   }
 });
@@ -79,7 +97,8 @@ var checkNewJobs = function() {
         favoritesJobs = storage.get('favorites') || [],
         trashJobs = storage.get('trash') || [],
         localJobs = [].concat(cacheJobs).concat(favoritesJobs).concat(trashJobs),
-        newJobs = 0;
+        newJobs = 0,
+        newestJob;
 
       _.each(downloadedJobs, downloaded => {
         var included;
@@ -97,12 +116,25 @@ var checkNewJobs = function() {
       if (cacheJobs.length > config.cache_limit) {
         cacheJobs.length = config.cache_limit;
       }
-      cacheJobs = _.sortBy(cacheJobs, item => {
-        return -new Date(item.date_created).getTime();
+      if (newJobs) {
+        cacheJobs = _.sortBy(cacheJobs, item => {
+          return -new Date(item.date_created).getTime();
+        });
+        newestJob = cacheJobs[0];
+        cache.set(cacheJobs);
+      }
+      var allNewJobsCount = 0;
+      _.each(cacheJobs, item => {
+        if (item.is_new) {
+          allNewJobsCount += 1;
+        }
       });
-      cache.set(cacheJobs);
-      console.log(newJobs);
-      notificationShow(1);
+      //if (allNewJobsCount) {
+      //  notificationShow(newestJob, allNewJobsCount);
+      //}
+      notificationShow({
+        title: 'Core PHP , Codeigniter, HTML, Jquery, CSS'
+      }, 10);
     }
   });
 };

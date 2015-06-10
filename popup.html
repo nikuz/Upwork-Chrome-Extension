@@ -32,11 +32,12 @@
     <label class="msitem m_select" title="Select All">
       <span class="msis_check">
         <input type="checkbox" class="fch_cust" id="jl_all">
-        <label for="jl_all" class="fl_cust"></label>
+        <span class="fl_cust"></span>
       </span>
     </label>
     <span class="msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
     <span class="msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
+    <div id="menu_blocker"></div>
   </div>
 
   <!-- Job List -->
@@ -50,6 +51,7 @@
     </div>
     <div class="jl_empty">Empty Folder</div>
     <div class="jl_response_empty">oDesk didn't find any jobs that match your search. Please modify your search to expand it.</div>
+    <div id="jl_get_new">Show new jobs</div>
   </div>
   <ul id="jobFolders">
     <li class="jf_item selected" data-value="inbox">Inbox</li>
@@ -127,7 +129,7 @@
 
 <script type="text/template" id="job_tpl">
   {{#jobs}}
-  <li class="jl_item {{{new_cl}}}">
+  <li class="jl_item{{#is_new}} is_new_job{{/is_new}}">
     <div class="jl_item_cont">
       <div class="jl_num">{{num}}</div>
       <div class="jl_check">
@@ -145,7 +147,7 @@
         {{#budget}}
         <span>Est. Budget: {{{budget}}} - </span>
         {{/budget}}
-        {{{date}}}
+        Posted: {{{date}}}
       </div>
       <div class="jli_skills">
         {{#skills}}

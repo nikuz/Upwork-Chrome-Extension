@@ -39,6 +39,9 @@ var filter = function(jobs) {
   _.each(jobs, (item, key) => {
     jobs[key] = _.pick(item, allowedFields);
   });
+  jobs = _.sortBy(jobs, item => {
+    return -new Date(item.date_created).getTime();
+  });
   return jobs;
 };
 
@@ -131,8 +134,18 @@ var pRequest = function(options, callback) {
   }
 };
 
-var pGet = function() {
-  return storage.get('cache_' + nameGet());
+var pGet = function(id) {
+  var curCache = storage.get('cache_' + nameGet());
+  if (id) {
+    let i = 0, l = curCache.length;
+    for (; i < l; i += 1) {
+      if (curCache[i].id === id) {
+        curCache = curCache[i];
+        break;
+      }
+    }
+  }
+  return curCache;
 };
 
 var pSet = function(data) {

@@ -7,8 +7,10 @@ import * as cache from 'modules/cache';
 import * as Page from 'components/page';
 import * as JobsList from 'components/jobs_list';
 
-var jobSelectedCl = 'job_selected';
-var curFolder = 'inbox';
+var jobSelectedCl = 'job_selected',
+  curFolder = 'inbox',
+  menuWrapper = $('#menu'),
+  menuActiveCl = 'menu_active';
 
 var searchInit = function() {
   var searchForm = $('#search');
@@ -39,12 +41,34 @@ $('#stngs_trigger').on('click', function() {
   }
 });
 
+var badgeUpdate = function() {
+  var curCache = cache.get(),
+    newCount = 0;
+
+  _.each(curCache, item => {
+    if (item.is_new) {
+      newCount += 1;
+    }
+  });
+  chrome.browserAction.setBadgeText({
+    text: newCount.toString()
+  });
+};
+
 // Select all visible jobs in current folder
 var checkAllEl = $('#jl_all');
 checkAllEl.on('change', function() {
   var target = $(this),
     checked = target.is(':checked'),
     curCache = JobsList.getCached();
+
+  if (checked) {
+    selectedJobs = curCache.length;
+    menuWrapper.addClass(menuActiveCl);
+  } else {
+    selectedJobs = 0;
+    menuWrapper.removeClass(menuActiveCl);
+  }
 
   _.each(curCache, item => {
     item.checked = checked;
@@ -98,6 +122,9 @@ $('#m_favorites, #m_trash').on('click', function() {
     curCacheItem = curCache[i];
     if (curCacheItem.checked) {
       curCacheItem.checked = false;
+      if (curCacheItem.is_new) {
+        curCacheItem.is_new = false;
+      }
       targetFolderJobs.push(curCache.splice(i, 1)[0]);
       i -= 1; l -= 1;
       for (j = 0, jl = sourceFolderJobs.length; j < jl; j += 1) {
@@ -126,20 +153,33 @@ $('#m_favorites, #m_trash').on('click', function() {
     storage.set(sourceFolder, sourceFolderJobs);
   }
   checkAllEl.prop('checked', false);
+  menuWrapper.removeClass(menuActiveCl);
   if (!curCache.length) {
     JobsList.init(curFolder);
   }
+  badgeUpdate();
 });
 
-// check job item
+// select job item
+var selectedJobs = 0;
 $('#jobs_list').on('click', function(e) {
   var target = $(e.target);
-
   if (!target.hasClass('jl_link') && !target.hasClass('fch_cust')) {
     var row = target.parents('.jl_item'),
       check = $('.fch_cust', row),
       checked = check.is(':checked'),
       curCache = JobsList.getCached();
+
+    if (!checked) {
+      selectedJobs += 1;
+      menuWrapper.addClass(menuActiveCl);
+    } else {
+      selectedJobs -= 1;
+      if (!selectedJobs) {
+        checkAllEl.prop('checked', false);
+        menuWrapper.removeClass(menuActiveCl);
+      }
+    }
 
     _.each(curCache, item => {
       if (item.id === check.val()) {
@@ -151,6 +191,18 @@ $('#jobs_list').on('click', function(e) {
     if (!target.hasClass('fl_cust')) {
       check.prop('checked', !checked);
     }
+  }
+  if (target.hasClass('jl_link')) {
+    let _id = target.attr('data-value');
+    if (cache.get(_id).is_new) {
+      cache.update(_id, {
+        is_new: false
+      });
+      badgeUpdate();
+    }
+    chrome.tabs.create({
+      url: target.attr('href')
+    });
   }
 });
 
@@ -169,15 +221,22 @@ folders.on('click', function() {
   curFolder = folderType;
   JobsList.init(folderType);
   checkAllEl.prop('checked', false);
+  menuWrapper.removeClass(menuActiveCl);
+  selectedJobs = 0;
 });
 
-GlobalEvents.settingsSaved.listen(() => {
+GlobalEvents.settingsSaved.listen(function() {
   cache.flush();
   JobsList.init(curFolder);
 });
 
+// got notification from bg script when popup is open
 window.addEventListener('message', function(e) {
   if (e.data === 'newJobs') {
-    console.log(e.data);
+    GlobalEvents.newJobsFromBg();
   }
 }, false);
+
+$('#jl_get_new').on('click', function() {
+  JobsList.init('inbox');
+});

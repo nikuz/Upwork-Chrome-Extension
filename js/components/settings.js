@@ -27,6 +27,11 @@ var formInit = function() {
   });
 };
 
+$('#notifyDisabled').on('change', function() {
+  var target = $(this);
+  $('#notifyInterval').prop('disabled', target.is(':checked'));
+});
+
 var init = function() {
   var sData = settings.get(),
     formField;
@@ -38,6 +43,8 @@ var init = function() {
       formField.val(value);
     }
   });
+  console.log(sData.notifyDisabled);
+  $('#notifyInterval').prop('disabled', sData.notifyDisabled);
   formInit();
 };
 

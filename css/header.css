@@ -10,6 +10,8 @@ header {
 }
 
 #menu {
+    position: relative;
+    float: left;
     display: none;
     padding: 10px;
     height: 30px;
@@ -54,6 +56,10 @@ header {
     background: url(/images/icons.png) 0 0 no-repeat;
 }
 
+.m_select {
+    position: relative;
+    z-index: 15;
+}
 .m_select:after {
     display: none;
 }
@@ -63,6 +69,14 @@ header {
     top: 50%;
     margin: -10px 0 0 -9px;
     font-size: 0;
+}
+.m_favorites,
+.m_delete {
+    opacity: .4;
+}
+.menu_active .m_favorites,
+.menu_active .m_delete {
+    opacity: 1;
 }
 .m_favorites:after { background-position: 0 -45px }
 .m_delete:after {
@@ -126,3 +140,13 @@ header {
     float: right;
     margin-left: 10px;
 }
+
+#menu_blocker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+.menu_active #menu_blocker { display: none }

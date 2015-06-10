@@ -51,11 +51,6 @@ button {
     outline: none!important;
     white-space: nowrap;
 }
-.pageLoadMode .ajax_btn {
-    background-image: url(/images/loader_btn.gif);
-    background-position: 50% 91%;
-    background-repeat: no-repeat;
-}
 .fch_cust {
     position: absolute;
     opacity: 0;

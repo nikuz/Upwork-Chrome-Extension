@@ -9,7 +9,7 @@ var preset = {
   budgetFrom:     0,
   budgetTo:       1000000,
   daysPosted:     50,
-  notifyInterval: 5, // TODO: initial should be 5
+  notifyInterval: 5,
   notifyDisabled: false,
   duration:       'All',
   jobType:        'All',

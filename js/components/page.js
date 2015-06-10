@@ -10,7 +10,8 @@ var modes = {
   settings: 'appSettingsMode',
   empty: 'pageDataEmpty',
   wide: 'pageWideMode',
-  full: 'pageNoMoreJobs'
+  full: 'pageNoMoreJobs',
+  bg: 'pageNewJobsFromBg'
 };
 
 var container = $('body');
@@ -58,7 +59,13 @@ GlobalEvents.jobsReceived.listen(() => {
   pRemove('full');
   pRemove('empty');
   pRemove('error');
+  pRemove('bg');
+  pRemove('settings');
   pAdd('data');
+});
+
+GlobalEvents.newJobsFromBg.listen(() => {
+  pAdd('bg');
 });
 
 // ----------------

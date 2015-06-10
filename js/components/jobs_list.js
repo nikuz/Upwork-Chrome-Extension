@@ -13,8 +13,7 @@ var template = $('#job_tpl').text(),
   container = $('#jobs_list'),
   curPage,
   curFolder,
-  curCache = [],
-  newJobCl = 'is_new_job';
+  curCache = [];
 
 var update = function(jobsList) {
   var result,
@@ -24,9 +23,6 @@ var update = function(jobsList) {
     item.cut_id = item.id.replace('~', '');
     item.date = $.timeago(item.date_created);
     item.num = keyShift + key;
-    if (item.is_new) {
-      item.new_cl = newJobCl;
-    }
   });
   result = Mustache.render(template, {
     jobs: jobsList,
@@ -35,6 +31,7 @@ var update = function(jobsList) {
   if (curPage === 1) {
     container.html(result);
     curCache = jobsList;
+    wrapper.scrollTop(0);
   } else {
     container.append(result);
     curCache = curCache.concat(jobsList);
@@ -76,17 +73,6 @@ var getJobs = function() {
 };
 
 GlobalEvents.feedsAdded.listen(() => {
-  container.on('click', e => {
-    var target = $(e.target);
-    if (target.hasClass('jl_link')) {
-      cache.update(target.attr('data-value'), {
-        is_new: false
-      });
-      chrome.tabs.create({
-        url: target.attr('href')
-      });
-    }
-  });
   wrapper.on('scroll', function() {
     var sHeight = this.scrollTop + this.clientHeight;
     if (sHeight > container.height() - 20) {

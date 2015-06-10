@@ -114,9 +114,11 @@
     padding: 7px 12px;
     border-radius: 7px;
     cursor: pointer;
+    color: #666;
 }
 .jf_item:hover {
     background-color: #CCC;
+    color: #333;
 }
 .jf_item.selected {
     background-color: #333;
@@ -143,3 +145,25 @@
     font-size: .833rem;
 }
 .is_new_job .jli_new { display: block }
+
+#jl_get_new {
+    position: absolute;
+    overflow: hidden;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 102px;
+    padding: 0 20px;
+    background-color: #ffeb99;
+    box-shadow: 0 1px 5px #333;
+    line-height: 24px;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+        height 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946),
+        opacity 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+}
+.pageNewJobsFromBg #jl_get_new {
+    height: 25px;
+    opacity: 1;
+}
