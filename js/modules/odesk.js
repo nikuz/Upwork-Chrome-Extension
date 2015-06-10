@@ -127,28 +127,43 @@ var request = (options, callback) => {
     }
   };
 
-  var makeRequest = () => {
+  var makeRequest = function() {
     var token = storage.get('token'),
       request_data = {
         url: config.API_url + url,
         method: method,
         data: _.extend(opts.data || {}, token && {oauth_token: token})
-      };
-
-    $.ajax({
-      url: config.API_url + url,
-      method: method,
-      dataType: opts.dataType || 'text',
-      data: oauth.authorize(request_data, {
-        secret: storage.get('token_secret')
-      }),
-      success: data => {
-        cb(null, data);
       },
-      error: (jqXHR, textStatus) => {
-        cb(textStatus);
-      }
+      request_obj = {
+        url: config.API_url + url,
+        method: method,
+        dataType: opts.dataType || 'text',
+        success: data => {
+          cb(null, data);
+        },
+        error: (jqXHR, textStatus) => {
+          cb(textStatus);
+        }
+      }, urlDelimiter;
+
+    request_data = oauth.authorize(request_data, {
+      secret: storage.get('token_secret')
     });
+
+    if (method === 'POST') {
+      request_obj.data = request_data;
+    } else {
+      _.each(request_data, (item, key) => {
+        if (!urlDelimiter) {
+          urlDelimiter = /\?/.test(request_obj.url) ? '&' : '?';
+        } else {
+          urlDelimiter = '&';
+        }
+        request_obj.url += urlDelimiter + key + '=' + item;
+      });
+    }
+
+    $.ajax(request_obj);
   };
 
   validateParams();

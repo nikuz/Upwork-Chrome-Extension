@@ -27,7 +27,7 @@ var pRequest = function(options, callback) {
     url: config.API_jobs_url,
     dataType: 'json',
     data: {
-      q: encodeURI(query),
+      q: query,
       budget: '[' + s.budgetFrom + ' TO ' + s.budgetTo + ']',
       days_posted: s.daysPosted,
       duration: fieldPrepare(s.duration),
