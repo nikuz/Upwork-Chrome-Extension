@@ -143,5 +143,6 @@ folders.on('click', function() {
 });
 
 GlobalEvents.settingsSaved.listen(() => {
+  cache.flush();
   JobsList.init(curFolder);
 });

@@ -150,6 +150,17 @@ var pUpdate = function(id, data) {
   pSet(curCache);
 };
 
+var pFlush = function() {
+  var data = storage.get(),
+    keys = _.keys(data);
+
+  _.each(keys, item => {
+    if (item.indexOf('cache_') !== -1) {
+      storage.clear(item);
+    }
+  });
+};
+
 // ---------
 // interface
 // ---------
@@ -158,5 +169,6 @@ export {
   pRequest as request,
   pGet as get,
   pSet as set,
-  pUpdate as update
+  pUpdate as update,
+  pFlush as flush
 };

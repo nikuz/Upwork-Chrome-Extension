@@ -7,11 +7,14 @@ import * as _ from 'underscore';
 // ----------------
 
 var pGet = name => {
-  var data = localStorage[name];
-  try {
-    data = JSON.parse(data);
-  } catch (e) {}
-
+  if (name) {
+    var data = localStorage[name];
+    try {
+      data = JSON.parse(data);
+    } catch (e) {}
+  } else {
+    data = localStorage;
+  }
   return data;
 };
 
