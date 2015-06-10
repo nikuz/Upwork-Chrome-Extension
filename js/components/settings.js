@@ -9,9 +9,15 @@ var formInit = () => {
   var formEl = $('#settings');
   formEl.on('submit', e => {
     e.preventDefault();
-    var sData = settings.get();
+    var sData = settings.get(),
+      formField, fieldVal;
     _.each(sData, (value, key) => {
-      sData[key] = $('#' + key).val();
+      formField = $('#' + key);
+      fieldVal = formField.val();
+      if (formField.attr('type') === 'number') {
+        fieldVal = parseInt(fieldVal, 10);
+      }
+      sData[key] = fieldVal;
     });
     settings.set(sData);
     GlobalEvents.settingsSaved();

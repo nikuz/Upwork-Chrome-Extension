@@ -4,7 +4,7 @@ import * as config from 'config';
 import * as _ from 'underscore';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
-import * as odesk from 'modules/odesk';
+import * as odeskR from 'modules/odesk_request';
 
 var noop = function() {};
 
@@ -24,10 +24,28 @@ var validate = function() {
   return response;
 };
 
+var allowedFields = [
+  'id',
+  'budget',
+  'date_created',
+  'duration',
+  'job_type',
+  'skills',
+  'title',
+  'url',
+  'workload'
+];
+var filter = function(jobs) {
+  _.each(jobs, (item, key) => {
+    jobs[key] = _.pick(item, allowedFields);
+  });
+  return jobs;
+};
+
 var fill = function(options, callback) {
   var opts = options,
     cb = callback,
-    query = opts.query,
+    query = storage.get('feeds'),
     update = opts.update,
     start,
     curCache;
@@ -42,9 +60,7 @@ var fill = function(options, callback) {
     start = 0;
   }
 
-  odesk.request({
-    url: config.API_jobs_url,
-    dataType: 'json',
+  odeskR.request({
     query: query,
     start: start,
     end: config.cache_per_page
@@ -52,7 +68,7 @@ var fill = function(options, callback) {
     if (err) {
       cb(err);
     } else {
-      var data = response.jobs,
+      var data = filter(response.jobs),
         jobsCount = data.length;
 
       if (!update) {
@@ -99,8 +115,6 @@ var request = function(options, callback) {
 var pRequest = function(options, callback) {
   var opts = options || {},
     cb = callback || noop;
-
-  opts.query = storage.get('feeds');
 
   if (validate()) {
     request(opts, cb);

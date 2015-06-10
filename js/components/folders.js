@@ -10,6 +10,7 @@ var jobSelectedCl = 'job_selected';
 var curFolder = 'inbox';
 //document.write(chrome.runtime.getURL('popup.html'));
 
+// Select all visible jobs in current folder
 var checkAllEl = $('#jl_all');
 checkAllEl.on('change', function(e) {
   var target = $(this),
@@ -31,13 +32,15 @@ checkAllEl.on('change', function(e) {
   });
 });
 
+// move jobs to favorites, trash, inbox (from trash back to inbox)
 $('#m_favorites, #m_trash').on('click', function(e) {
   var curCache = JobsList.getCached(),
     sourceFolder = curFolder,
     sourceFolderJobs,
     targetFolder = $(this).attr('data-value'),
     targetFolderJobs,
-    i, l;
+    i, l, j, jl,
+    curCacheItem;
 
   switch (curFolder) {
     case 'inbox':
@@ -62,14 +65,16 @@ $('#m_favorites, #m_trash').on('click', function(e) {
   sourceFolderJobs = sourceFolderJobs || [];
   targetFolderJobs = targetFolderJobs || [];
 
-  _.each(curCache, curCacheItem => {
+  for (i = 0, l = curCache.length; i < l; i += 1) {
+    curCacheItem = curCache[i];
     if (curCacheItem.checked) {
       curCacheItem.checked = false;
-      targetFolderJobs.push(curCacheItem);
-      for (i = 0, l = sourceFolderJobs.length; i < l; i += 1) {
-        if (curCacheItem.id === sourceFolderJobs[i].id) {
-          sourceFolderJobs.splice(i, 1);
-          i -= 1; l -= 1;
+      targetFolderJobs.push(curCache.splice(i, 1)[0]);
+      i -= 1; l -= 1;
+      for (j = 0, jl = sourceFolderJobs.length; j < jl; j += 1) {
+        if (curCacheItem.id === sourceFolderJobs[j].id) {
+          sourceFolderJobs.splice(j, 1);
+          j -= 1; jl -= 1;
         }
       }
       var id = curCacheItem.id.replace('~', ''),
@@ -77,7 +82,7 @@ $('#m_favorites, #m_trash').on('click', function(e) {
 
       row.remove();
     }
-  });
+  }
   targetFolderJobs = _.sortBy(targetFolderJobs, item => {
     return -new Date(item.date_created).getTime();
   });
@@ -92,8 +97,12 @@ $('#m_favorites, #m_trash').on('click', function(e) {
     storage.set(sourceFolder, sourceFolderJobs);
   }
   checkAllEl.prop('checked', false);
+  if (!curCache.length) {
+    JobsList.init(curFolder);
+  }
 });
 
+// check job item
 $('#jobs_list').on('click', e => {
   var target = $(e.target);
 
@@ -116,6 +125,7 @@ $('#jobs_list').on('click', e => {
   }
 });
 
+// change current folder
 var folders = $('.jf_item');
 folders.on('click', function() {
   var selectedCl = 'selected',
@@ -129,4 +139,9 @@ folders.on('click', function() {
   var folderType = target.attr('data-value');
   curFolder = folderType;
   JobsList.init(folderType);
+  checkAllEl.prop('checked', false);
+});
+
+GlobalEvents.settingsSaved.listen(() => {
+  JobsList.init(curFolder);
 });

@@ -13,7 +13,8 @@
     min-height: 0;
 }
 .jl_response_empty,
-.jl_empty {
+.jl_empty,
+.jl_folder_empty {
     padding: 10px 20px;
     text-align: center;
     font-size: 1.75rem;

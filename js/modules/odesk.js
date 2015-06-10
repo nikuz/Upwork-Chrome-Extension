@@ -179,13 +179,6 @@ var pRequest = (options, callback) => {
       getAccess(internalCallback);
     },
     internalCallback => {
-      var start = opts.start || 0,
-        end = opts.end || 20;
-
-      opts.data = {
-        q: encodeURI(opts.query),
-        paging: start + ';' + end
-      };
       request(opts, (err, response) => {
         result = response;
         internalCallback(err);

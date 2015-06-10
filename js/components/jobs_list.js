@@ -17,7 +17,7 @@ var template = $('#job_tpl').text(),
   newJobCl = 'is_new_job';
 
 var update = function(jobsList) {
-  var result = '',
+  var result,
     keyShift = (curPage - 1) * settings.get('jobsPerPage');
   _.each(jobsList, (item, key) => {
     key += 1;
@@ -27,7 +27,10 @@ var update = function(jobsList) {
     if (item.is_new) {
       item.new_cl = newJobCl;
     }
-    result += Mustache.render(template, item);
+  });
+  result = Mustache.render(template, {
+    jobs: jobsList,
+    empty: curFolder !== 'inbox' && !jobsList.length && curPage === 1
   });
   if (curPage === 1) {
     container.html(result);

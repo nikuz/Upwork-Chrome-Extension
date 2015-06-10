@@ -5,7 +5,7 @@ import * as async from 'async';
 import * as _ from 'underscore';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
-import * as odesk from 'modules/odesk';
+import * as odeskR from 'modules/odesk_request';
 import * as cache from 'modules/cache';
 
 var notifyInterval;
@@ -58,12 +58,10 @@ var checkNewJobs = function() {
     return;
   }
 
-  odesk.request({
-    url: config.API_jobs_url,
-    dataType: 'json',
+  odeskR.request({
     query: feeds,
-    page: 0,
-    per_page: 20
+    start: 0,
+    end: 20
   }, (err, response) => {
     if (err) {
       console.log(err);

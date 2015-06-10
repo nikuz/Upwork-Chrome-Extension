@@ -126,6 +126,7 @@
 </div>
 
 <script type="text/template" id="job_tpl">
+  {{#jobs}}
   <li class="jl_item {{{new_cl}}}">
     <div class="jl_item_cont">
       <div class="jl_num">{{num}}</div>
@@ -156,5 +157,9 @@
       <div class="jli_new">new</div>
     </div>
   </li>
+  {{/jobs}}
+  {{#empty}}
+  <li class="jl_folder_empty">Folder is empty</li>
+  {{/empty}}
 </script>
 </body>
