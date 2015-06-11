@@ -43,7 +43,6 @@ var init = function() {
       formField.val(value);
     }
   });
-  console.log(sData.notifyDisabled);
   $('#notifyInterval').prop('disabled', sData.notifyDisabled);
   formInit();
 };

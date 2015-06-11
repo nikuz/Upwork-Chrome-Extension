@@ -95,14 +95,14 @@ var checkNewJobs = function() {
         favoritesJobs = storage.get('favorites') || [],
         trashJobs = storage.get('trash') || [],
         localJobs = [].concat(cacheJobs).concat(favoritesJobs).concat(trashJobs),
-        newJobs = 0,
-        newestJob;
+        newJobs = 0;
 
       _.each(downloadedJobs, downloaded => {
-        var included;
-        _.each(localJobs, local => {
+        let included;
+        localJobs.every(local => {
           if (local.title === downloaded.title && local.date_created === downloaded.date_created) {
             included = true;
+            return false;
           }
         });
         if (!included) {
@@ -114,6 +114,7 @@ var checkNewJobs = function() {
       if (cacheJobs.length > config.cache_limit) {
         cacheJobs.length = config.cache_limit;
       }
+      let newestJob;
       if (newJobs) {
         cacheJobs = _.sortBy(cacheJobs, item => {
           return -new Date(item.date_created).getTime();
@@ -121,7 +122,7 @@ var checkNewJobs = function() {
         newestJob = cacheJobs[0];
         cache.set(cacheJobs);
       }
-      var allNewJobsCount = 0;
+      let allNewJobsCount = 0;
       _.each(cacheJobs, item => {
         if (item.is_new) {
           allNewJobsCount += 1;
@@ -144,6 +145,10 @@ var onInit = function() {
   });
 };
 
+chrome.runtime.onInstalled.addListener(function() {
+  console.log('App installed...');
+  onInit();
+});
 chrome.runtime.onStartup.addListener(function() {
   console.log('Starting browser...');
   onInit();

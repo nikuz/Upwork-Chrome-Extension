@@ -137,13 +137,12 @@ var pRequest = function(options, callback) {
 var pGet = function(id) {
   var curCache = storage.get('cache_' + nameGet());
   if (id) {
-    let i = 0, l = curCache.length;
-    for (; i < l; i += 1) {
-      if (curCache[i].id === id) {
-        curCache = curCache[i];
-        break;
+    curCache.every(item => {
+      if (item.id === id) {
+        curCache = item;
+        return false;
       }
-    }
+    });
   }
   return curCache;
 };

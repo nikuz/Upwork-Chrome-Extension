@@ -49,6 +49,7 @@ var badgeUpdate = function() {
   _.each(curCache, item => {
     if (item.is_new) {
       newsCount += 1;
+      console.log(item);
     }
   });
   chrome.browserAction.setBadgeText({
