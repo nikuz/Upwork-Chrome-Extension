@@ -29,6 +29,9 @@ module.exports = function(grunt) {
       },
       remove_bower_surpluses: {
         command: 'rm release/bower_components/crypto-js/crypto-js.js'
+      },
+      copy_html_specs: {
+        command: 'cp specs/*.html specs_babel/'
       }
     },
     bower: {
@@ -77,6 +80,14 @@ module.exports = function(grunt) {
           cwd: 'js',
           src: ['**/*.js', '!main.js', '!verifier.js', '!background/background.js'],
           dest: 'release/js'
+        }]
+      },
+      specs: {
+        files: [{
+          expand: true,
+          cwd: 'specs',
+          src: ['**/*.js'],
+          dest: 'specs_babel'
         }]
       },
       prod: {
@@ -174,6 +185,13 @@ module.exports = function(grunt) {
         src: ['**'],
         dest: ''
       }
+    },
+    mocha_phantomjs: {
+      options: {
+        //timeout: 1000 * 10,
+        //reporter: 'spec'
+      },
+      all: ['specs_babel/index.html']
     }
   });
 
@@ -184,6 +202,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-bower');
+  grunt.loadNpmTasks('grunt-mocha-phantomjs');
 
   grunt.registerTask('default', [
     'shell:clean',
@@ -195,6 +214,12 @@ module.exports = function(grunt) {
     'bower',
     'babel:dev',
     'watch'
+  ]);
+
+  grunt.registerTask('specs', [
+    'babel:specs',
+    'shell:copy_html_specs',
+    'mocha_phantomjs'
   ]);
 
   grunt.registerTask('before_push_test', [
