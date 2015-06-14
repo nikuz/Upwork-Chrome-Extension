@@ -26,6 +26,7 @@
     "after": true,
     "afterEach": true,
     "chrome": true,
-    "GlobalEvents": true
+    "GlobalEvents": true,
+    "expect": true
   }
 }

@@ -52,11 +52,6 @@ var notificationShow = function(newestJob, count) {
     text: count.toString()
   });
 };
-chrome.notifications.onClicked.addListener(notificationId => {
-  if (notificationId.indexOf(storage.get('feeds')) !== -1) {
-    window.open('popup.html');
-  }
-});
 
 var createNotifier = function() {
   var alarmName = 'newJobsNotifier';
@@ -72,6 +67,7 @@ var settingsCheck = function() {
     notifyInterval = newInterval;
     createNotifier();
   }
+  return newInterval;
 };
 
 var checkNewJobs = function() {
@@ -164,3 +160,21 @@ chrome.alarms.onAlarm.addListener(alarm => {
     default:
   }
 });
+chrome.notifications.onClicked.addListener(notificationId => {
+  if (notificationId.indexOf(storage.get('feeds')) !== -1) {
+    window.open('popup.html');
+  }
+});
+
+var checkState;
+if (window.env === 'test') {
+  checkState = function() {
+    return {
+      prevNotificationCount,
+      settingsCheck: settingsCheck
+    };
+  };
+}
+export {
+  checkState as checkState
+};

@@ -16,9 +16,11 @@ module.exports = function(grunt) {
       },
       copy_js: {
         command: [
-          'cp --parents js/main.js release/',
-          'cp --parents js/verifier.js release/',
-          'cp --parents js/background/background.js release/'
+          'mkdir release/js/',
+          'mkdir release/js/background/',
+          'cp js/main.js release/js/',
+          'cp js/verifier.js release/js/',
+          'cp js/background/background.js release/js/background/'
         ].join(' && ')
       },
       copy_css: {
@@ -30,8 +32,11 @@ module.exports = function(grunt) {
       remove_bower_surpluses: {
         command: 'rm release/bower_components/crypto-js/crypto-js.js'
       },
-      copy_html_specs: {
-        command: 'cp specs/*.html specs_babel/'
+      specs_copy_js: {
+        command: [
+          'mkdir release/js/data',
+          'cp specs/data/credentials.json release/js/data'
+        ].join(' && ')
       }
     },
     bower: {
@@ -86,8 +91,8 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'specs',
-          src: ['**/*.js'],
-          dest: 'specs_babel'
+          src: ['**/*.js', '!test.main.js'],
+          dest: 'release/js'
         }]
       },
       prod: {
@@ -131,7 +136,8 @@ module.exports = function(grunt) {
       },
       src: [
         '*.js',
-        'js/**/*.js'
+        'js/**/*.js',
+        'specs/**/*.js'
       ]
     },
     jshint: {
@@ -140,7 +146,8 @@ module.exports = function(grunt) {
       },
       all: [
         '*.js',
-        'js/**/*.js'
+        'js/**/*.js',
+        'specs/**/*.js'
       ]
     },
     cssmin: {
@@ -186,12 +193,13 @@ module.exports = function(grunt) {
         dest: ''
       }
     },
-    mocha_phantomjs: {
-      options: {
-        //timeout: 1000 * 10,
-        //reporter: 'spec'
-      },
-      all: ['specs_babel/index.html']
+    /** karma configuration */
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        autoWatch: false,
+        singleRun: true
+      }
     }
   });
 
@@ -202,7 +210,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-bower');
-  grunt.loadNpmTasks('grunt-mocha-phantomjs');
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('default', [
     'shell:clean',
@@ -217,9 +225,17 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('specs', [
+    'shell:clean',
+    'shell:copy_dependencies',
+    'shell:copy_html',
+    'shell:copy_js',
+    'shell:copy_css',
+    'shell:copy_images',
+    'shell:specs_copy_js',
+    'bower',
+    'babel:dev',
     'babel:specs',
-    'shell:copy_html_specs',
-    'mocha_phantomjs'
+    'karma:unit'
   ]);
 
   grunt.registerTask('before_push_test', [
@@ -227,24 +243,9 @@ module.exports = function(grunt) {
     'jshint'
   ]);
 
-  grunt.registerTask('prebuild', [
-    'shell:clean',
-    'shell:copy_dependencies',
-    'shell:copy_js',
-    'cssmin',
-    'bower',
-    'shell:remove_bower_surpluses',
-    'babel:prod',
-    'htmlmin',
-    'imagemin',
-    'compress'
-  ]);
-  grunt.registerTask('build', function() {
-    grunt.task.run('prebuild');
-
-    var manifestFile = 'manifest.json';
-
-    var manifest = grunt.file.readJSON(manifestFile),
+  grunt.registerTask('manifest_copy', function() {
+    var manifestFile = 'manifest.json',
+      manifest = grunt.file.readJSON(manifestFile),
       version = manifest.version.split('.');
 
     version.forEach(function(value, key) {
@@ -268,4 +269,18 @@ module.exports = function(grunt) {
 
     console.log('Copy manifest: release/' + manifestFile);
   });
+
+  grunt.registerTask('build', [
+    'manifest_copy',
+    'shell:clean',
+    'shell:copy_dependencies',
+    'shell:copy_js',
+    'cssmin',
+    'bower',
+    'shell:remove_bower_surpluses',
+    'babel:prod',
+    'htmlmin',
+    'imagemin',
+    'compress'
+  ]);
 };

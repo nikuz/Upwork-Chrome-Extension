@@ -5,6 +5,7 @@
     "jquery": "latest",
     "reflux": "latest",
     "requirejs": "latest",
+    "requirejs-text": "latest",
     "underscore": "latest",
     "crypto-js": "latest",
     "async": "latest",
