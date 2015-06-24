@@ -1,7 +1,6 @@
 'use strict';
 
 import * as storage from 'modules/storage';
-import * as _ from 'underscore';
 
 var preset = {
   curPage:        0,

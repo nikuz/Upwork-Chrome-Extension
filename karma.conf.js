@@ -30,8 +30,6 @@ module.exports = function(config) {
     // web server port
     port: 9876,
 
-    browserNoActivityTimeout: 2000,
-
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
@@ -46,7 +44,26 @@ module.exports = function(config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     //browsers: ['PhantomJS', 'Firefox', 'Chrome'],
-    browsers: ['PhantomJS'],
+    browsers: ['PhantomJS_custom'],
+
+    customLaunchers: {
+      PhantomJS_custom: {
+        base: 'PhantomJS',
+        options: {
+          windowName: 'my-window',
+          settings: {
+            webSecurityEnabled: false
+          }
+        },
+        flags: ['--load-images=true'],
+        debug: true
+      }
+    },
+
+    phantomjsLauncher: {
+      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+      exitOnResourceError: true
+    },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

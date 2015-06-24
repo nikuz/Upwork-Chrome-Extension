@@ -1,7 +1,5 @@
 'use strict';
 
-import * as $ from 'jquery';
-import * as _ from 'underscore';
 import * as Page from 'components/page';
 import * as settings from 'modules/settings';
 
@@ -47,6 +45,19 @@ var init = function() {
   formInit();
 };
 
-GlobalEvents.settingsInit.listen(() => {
+
+// ----------------
+// public methods
+// ----------------
+
+var pInit = function() {
   init();
-});
+};
+
+// ---------
+// interface
+// ---------
+
+export {
+  pInit as init
+};

@@ -1,9 +1,6 @@
 'use strict';
 
 import * as config from 'config';
-import * as $ from 'jquery';
-import * as _ from 'underscore';
-import * as async from 'async';
 import * as storage from 'modules/storage';
 import * as OAuth from 'modules/oauth';
 import * as constants from 'modules/constants';

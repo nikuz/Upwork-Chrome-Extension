@@ -27,6 +27,12 @@
     "afterEach": true,
     "chrome": true,
     "GlobalEvents": true,
-    "expect": true
+    "expect": true,
+    "$": true,
+    "_": true,
+    "Mustache": true,
+    "Reflux": true,
+    "async": true,
+    "jasmine": true
   }
 }

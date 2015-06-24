@@ -1,7 +1,5 @@
 'use strict';
 
-import * as _ from 'underscore';
-
 // ----------------
 // public methods
 // ----------------
@@ -20,7 +18,7 @@ var pGet = function(name) {
 };
 
 var pSet = function(name, data) {
-  localStorage[name] = _.isObject(data) ? JSON.stringify(data) : data;
+  localStorage[name] = typeof data === 'object' ? JSON.stringify(data) : data;
 };
 var pCheck = function(name) {
   return !!localStorage[name];

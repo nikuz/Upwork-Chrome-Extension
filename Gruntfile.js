@@ -17,10 +17,8 @@ module.exports = function(grunt) {
       copy_js: {
         command: [
           'mkdir release/js/',
-          'mkdir release/js/background/',
           'cp js/main.js release/js/',
-          'cp js/verifier.js release/js/',
-          'cp js/background/background.js release/js/background/'
+          'cp js/verifier.js release/js/'
         ].join(' && ')
       },
       copy_css: {
@@ -35,7 +33,18 @@ module.exports = function(grunt) {
       specs_copy_js: {
         command: [
           'mkdir release/js/data',
-          'cp specs/data/credentials.json release/js/data'
+          'cp specs/data/*.json release/js/data'
+        ].join(' && ')
+      },
+      release_clear: {
+        command: [
+          'rm -rf release/bower_components',
+          'rm release/js/background/daemon.js',
+          'rm -rf release/js/components',
+          'rm -rf release/js/modules',
+          'rm release/js/config.js',
+          'rm release/js/popup.js',
+          'rm release/*.min.html'
         ].join(' && ')
       }
     },
@@ -47,26 +56,6 @@ module.exports = function(grunt) {
             'crypto-js': {
               files: [
                 '*.js'
-              ]
-            },
-            jquery: {
-              files: [
-                'dist/jquery.min.js'
-              ]
-            },
-            underscore: {
-              files: [
-                'underscore-min.js'
-              ]
-            },
-            reflux: {
-              files: [
-                'dist/reflux.min.js'
-              ]
-            },
-            mustache: {
-              files: [
-                'mustache.min.js'
               ]
             }
           }
@@ -83,7 +72,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'js',
-          src: ['**/*.js', '!main.js', '!verifier.js', '!background/background.js'],
+          src: ['**/*.js', '!main.js', '!verifier.js'],
           dest: 'release/js'
         }]
       },
@@ -102,7 +91,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'js',
-          src: ['**/*.js', '!main.js', '!verifier.js', '!background/background.js'],
+          src: ['**/*.js', '!main.js', '!verifier.js'],
           dest: 'release/js'
         }]
       }
@@ -168,7 +157,8 @@ module.exports = function(grunt) {
         expand: true,
         cwd: '',
         src: '*.html',
-        dest: 'release/'
+        dest: 'release/',
+        ext: '.min.html'
       }
     },
     imagemin: {
@@ -200,6 +190,60 @@ module.exports = function(grunt) {
         autoWatch: false,
         singleRun: true
       }
+    },
+    'string-replace': {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'release/',
+          src: '*.min.html',
+          dest: 'release/',
+          ext: '.html'
+        }],
+        options: {
+          replacements: [{
+            pattern: '<script src="/bower_components/requirejs/require.js"></script>',
+            replacement: ''
+          }]
+        }
+      }
+    },
+    requirejs: {
+      options: {
+        baseUrl: 'release/js',
+        include: [
+          '../bower_components/almond/almond'
+        ],
+        paths: {
+          jquery: '../bower_components/jquery/dist/jquery',
+          underscore: '../bower_components/underscore/underscore',
+          async: '../bower_components/async/lib/async',
+          reflux: '../bower_components/reflux/dist/reflux',
+          mustache: '../bower_components/mustache/mustache',
+          timeago: '../bower_components/jquery-timeago/jquery.timeago'
+        },
+        packages: [{
+          name: 'crypto-js',
+          location: '../bower_components/crypto-js',
+          main: 'index'
+        }],
+        preserveLicenseComments: false,
+        name: 'main',
+        out: 'release/js/main.js',
+        wrap: true
+      },
+      main: {
+        options: {
+          name: 'main',
+          out: 'release/js/main.js'
+        }
+      },
+      verifier: {
+        options: {
+          name: 'verifier',
+          out: 'release/js/verifier.js'
+        }
+      }
     }
   });
 
@@ -211,6 +255,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-bower');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-string-replace');
 
   grunt.registerTask('default', [
     'shell:clean',
@@ -280,7 +326,10 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
+    'string-replace',
     'imagemin',
+    'requirejs',
+    'shell:release_clear',
     'compress'
   ]);
 };

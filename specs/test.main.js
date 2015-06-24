@@ -36,3 +36,24 @@ require.config({
   // we have to kickoff jasmine, as it is asynchronous
   callback: window.__karma__.start
 });
+
+var Reflux;
+var Mustache;
+var async;
+var GlobalEvents;
+
+// download core modules
+require([
+  'jquery',
+  'underscore',
+  'async',
+  'reflux',
+  'mustache',
+  'timeago',
+  'crypto-js'
+], function($, _, a, r, m, t, c) {
+  // global define core modules
+  Reflux = r;
+  Mustache = m;
+  async = a;
+});

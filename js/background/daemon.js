@@ -1,80 +1,111 @@
 'use strict';
 
 import * as config from 'config';
-import * as async from 'async';
-import * as _ from 'underscore';
-import * as $ from 'jquery';
-import * as $time from 'timeago';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 import * as odeskR from 'modules/odesk_request';
 import * as cache from 'modules/cache';
+import * as constants from 'modules/constants';
+
+var noop = function() {};
 
 var notifyInterval,
-  prevNotificationCount;
+  state = 'init';
 
-var notificationShow = function(newestJob, count) {
-  if (!count || count === prevNotificationCount) {
-    return;
-  }
-  prevNotificationCount = count;
-  var popup = chrome.extension.getViews({type: 'popup'})[0];
-  if (popup) {
-    popup.postMessage('newJobs', '*');
-  } else {
-    chrome.notifications.getPermissionLevel(permission => {
-      if (permission === 'granted') {
-        let notificationId = config.APP_name + storage.get('feeds') + Date.now(),
-          notificationData = {
-          type: 'basic',
-          title: storage.get('feeds') + ':',
-          iconUrl: '/images/icon128n.png',
-          message: `You have new ${count} vacancies`
-        };
-        if (newestJob) {
-          count -= 1;
-          let updatedMessage;
-          if (count) {
-            updatedMessage = 'And +' + count + ' others...';
+var notificationShow = function(options, callback) {
+  var opts = options || {},
+    cb = callback || noop,
+    count = opts.count;
+
+  var validateParams = function() {
+    if (!count) {
+      cb(constants.get('REQUIRED', 'count'));
+    } else {
+      checkEnv();
+    }
+  };
+
+  var checkEnv = function() {
+    var popup = chrome.extension.getViews({type: 'popup'});
+    if (popup && popup[0]) {
+      popup[0].postMessage('newJobs', '*');
+      showBadge();
+      cb(null, 'Popup is opened');
+    } else {
+      if (window.env === 'test') {
+        showBadge();
+        showNotification();
+      } else {
+        chrome.notifications.getPermissionLevel(permission => {
+          if (permission !== 'granted') {
+            cb('Have not permissions to show notification');
           } else {
-            updatedMessage = 'Posted: ' + $.timeago(newestJob.date_created);
+            showBadge();
+            showNotification();
           }
-          _.extend(notificationData, {
-            title: newestJob.title.substr(0, 300),
-            message: updatedMessage
-          });
-        }
-        chrome.notifications.create(notificationId, notificationData);
+        });
       }
+    }
+  };
+
+  var showNotification = function() {
+    var count = opts.count,
+      newestJob = opts.newestJob,
+      notificationId = config.APP_name + storage.get('feeds') + Date.now(),
+      notificationData = {
+        type: 'basic',
+        title: storage.get('feeds') + ':',
+        iconUrl: '/images/icon128n.png',
+        message: `You have new ${count} vacancies`
+      };
+
+    if (newestJob) {
+      count -= 1;
+      let updatedMessage;
+      if (count) {
+        updatedMessage = 'And +' + count + ' others...';
+      } else {
+        updatedMessage = 'Posted: ' + $.timeago(newestJob.date_created);
+      }
+      _.extend(notificationData, {
+        title: newestJob.title.substr(0, 300),
+        message: updatedMessage
+      });
+    }
+    chrome.notifications.create(notificationId, notificationData);
+    cb(null, {
+      notification: notificationData,
+      count: count
     });
-  }
-  chrome.browserAction.setBadgeText({
-    text: count.toString()
-  });
+  };
+
+  var showBadge = function() {
+    chrome.browserAction.setBadgeText({
+      text: count.toString()
+    });
+  };
+
+  validateParams();
 };
 
-var createNotifier = function() {
-  var alarmName = 'newJobsNotifier';
-  chrome.alarms.clear(alarmName);
-  chrome.alarms.create(alarmName, {
-    periodInMinutes: notifyInterval
-  });
-};
+var settingsCheck = function(callback) {
+  var cb = callback || noop,
+    newInterval = settings.get('notifyInterval');
 
-var settingsCheck = function() {
-  var newInterval = settings.get('notifyInterval');
   if (newInterval !== notifyInterval) {
     notifyInterval = newInterval;
-    createNotifier();
+    createAlarms();
   }
-  return newInterval;
+  cb(null, newInterval);
 };
 
-var checkNewJobs = function() {
-  var feeds = storage.get('feeds'),
+var newJobsCheck = function(callback) {
+  var cb = callback || noop,
+    feeds = storage.get('feeds'),
     API_access = storage.get('access');
 
   if (!feeds || !API_access) {
+    cb('No credentials');
     return;
   }
 
@@ -84,7 +115,7 @@ var checkNewJobs = function() {
     end: 20
   }, (err, response) => {
     if (err) {
-      console.log(err);
+      cb(err);
     } else {
       var downloadedJobs = response.jobs,
         cacheJobs = cache.get() || [],
@@ -95,16 +126,15 @@ var checkNewJobs = function() {
 
       _.each(downloadedJobs, downloaded => {
         let included;
-        localJobs.every(local => {
+        _.each(localJobs, local => {
           if (local.title === downloaded.title && local.date_created === downloaded.date_created) {
             included = true;
-            return false;
           }
         });
         if (!included) {
           newJobs += 1;
           downloaded.is_new = true;
-          cacheJobs.unshift(downloaded);
+          cacheJobs.push(downloaded);
         }
       });
       if (cacheJobs.length > config.cache_limit) {
@@ -124,57 +154,101 @@ var checkNewJobs = function() {
           allNewJobsCount += 1;
         }
       });
-      if (allNewJobsCount) {
-        notificationShow(newestJob, allNewJobsCount);
+      if (allNewJobsCount && window.env !== 'test') {
+        notificationShow({
+          newestJob: newestJob,
+          count: allNewJobsCount
+        });
       }
+      cb(null, allNewJobsCount);
     }
   });
 };
 
-var onInit = function() {
-  prevNotificationCount = 0;
-  settingsCheck();
-  var alarmName = 'settingsWatch';
-  chrome.alarms.clear(alarmName);
-  chrome.alarms.create(alarmName, {
-    periodInMinutes: 1
+var createAlarms = function() {
+  var alarms = {
+    settingsWatch: 1,
+    newJobsNotifier: 1 //notifyInterval || 1
+  };
+  _.each(alarms, (value, key) => {
+    chrome.alarms.get(key, alarm => {
+      if (alarm) {
+        chrome.alarms.clear(alarm.name, () => {
+          create(key, value);
+        });
+      } else {
+        create(key, value);
+      }
+    });
+  });
+
+  var create = function(name, period) {
+    chrome.alarms.create(name, {
+      periodInMinutes: period
+    });
+  };
+};
+
+// ----------------
+// public methods
+// ----------------
+
+var pInit = function() {
+  chrome.notifications.onClicked.addListener(notificationId => {
+    if (notificationId.indexOf(storage.get('feeds')) !== -1) {
+      window.open('popup.html');
+    }
+  });
+  chrome.alarms.onAlarm.addListener(alarm => {
+    switch (alarm.name) {
+      case 'settingsWatch':
+        settingsCheck();
+        break;
+      case 'newJobsNotifier':
+        newJobsCheck();
+        break;
+    }
+  });
+  chrome.runtime.onInstalled.addListener(function() {
+    console.log('App installed...');
+    state = 'installed';
+    createAlarms();
+  });
+  chrome.runtime.onStartup.addListener(function() {
+    console.log('Starting browser...');
+    state = 'started';
+    settingsCheck();
+    newJobsCheck();
   });
 };
 
-chrome.runtime.onInstalled.addListener(function() {
-  console.log('App installed...');
-  onInit();
-});
-chrome.runtime.onStartup.addListener(function() {
-  console.log('Starting browser...');
-  onInit();
-});
-chrome.alarms.onAlarm.addListener(alarm => {
-  switch (alarm.name) {
-    case 'settingsWatch':
-      settingsCheck();
-      break;
-    case 'newJobsNotifier':
-      checkNewJobs();
-      break;
-    default:
-  }
-});
-chrome.notifications.onClicked.addListener(notificationId => {
-  if (notificationId.indexOf(storage.get('feeds')) !== -1) {
-    window.open('popup.html');
-  }
-});
+var pStateCheck = function(callback) {
+  var cb = callback || noop;
+  cb(null, {
+    state: state
+  });
+};
 
-var checkState;
-if (window.env === 'test') {
-  checkState = function() {
-    return {
-      prevNotificationCount,
-      settingsCheck: settingsCheck
-    };
-  };
-}
+var pNewJobsCheck = function(callback) {
+  newJobsCheck(callback);
+};
+
+var pSettingsCheck = function(callback) {
+  settingsCheck(callback);
+};
+
+var pNotificationShow = function(options, callback) {
+  notificationShow(options, callback);
+};
+
+// ---------
+// interface
+// ---------
+
 export {
-  checkState as checkState
+  pInit as init,
+  pStateCheck as stateCheck,
+  pNewJobsCheck as newJobsCheck,
+  pSettingsCheck as settingsCheck,
+  pNotificationShow as notificationShow
 };

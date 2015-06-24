@@ -1,16 +1,12 @@
 'use strict';
 
-import * as $ from 'jquery';
-import * as $time from 'timeago';
-import * as _ from 'underscore';
-import * as Mustache from 'mustache';
 import * as cache from 'modules/cache';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 
-var template = $('#job_tpl').text(),
-  wrapper = $('#jobs_list_wrap'),
-  container = $('#jobs_list'),
+var template,
+  wrapper,
+  container,
   curPage,
   curFolder,
   curCache = [];
@@ -72,22 +68,27 @@ var getJobs = function() {
   }
 };
 
-GlobalEvents.feedsAdded.listen(() => {
-  wrapper.on('scroll', function() {
-    var sHeight = this.scrollTop + this.clientHeight;
-    if (sHeight > container.height() - 20) {
-      curPage += 1;
-      getJobs();
-    }
-  });
-  pInit('inbox');
-});
-
 // ----------------
 // public methods
 // ----------------
 
-var pInit = function(folder) {
+var pInit = function() {
+  template = $('#job_tpl').text();
+  wrapper = $('#jobs_list_wrap');
+  container = $('#jobs_list');
+  GlobalEvents.feedsAdded.listen(() => {
+    pUpdate('inbox');
+    wrapper.on('scroll', function() {
+      var sHeight = this.scrollTop + this.clientHeight;
+      if (sHeight > container.height() - 20) {
+        curPage += 1;
+        getJobs();
+      }
+    });
+  });
+};
+
+var pUpdate = function(folder) {
   curPage = 1;
   curFolder = folder;
   curCache = [];
@@ -104,5 +105,6 @@ var pGetCached = function() {
 
 export {
   pInit as init,
+  pUpdate as update,
   pGetCached as getCached
 };

@@ -1,7 +1,6 @@
 'use strict';
 
 import * as config from 'config';
-import * as _ from 'underscore';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 import * as odeskR from 'modules/odesk_request';
