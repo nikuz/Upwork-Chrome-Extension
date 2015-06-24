@@ -17,7 +17,6 @@
   "permissions": [
     "tabs",
     "background",
-    "storage",
     "notifications",
     "alarms",
     "https://www.upwork.com/*"

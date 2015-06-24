@@ -168,7 +168,7 @@ var newJobsCheck = function(callback) {
 var createAlarms = function() {
   var alarms = {
     settingsWatch: 1,
-    newJobsNotifier: 1 //notifyInterval || 1
+    newJobsNotifier: notifyInterval || 1
   };
   _.each(alarms, (value, key) => {
     chrome.alarms.get(key, alarm => {

@@ -229,6 +229,7 @@ var init = function() {
   GlobalEvents.settingsSaved.listen(function() {
     cache.flush();
     JobsList.update(curFolder);
+    badgeUpdate();
   });
 
 // got notification from bg script when popup is open
