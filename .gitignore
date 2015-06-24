@@ -3,3 +3,4 @@ node_modules/*
 store/*
 bower_components/*
 specs_babel/*
+.DS_Store

@@ -34,14 +34,26 @@ var allowedFields = [
   'url',
   'workload'
 ];
-var filter = function(jobs) {
-  _.each(jobs, (item, key) => {
-    jobs[key] = _.pick(item, allowedFields);
+var filter = function(jobs, localJobs) {
+  var result = [];
+  _.each(jobs, downloaded => {
+    let localDuplicate;
+    localJobs.every(local => {
+      if (local.title === downloaded.title && local.date_created === downloaded.date_created) {
+        localDuplicate = true;
+        return false;
+      } else {
+        return true;
+      }
+    });
+    if (!localDuplicate) {
+      result.push(_.pick(downloaded, allowedFields));
+    }
   });
-  jobs = _.sortBy(jobs, item => {
+  result = _.sortBy(result, item => {
     return -new Date(item.date_created).getTime();
   });
-  return jobs;
+  return result;
 };
 
 var fill = function(options, callback) {
@@ -50,14 +62,17 @@ var fill = function(options, callback) {
     query = storage.get('feeds'),
     update = opts.update,
     start,
-    curCache;
+    curCache,
+    favoritesJobs = storage.get('favorites') || [],
+    trashJobs = storage.get('trash') || [],
+    localJobs = [].concat(favoritesJobs).concat(trashJobs);
 
   // API pager format is `$offset;$count`.
   // Page size is restricted to be <= 100.
   // Example: page=100;99.
   if (!update) {
     curCache = pGet() || [];
-    start = curCache.length;
+    start = curCache.length + localJobs.length;
   } else {
     start = 0;
   }
@@ -70,7 +85,7 @@ var fill = function(options, callback) {
     if (err) {
       cb(err);
     } else {
-      var data = filter(response.jobs),
+      var data = filter(response.jobs, localJobs),
         jobsCount = data.length;
 
       if (!update) {
@@ -140,6 +155,8 @@ var pGet = function(id) {
       if (item.id === id) {
         curCache = item;
         return false;
+      } else {
+        return true;
       }
     });
   }
