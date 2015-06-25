@@ -1,7 +1,5 @@
 'use strict';
 
-export var APP_name = 'Odesk';
-
 // API
 export var API_url = 'https://www.upwork.com';
 export var API_token_url = '/api/auth/v1/oauth/token/request';

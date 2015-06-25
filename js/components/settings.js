@@ -25,12 +25,14 @@ var formInit = function() {
   });
 };
 
-$('#notifyDisabled').on('change', function() {
-  var target = $(this);
-  $('#notifyInterval').prop('disabled', target.is(':checked'));
-});
-
 var init = function() {
+  $('#notifyDisabled').on('change', function() {
+    var target = $(this);
+    $('#notifyInterval').prop('disabled', target.is(':checked'));
+  });
+};
+
+var show = function() {
   var sData = settings.get(),
     formField;
   _.each(sData, (value, key) => {
@@ -51,7 +53,11 @@ var init = function() {
 // ----------------
 
 var pInit = function() {
-  init();
+  show();
+};
+
+var pShow = function() {
+  show();
 };
 
 // ---------
@@ -59,5 +65,6 @@ var pInit = function() {
 // ---------
 
 export {
-  pInit as init
+  pInit as init,
+  pShow as show
 };

@@ -51,11 +51,13 @@ var notificationShow = function(options, callback) {
   var showNotification = function() {
     var count = opts.count,
       newestJob = opts.newestJob,
-      notificationId = config.APP_name + storage.get('feeds') + Date.now(),
+      notificationId = storage.get('feeds') + Date.now(),
+      manifest = chrome.runtime.getManifest(),
+      iconPrefix = manifest.name.indexOf('Upwork') !== -1 ? 'upwork' : 'odesk',
       notificationData = {
         type: 'basic',
         title: storage.get('feeds') + ':',
-        iconUrl: '/images/icon128n.png',
+        iconUrl: '/images/' + iconPrefix + '-icon128n.png',
         message: `You have new ${count} vacancies`
       };
 
@@ -87,6 +89,9 @@ var notificationShow = function(options, callback) {
 
   validateParams();
 };
+notificationShow({
+  count: 100
+});
 
 var settingsCheck = function(callback) {
   var cb = callback || noop,

@@ -8,8 +8,11 @@ module.exports = function(grunt) {
       clean: {
         command: 'rm -rf release && mkdir release'
       },
-      copy_dependencies: {
-        command: 'cp manifest.json release/'
+      copy_manifest_odesk: {
+        command: 'cp manifest-odesk.json release/manifest.json'
+      },
+      copy_manifest_upwork: {
+        command: 'cp manifest-upwork.json release/manifest.json'
       },
       copy_html: {
         command: 'cp *.html release/'
@@ -20,9 +23,6 @@ module.exports = function(grunt) {
           'cp js/main.js release/js/',
           'cp js/verifier.js release/js/'
         ].join(' && ')
-      },
-      copy_css: {
-        command: 'cp -r css release/'
       },
       copy_images: {
         command: 'cp -r images release/'
@@ -110,8 +110,8 @@ module.exports = function(grunt) {
         tasks: ['shell:copy_html']
       },
       css: {
-        files: 'css/*.css',
-        tasks: ['shell:copy_css']
+        files: 'css/*.less',
+        tasks: ['less:upwork']
       },
       images: {
         files: 'images/*.*',
@@ -139,13 +139,36 @@ module.exports = function(grunt) {
         'specs/**/*.js'
       ]
     },
-    cssmin: {
-      files: {
-        expand: true,
-        cwd: 'css/',
-        src: '*.css',
-        dest: 'release/css/',
-        ext: '.css'
+    less: {
+      odesk: {
+        options: {
+          modifyVars: {
+            headerColor: '#28b7ed',
+            btnColor: '#28b7ed',
+            linkColor: '#0093f0',
+            odesk: true,
+            upwork: false
+          },
+          compress: true
+        },
+        files: {
+          'release/css/main.css': 'css/main.less'
+        }
+      },
+      upwork: {
+        options: {
+          modifyVars: {
+            headerColor: '#6FDA44',
+            btnColor: '#5bbc2e',
+            linkColor: '#43ac12',
+            odesk: false,
+            upwork: true
+          },
+          compress: true
+        },
+        files: {
+          'release/css/main.css': 'css/main.less'
+        }
       }
     },
     htmlmin: {
@@ -162,11 +185,21 @@ module.exports = function(grunt) {
       }
     },
     imagemin: {
-      files: {
-        expand: true,
-        cwd: 'images/',
-        src: '**/*.{png,jpg,gif}',
-        dest: 'release/images/'
+      odesk: {
+        files: [{
+          expand: true,
+          cwd: 'images/',
+          src: ['**/odesk*.*', '**/common*.*'],
+          dest: 'release/images/'
+        }]
+      },
+      upwork: {
+        files: [{
+          expand: true,
+          cwd: 'images/',
+          src: ['**/upwork*.*', '**/common*.*'],
+          dest: 'release/images/'
+        }]
       }
     },
     compress: {
@@ -248,7 +281,6 @@ module.exports = function(grunt) {
   });
 
   require('load-grunt-tasks')(grunt);
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-contrib-compress');
@@ -257,13 +289,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-string-replace');
+  grunt.loadNpmTasks('grunt-contrib-less');
 
   grunt.registerTask('default', [
     'shell:clean',
-    'shell:copy_dependencies',
+    'shell:copy_manifest_odesk',
     'shell:copy_html',
     'shell:copy_js',
-    'shell:copy_css',
+    'less:odesk',
     'shell:copy_images',
     'bower',
     'babel:dev',
@@ -272,11 +305,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('specs', [
     'shell:clean',
-    'shell:copy_dependencies',
+    'shell:copy_manifest_upwork',
     'shell:copy_html',
     'shell:copy_js',
-    'shell:copy_css',
-    'shell:copy_images',
     'shell:specs_copy_js',
     'bower',
     'babel:dev',
@@ -289,8 +320,8 @@ module.exports = function(grunt) {
     'jshint'
   ]);
 
-  grunt.registerTask('manifest_copy', function() {
-    var manifestFile = 'manifest.json',
+  grunt.registerTask('manifest_copy', function(name) {
+    var manifestFile = 'manifest-' + name + '.json',
       manifest = grunt.file.readJSON(manifestFile),
       version = manifest.version.split('.');
 
@@ -311,23 +342,38 @@ module.exports = function(grunt) {
     manifest.version = version.join('.');
 
     grunt.file.write(manifestFile, JSON.stringify(manifest, null, 2));
-    grunt.file.write('release/' + manifestFile, JSON.stringify(manifest));
+    grunt.file.write('release/manifest.json', JSON.stringify(manifest));
 
-    console.log('Copy manifest: release/' + manifestFile);
+    console.log('Copy manifest: release/manifest.json');
   });
 
   grunt.registerTask('build', [
-    'manifest_copy',
     'shell:clean',
-    'shell:copy_dependencies',
+    'manifest_copy:upwork',
     'shell:copy_js',
-    'cssmin',
+    'less:upwork',
     'bower',
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
     'string-replace',
-    'imagemin',
+    'imagemin:upwork',
+    'requirejs',
+    'shell:release_clear',
+    'compress'
+  ]);
+
+  grunt.registerTask('build:odesk', [
+    'shell:clean',
+    'manifest_copy:odesk',
+    'shell:copy_js',
+    'less:odesk',
+    'bower',
+    'shell:remove_bower_surpluses',
+    'babel:prod',
+    'htmlmin',
+    'string-replace',
+    'imagemin:odesk',
     'requirejs',
     'shell:release_clear',
     'compress'

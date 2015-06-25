@@ -35,7 +35,7 @@ var init = function() {
     if (Page.has('settings')) {
       GlobalEvents.settingsHide();
     } else {
-      Settings.init();
+      Settings.show();
       GlobalEvents.settingsInit();
     }
   });
@@ -253,6 +253,7 @@ var pInit = function() {
   $(() => {
     Page.init();
     JobsList.init();
+    Settings.init();
     init();
   });
 };
