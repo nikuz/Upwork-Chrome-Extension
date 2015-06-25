@@ -46,6 +46,12 @@ module.exports = function(grunt) {
           'rm release/js/popup.js',
           'rm release/*.min.html'
         ].join(' && ')
+      },
+      build_move: {
+        command: 'mv release/*.zip .'
+      },
+      build_move_back: {
+        command: 'mv *.zip release/'
       }
     },
     bower: {
@@ -232,7 +238,7 @@ module.exports = function(grunt) {
           cwd: 'release/',
           src: '*.min.html',
           dest: 'release/',
-          ext: '.html'
+          ext: '.min2.html'
         }],
         options: {
           replacements: [{
@@ -245,7 +251,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'release/',
-          src: '*.min.html',
+          src: '*.min2.html',
           dest: 'release/',
           ext: '.html'
         }],
@@ -397,5 +403,12 @@ module.exports = function(grunt) {
     'requirejs',
     'shell:release_clear',
     'compress'
+  ]);
+
+  grunt.registerTask('build:all', [
+    'build:odesk',
+    'shell:build_move',
+    'build',
+    'shell:build_move_back'
   ]);
 };

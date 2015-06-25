@@ -92,7 +92,6 @@ var fill = function(options, callback) {
         data = curCache.concat(data);
       }
       pSet(data);
-      storage.set('validate', Date.now());
       cb(null, jobsCount);
     }
   });
@@ -164,6 +163,7 @@ var pGet = function(id) {
 };
 
 var pSet = function(data) {
+  storage.set('validate', Date.now());
   return storage.set('cache_' + nameGet(), data);
 };
 
