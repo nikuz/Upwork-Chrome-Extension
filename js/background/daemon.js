@@ -51,9 +51,9 @@ var notificationShow = function(options, callback) {
   var showNotification = function() {
     var count = opts.count,
       newestJob = opts.newestJob,
-      notificationId = storage.get('feeds') + Date.now(),
       manifest = chrome.runtime.getManifest(),
       iconPrefix = manifest.name.indexOf('Upwork') !== -1 ? 'upwork' : 'odesk',
+      notificationId = manifest.short_name + storage.get('feeds') + Date.now(),
       notificationData = {
         type: 'basic',
         title: storage.get('feeds') + ':',

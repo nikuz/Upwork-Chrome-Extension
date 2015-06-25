@@ -46,6 +46,12 @@ module.exports = function(grunt) {
           'rm release/js/popup.js',
           'rm release/*.min.html'
         ].join(' && ')
+      },
+      build_move: {
+        command: 'mv release/*.zip .'
+      },
+      build_move_back: {
+        command: 'mv *.zip release/'
       }
     },
     bower: {
@@ -240,24 +246,6 @@ module.exports = function(grunt) {
             replacement: ''
           }]
         }
-      },
-      upwork: {
-        files: [{
-          expand: true,
-          cwd: 'release/',
-          src: '*.min.html',
-          dest: 'release/',
-          ext: '.html'
-        }],
-        options: {
-          replacements: [{
-            pattern: 'oDesk',
-            replacement: 'Upwork'
-          }, {
-            pattern: 'Odesk.com',
-            replacement: 'Upwork.com'
-          }]
-        }
       }
     },
     requirejs: {
@@ -375,8 +363,7 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
-    'string-replace:require',
-    'string-replace:upwork',
+    'string-replace',
     'imagemin:upwork',
     'requirejs',
     'shell:release_clear',
@@ -392,10 +379,17 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
-    'string-replace:require',
+    'string-replace',
     'imagemin:odesk',
     'requirejs',
     'shell:release_clear',
     'compress'
+  ]);
+
+  grunt.registerTask('build:all', [
+    'build:odesk',
+    'shell:build_move',
+    'build',
+    'shell:build_move_back'
   ]);
 };
