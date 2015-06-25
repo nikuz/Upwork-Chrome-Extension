@@ -3,7 +3,7 @@
   "name": "Watch Upwork. Upwork job watcher.",
   "short_name": "Watch Upwork",
   "description": "This extension use Upwork API for watching new jobs and showing notifications.",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "browser_action": {
     "default_icon": "/images/upwork-icon.png",
     "default_popup": "popup.html"

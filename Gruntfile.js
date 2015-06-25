@@ -39,7 +39,7 @@ module.exports = function(grunt) {
       release_clear: {
         command: [
           'rm -rf release/bower_components',
-          'rm release/js/background/daemon.js',
+          'rm -rf release/js/background',
           'rm -rf release/js/components',
           'rm -rf release/js/modules',
           'rm release/js/config.js',
@@ -174,7 +174,8 @@ module.exports = function(grunt) {
     htmlmin: {
       options: {
         removeComments: true,
-        collapseWhitespace: true
+        collapseWhitespace: true,
+        processScripts: ['text/template']
       },
       files: {
         expand: true,
