@@ -53,7 +53,7 @@ var show = function() {
 // ----------------
 
 var pInit = function() {
-  show();
+  init();
 };
 
 var pShow = function() {

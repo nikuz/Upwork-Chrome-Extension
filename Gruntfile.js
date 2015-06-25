@@ -225,7 +225,7 @@ module.exports = function(grunt) {
       }
     },
     'string-replace': {
-      dist: {
+      require: {
         files: [{
           expand: true,
           cwd: 'release/',
@@ -237,6 +237,24 @@ module.exports = function(grunt) {
           replacements: [{
             pattern: '<script src="/bower_components/requirejs/require.js"></script>',
             replacement: ''
+          }]
+        }
+      },
+      upwork: {
+        files: [{
+          expand: true,
+          cwd: 'release/',
+          src: '*.min.html',
+          dest: 'release/',
+          ext: '.html'
+        }],
+        options: {
+          replacements: [{
+            pattern: 'oDesk',
+            replacement: 'Upwork'
+          }, {
+            pattern: 'Odesk.com',
+            replacement: 'Upwork.com'
           }]
         }
       }
@@ -293,10 +311,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'shell:clean',
-    'shell:copy_manifest_odesk',
+    'shell:copy_manifest_upwork',
     'shell:copy_html',
     'shell:copy_js',
-    'less:odesk',
+    'less:upwork',
     'shell:copy_images',
     'bower',
     'babel:dev',
@@ -356,7 +374,8 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
-    'string-replace',
+    'string-replace:require',
+    'string-replace:upwork',
     'imagemin:upwork',
     'requirejs',
     'shell:release_clear',
@@ -372,7 +391,7 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
-    'string-replace',
+    'string-replace:require',
     'imagemin:odesk',
     'requirejs',
     'shell:release_clear',

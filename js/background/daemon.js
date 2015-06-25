@@ -89,9 +89,6 @@ var notificationShow = function(options, callback) {
 
   validateParams();
 };
-notificationShow({
-  count: 100
-});
 
 var settingsCheck = function(callback) {
   var cb = callback || noop,
