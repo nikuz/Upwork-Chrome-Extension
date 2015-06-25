@@ -238,30 +238,12 @@ module.exports = function(grunt) {
           cwd: 'release/',
           src: '*.min.html',
           dest: 'release/',
-          ext: '.min2.html'
+          ext: '.html'
         }],
         options: {
           replacements: [{
             pattern: '<script src="/bower_components/requirejs/require.js"></script>',
             replacement: ''
-          }]
-        }
-      },
-      upwork: {
-        files: [{
-          expand: true,
-          cwd: 'release/',
-          src: '*.min2.html',
-          dest: 'release/',
-          ext: '.html'
-        }],
-        options: {
-          replacements: [{
-            pattern: 'oDesk',
-            replacement: 'Upwork'
-          }, {
-            pattern: 'Odesk.com',
-            replacement: 'Upwork.com'
           }]
         }
       }
@@ -381,8 +363,7 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
-    'string-replace:require',
-    'string-replace:upwork',
+    'string-replace',
     'imagemin:upwork',
     'requirejs',
     'shell:release_clear',
@@ -398,7 +379,7 @@ module.exports = function(grunt) {
     'shell:remove_bower_surpluses',
     'babel:prod',
     'htmlmin',
-    'string-replace:require',
+    'string-replace',
     'imagemin:odesk',
     'requirejs',
     'shell:release_clear',
