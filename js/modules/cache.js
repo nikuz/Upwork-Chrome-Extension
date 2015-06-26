@@ -24,17 +24,25 @@ var validate = function() {
   return response;
 };
 
-var allowedFields = [
-  'id',
-  'budget',
-  'date_created',
-  'duration',
-  'job_type',
-  'skills',
-  'title',
-  'url',
-  'workload'
-];
+var pick = function(jobs) {
+  var allowedFields = [
+    'id',
+    'budget',
+    'date_created',
+    'duration',
+    'job_type',
+    'skills',
+    'title',
+    'url',
+    'workload',
+    'is_new'
+  ];
+  _.each(jobs, (item, key) => {
+    jobs[key] = _.pick(item, allowedFields);
+  });
+  return jobs;
+};
+
 var filter = function(jobs, localJobs) {
   var result = [];
   _.each(jobs, downloaded => {
@@ -48,7 +56,7 @@ var filter = function(jobs, localJobs) {
       }
     });
     if (!localDuplicate) {
-      result.push(_.pick(downloaded, allowedFields));
+      result.push(downloaded);
     }
   });
   result = _.sortBy(result, item => {
@@ -165,8 +173,8 @@ var pGet = function(id) {
 
 var pSet = function(data) {
   storage.set('validate', Date.now());
+  storage.set('cache_' + nameGet(), pick(data));
   badge.update();
-  return storage.set('cache_' + nameGet(), data);
 };
 
 var pUpdate = function(id, data) {
