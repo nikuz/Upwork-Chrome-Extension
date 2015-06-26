@@ -4,6 +4,7 @@ import * as config from 'config';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
 import * as odeskR from 'modules/odesk_request';
+import * as badge from 'modules/badge';
 
 var noop = function() {};
 
@@ -39,7 +40,7 @@ var filter = function(jobs, localJobs) {
   _.each(jobs, downloaded => {
     let localDuplicate;
     localJobs.every(local => {
-      if (local.title === downloaded.title && local.date_created === downloaded.date_created) {
+      if (local.id === downloaded.id && local.title === downloaded.title && local.date_created === downloaded.date_created) {
         localDuplicate = true;
         return false;
       } else {
@@ -164,6 +165,7 @@ var pGet = function(id) {
 
 var pSet = function(data) {
   storage.set('validate', Date.now());
+  badge.update();
   return storage.set('cache_' + nameGet(), data);
 };
 

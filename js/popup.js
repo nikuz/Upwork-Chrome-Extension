@@ -2,6 +2,7 @@
 
 import * as storage from 'modules/storage';
 import * as cache from 'modules/cache';
+import * as badge from 'modules/badge';
 import * as Page from 'components/page';
 import * as JobsList from 'components/jobs_list';
 import * as Settings from 'components/settings';
@@ -39,21 +40,6 @@ var init = function() {
       GlobalEvents.settingsInit();
     }
   });
-
-  var badgeUpdate = function() {
-    var curCache = cache.get(),
-      newsCount = 0;
-
-    _.each(curCache, item => {
-      if (item.is_new) {
-        newsCount += 1;
-        console.log(item);
-      }
-    });
-    chrome.browserAction.setBadgeText({
-      text: (newsCount || '').toString()
-    });
-  };
 
 // Select all visible jobs in current folder
   var checkAllEl = $('#jl_all');
@@ -157,7 +143,7 @@ var init = function() {
     if (!curCache.length) {
       JobsList.update(curFolder);
     }
-    badgeUpdate();
+    badge.update();
   });
 
 // select job item
@@ -198,7 +184,7 @@ var init = function() {
         cache.update(_id, {
           is_new: false
         });
-        badgeUpdate();
+        badge.update();
       }
       chrome.tabs.create({
         url: target.attr('href')
@@ -229,7 +215,6 @@ var init = function() {
   GlobalEvents.settingsSaved.listen(function() {
     cache.flush();
     JobsList.update(curFolder);
-    badgeUpdate();
   });
 
 // got notification from bg script when popup is open
