@@ -6,6 +6,7 @@ import * as settings from 'modules/settings';
 import * as odeskR from 'modules/odesk_request';
 import * as cache from 'modules/cache';
 import * as constants from 'modules/constants';
+import * as badge from 'modules/badge';
 
 var noop = function() {};
 
@@ -29,18 +30,18 @@ var notificationShow = function(options, callback) {
     var popup = chrome.extension.getViews({type: 'popup'});
     if (popup && popup[0]) {
       popup[0].postMessage('newJobs', '*');
-      showBadge();
+      badge.update();
       cb(null, 'Popup is opened');
     } else {
       if (window.env === 'test') {
-        showBadge();
+        badge.update();
         showNotification();
       } else {
         chrome.notifications.getPermissionLevel(permission => {
           if (permission !== 'granted') {
             cb('Have not permissions to show notification');
           } else {
-            showBadge();
+            badge.update();
             showNotification();
           }
         });
@@ -78,12 +79,6 @@ var notificationShow = function(options, callback) {
     cb(null, {
       notification: notificationData,
       count: count
-    });
-  };
-
-  var showBadge = function() {
-    chrome.browserAction.setBadgeText({
-      text: count.toString()
     });
   };
 
@@ -129,7 +124,7 @@ var newJobsCheck = function(callback) {
       _.each(downloadedJobs, downloaded => {
         let included;
         _.each(localJobs, local => {
-          if (local.title === downloaded.title && local.date_created === downloaded.date_created) {
+          if (local.id === downloaded.id && local.title === downloaded.title && local.date_created === downloaded.date_created) {
             included = true;
           }
         });
