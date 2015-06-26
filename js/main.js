@@ -10,11 +10,6 @@ require.config({
     mustache: '../bower_components/mustache/mustache',
     timeago: '../bower_components/jquery-timeago/jquery.timeago'
   },
-  shim: {
-    popup: {
-      deps: ['components/page', 'components/settings', 'components/jobs_list']
-    }
-  },
   packages: [{
     name: 'crypto-js',
     location: '../bower_components/crypto-js',
