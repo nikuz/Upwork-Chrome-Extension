@@ -72,7 +72,6 @@ module.exports = function(grunt) {
     babel: {
       options: {
         modules: 'amdStrict'
-        //sourceMap: true
       },
       dev: {
         files: [{
@@ -87,17 +86,6 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'specs',
           src: ['**/*.js', '!test.main.js'],
-          dest: 'release/js'
-        }]
-      },
-      prod: {
-        options: {
-          compact: true
-        },
-        files: [{
-          expand: true,
-          cwd: 'js',
-          src: ['**/*.js', '!main.js', '!verifier.js'],
           dest: 'release/js'
         }]
       }
@@ -361,7 +349,7 @@ module.exports = function(grunt) {
     'less:upwork',
     'bower',
     'shell:remove_bower_surpluses',
-    'babel:prod',
+    'babel:dev',
     'htmlmin',
     'string-replace',
     'imagemin:upwork',
@@ -377,7 +365,7 @@ module.exports = function(grunt) {
     'less:odesk',
     'bower',
     'shell:remove_bower_surpluses',
-    'babel:prod',
+    'babel:dev',
     'htmlmin',
     'string-replace',
     'imagemin:odesk',

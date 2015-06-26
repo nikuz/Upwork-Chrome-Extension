@@ -9,6 +9,7 @@ import * as Settings from 'components/settings';
 
 var init = function() {
   var jobSelectedCl = 'job_selected',
+    jobNewCl = 'is_new_job',
     curFolder = 'inbox',
     menuWrapper = $('#menu'),
     wrapper = $('#wrap'),
@@ -149,10 +150,11 @@ var init = function() {
 // select job item
   var selectedJobs = 0;
   $('#jobs_list').on('click', function(e) {
-    var target = $(e.target);
+    var target = $(e.target),
+      row = target.parents('.jl_item');
+
     if (!target.hasClass('jl_link') && !target.hasClass('fch_cust')) {
-      var row = target.parents('.jl_item'),
-        check = $('.fch_cust', row),
+      var check = $('.fch_cust', row),
         checked = check.is(':checked'),
         curCache = JobsList.getCached();
 
@@ -179,6 +181,7 @@ var init = function() {
       }
     }
     if (target.hasClass('jl_link')) {
+      e.preventDefault();
       let _id = target.attr('data-value');
       if (cache.get(_id).is_new) {
         cache.update(_id, {
@@ -189,6 +192,7 @@ var init = function() {
       chrome.tabs.create({
         url: target.attr('href')
       });
+      row.removeClass(jobNewCl);
     }
   });
 
