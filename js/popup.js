@@ -226,7 +226,28 @@ var init = function() {
 // got notification from bg script when popup is open
   window.addEventListener('message', function(e) {
     if (e.data === 'newJobs') {
-      GlobalEvents.newJobsFromBg();
+      let curCache = cache.get(),
+        inboxJobs = JobsList.getCached(),
+        i = 0, l = inboxJobs.length,
+        newJobsExist = false;
+
+      for (; i < l; i += 1) {
+        let contains;
+        inboxJobs.every(inboxItem => {
+          if (curCache[i].id === inboxItem.id) {
+            contains = true;
+            return false;
+          } else {
+            return true;
+          }
+        });
+        if (!contains) {
+          GlobalEvents.newJobsFromBg();
+          newJobsExist = true;
+          break;
+        }
+      }
+      console.log('Exists new jobs: %s', newJobsExist);
     }
   }, false);
 
