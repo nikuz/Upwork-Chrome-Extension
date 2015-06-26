@@ -2,17 +2,41 @@
 
 import * as storage from 'modules/storage';
 
-var preset = {
-  curPage:        0,
-  jobsPerPage:    10,
-  budgetFrom:     0,
-  budgetTo:       1000000,
-  daysPosted:     50,
-  notifyInterval: 5,
-  notifyDisabled: false,
-  duration:       'All',
-  jobType:        'All',
-  workload:       'All'
+// search - it is mean, that change this field will refresh search results
+var fields = {
+  jobsPerPage: {
+    value: 10
+  },
+  budgetFrom: {
+    value: 0,
+    search: true
+  },
+  budgetTo: {
+    value: 1000000,
+    search: true
+  },
+  daysPosted: {
+    value: 50,
+    search: true
+  },
+  notifyInterval: {
+    value: 5
+  },
+  notifyDisabled: {
+    value: false
+  },
+  duration: {
+    value: 'All',
+    search: true
+  },
+  jobType: {
+    value: 'All',
+    search: true
+  },
+  workload: {
+    value: 'All',
+    search: true
+  }
 };
 
 // ----------------
@@ -22,7 +46,7 @@ var preset = {
 var pGet = function(field) {
   var settings = storage.get('settings');
   if (!settings) {
-    settings = _.clone(preset);
+    settings = _.clone(fields);
   }
   if (field) {
     settings = settings[field];
@@ -33,7 +57,7 @@ var pGet = function(field) {
 var pSet = function(data) {
   var settings = storage.get('settings');
   if (!settings) {
-    settings = _.clone(preset);
+    settings = _.clone(fields);
   }
   _.extend(settings, data);
   storage.set('settings', settings);

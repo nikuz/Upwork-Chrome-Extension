@@ -4,12 +4,14 @@ import * as Page from 'components/page';
 import * as settings from 'modules/settings';
 
 var formInit = function() {
-  var formEl = $('#settings');
+  var formEl = $('#settings'),
+    needToUpdateCache;
   formEl.on('submit', e => {
+    needToUpdateCache = false;
     e.preventDefault();
     var sData = settings.get(),
       formField, fieldVal;
-    _.each(sData, (value, key) => {
+    _.each(sData, (item, key) => {
       formField = $('#' + key);
       fieldVal = formField.val();
       if (formField.attr('type') === 'number') {
@@ -18,10 +20,15 @@ var formInit = function() {
       if (formField.attr('type') === 'checkbox') {
         fieldVal = formField.is(':checked');
       }
-      sData[key] = fieldVal;
+      if (item.search && item.value !== fieldVal) {
+        needToUpdateCache = true;
+      }
+      _.extend(sData[key], {
+        value: fieldVal
+      });
     });
     settings.set(sData);
-    GlobalEvents.settingsSaved();
+    GlobalEvents.settingsSaved(needToUpdateCache);
   });
 };
 
@@ -30,21 +37,21 @@ var init = function() {
     var target = $(this);
     $('#notifyInterval').prop('disabled', target.is(':checked'));
   });
+  formInit();
 };
 
 var show = function() {
   var sData = settings.get(),
     formField;
-  _.each(sData, (value, key) => {
+  _.each(sData, (item, key) => {
     formField = $('#' + key);
     if (formField.attr('type') === 'checkbox') {
-      formField.prop('checked', value);
+      formField.prop('checked', item.value);
     } else {
-      formField.val(value);
+      formField.val(item.value);
     }
   });
-  $('#notifyInterval').prop('disabled', sData.notifyDisabled);
-  formInit();
+  $('#notifyInterval').prop('disabled', sData.notifyDisabled.value);
 };
 
 

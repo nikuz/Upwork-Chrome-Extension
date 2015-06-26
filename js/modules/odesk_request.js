@@ -28,11 +28,11 @@ var pRequest = function(options, callback) {
     dataType: 'json',
     data: {
       q: query,
-      budget: '[' + s.budgetFrom + ' TO ' + s.budgetTo + ']',
-      days_posted: s.daysPosted,
-      duration: fieldPrepare(s.duration),
-      job_type: fieldPrepare(s.jobType),
-      workload: fieldPrepare(s.workload),
+      budget: '[' + s.budgetFrom.value + ' TO ' + s.budgetTo.value + ']',
+      days_posted: s.daysPosted.value,
+      duration: fieldPrepare(s.duration.value),
+      job_type: fieldPrepare(s.jobType.value),
+      workload: fieldPrepare(s.workload.value),
       paging: start + ';' + end
     }
   }, (err, response) => {

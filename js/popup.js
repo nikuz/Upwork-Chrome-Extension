@@ -216,8 +216,10 @@ var init = function() {
     selectedJobs = 0;
   });
 
-  GlobalEvents.settingsSaved.listen(function() {
-    cache.flush();
+  GlobalEvents.settingsSaved.listen(function(needToUpdateCache) {
+    if (needToUpdateCache) {
+      cache.flush();
+    }
     JobsList.update(curFolder);
   });
 
