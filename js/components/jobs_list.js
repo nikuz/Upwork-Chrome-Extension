@@ -13,7 +13,7 @@ var template,
 
 var update = function(jobsList) {
   var result,
-    keyShift = (curPage - 1) * settings.get('jobsPerPage');
+    keyShift = (curPage - 1) * settings.get('jobsPerPage').value;
   _.each(jobsList, (item, key) => {
     key += 1;
     item.cut_id = item.id.replace('~', '');
@@ -58,7 +58,7 @@ var getJobs = function() {
     });
   } else {
     var jobs = storage.get(curFolder) || [],
-      per_page = settings.get('jobsPerPage'),
+      per_page = settings.get('jobsPerPage').value,
       start = (curPage - 1) * per_page,
       end = curPage * per_page;
 

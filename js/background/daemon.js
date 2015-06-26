@@ -87,7 +87,7 @@ var notificationShow = function(options, callback) {
 
 var settingsCheck = function(callback) {
   var cb = callback || noop,
-    newInterval = settings.get('notifyInterval');
+    newInterval = settings.get('notifyInterval').value;
 
   if (newInterval !== notifyInterval) {
     notifyInterval = newInterval;
