@@ -47,6 +47,11 @@ var pGet = function(field) {
   var settings = storage.get('settings');
   if (!settings) {
     settings = _.clone(fields);
+  } else {
+    if (_.isUndefined(settings.jobsPerPage.value)) {
+      storage.clear('settings');
+      settings = _.clone(fields);
+    }
   }
   if (field) {
     settings = settings[field];

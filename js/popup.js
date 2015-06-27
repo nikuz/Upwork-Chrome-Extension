@@ -239,7 +239,9 @@ var init = function() {
     if (needToUpdateCache) {
       cache.flush();
     }
-    JobsList.update(curFolder);
+    if (storage.get('feeds')) {
+      JobsList.update(curFolder);
+    }
   });
 
   // got notification from bg script when popup is open
@@ -247,8 +249,7 @@ var init = function() {
     if (e.data === 'newJobs') {
       let curCache = cache.get(),
         inboxJobs = JobsList.getCached(),
-        i = 0, l = inboxJobs.length,
-        newJobsExist = false;
+        i = 0, l = inboxJobs.length;
 
       for (; i < l; i += 1) {
         let contains;
@@ -262,11 +263,9 @@ var init = function() {
         });
         if (!contains) {
           GlobalEvents.newJobsFromBg();
-          newJobsExist = true;
           break;
         }
       }
-      console.log('Exists new jobs: %s', newJobsExist);
     }
   }, false);
 
