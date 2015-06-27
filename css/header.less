@@ -47,7 +47,7 @@ header {
   display: inline-block;
   width: 54px;
   height: 27px;
-  padding: 0 8px;
+  padding: 0 2px;
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 2px;
@@ -55,6 +55,8 @@ header {
   white-space: nowrap;
   -webkit-user-select: none;
   vertical-align: top;
+  font-size: 20px;
+  line-height: 28px;
 }
 
 .msitem:hover {
@@ -71,52 +73,23 @@ header {
   border-color: #ccc;
 }
 
-.msitem:after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin: -11px 0 0 -10px;
-  width: 21px;
-  height: 21px;
-  background: url(/images/common_icons.png) 0 0 no-repeat;
-}
-
-.m_select {
-  position: relative;
-  z-index: 15;
-}
-
-.m_select:after {
-  display: none;
-}
-
-.msis_check {
+#menu .fl_cust {
   position: absolute;
   left: 50%;
   top: 50%;
   margin: -10px 0 0 -9px;
-  font-size: 0;
 }
-
 .m_favorites,
 .m_delete,
-.folder_favorites .menu_active .m_favorites {
+.folder_favorites .menu_active .m_favorites,
+.m_read {
   opacity: .4;
 }
 
 .menu_active .m_favorites,
-.menu_active .m_delete {
+.menu_active .m_delete,
+.menu_active .m_read {
   opacity: 1;
-}
-
-.m_favorites:after {
-  background-position: 0 -45px
-}
-
-.m_delete:after {
-  margin-top: -12px;
-  background-position: 0 -21px
 }
 
 #search {
@@ -143,14 +116,25 @@ header {
 .js_submit {
   width: 30px;
   height: 28px;
+  padding: 0;
   border: none;
-  background: #efefef url(/images/common_search.svg) 50% 50% no-repeat;
+  background: #efefef;
+  font-size: 20px;
+  color: #999;
+  text-align: center;
   vertical-align: middle;
   outline: none !important
 }
+.js_submit:active {
+  padding: 1px 0 0 1px;
+}
 
-.pageLoadMode .js_submit {
-  background-image: url(/images/common_loader_sm.gif);
+.js_submit .fa-spinner,
+.pageLoadMode .js_submit .fa-search {
+  display: none;
+}
+.pageLoadMode .js_submit .fa-spinner {
+  display: inline-block;
 }
 
 .js_submit:active {

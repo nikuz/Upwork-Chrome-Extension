@@ -11,6 +11,7 @@
     "async": "latest",
     "mustache": "latest",
     "jquery-timeago": "latest",
-    "almond": "latest"
+    "almond": "latest",
+    "components-font-awesome": "latest"
   }
 }

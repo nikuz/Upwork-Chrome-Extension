@@ -7,24 +7,25 @@
   width: 56px;
   height: 40px;
   border-radius: 7px 7px 0 0;
-  background: url(/images/common_settings.svg) 50% 40% no-repeat;
-  background-size: 50%;
+  font-size: 27px;
+  text-align: center;
   cursor: pointer;
+  color: #fff;
+  -webkit-user-select: none;
   -webkit-transition:
     right @animate,
     background-color @animate;
 }
-
-.appSettingsMode #stngs_trigger when (@odesk) {
+.appSettingsMode #stngs_trigger {
   right: 10px;
   background-color: #fff;
-  background-image: url(/images/odesk_settings.svg);
+}
+.appSettingsMode #stngs_trigger when (@odesk) {
+  color: #28b7ed;
 }
 
 .appSettingsMode #stngs_trigger when (@upwork) {
-  right: 10px;
-  background-color: #fff;
-  background-image: url(/images/upwork_settings.svg);
+  color: #6fda44;
 }
 
 #settings {

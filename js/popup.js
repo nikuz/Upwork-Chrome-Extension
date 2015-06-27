@@ -42,7 +42,7 @@ var init = function() {
     }
   });
 
-// Select all visible jobs in current folder
+  // Select all visible jobs in current folder
   var checkAllEl = $('#jl_all');
   checkAllEl.on('change', function() {
     var target = $(this),
@@ -72,7 +72,7 @@ var init = function() {
     });
   });
 
-// move jobs to favorites, trash, inbox (from trash back to inbox)
+  // move jobs to favorites, trash, inbox (from trash back to inbox)
   $('#m_favorites, #m_trash').on('click', function() {
     var curCache = JobsList.getCached(),
       sourceFolder = curFolder,
@@ -141,13 +141,32 @@ var init = function() {
     }
     checkAllEl.prop('checked', false);
     menuWrapper.removeClass(menuActiveCl);
+    selectedJobs = 0;
     if (!curCache.length) {
       JobsList.update(curFolder);
     }
     badge.update();
   });
 
-// select job item
+  $('#m_read').on('click', function() {
+    var curCache = JobsList.getCached();
+    _.each(curCache, item => {
+      if (item.checked) {
+        item.is_new = false;
+
+        let id = item.id.replace('~', ''),
+          row = $('#jl_' + id).parents('.jl_item');
+
+        row.removeClass(jobNewCl);
+        cache.update(item.id, {
+          is_new: false
+        });
+      }
+    });
+    badge.update();
+  });
+
+  // select job item
   var selectedJobs = 0;
   $('#jobs_list').on('click', function(e) {
     var target = $(e.target),
@@ -196,7 +215,7 @@ var init = function() {
     }
   });
 
-// change current folder
+  // change current folder
   var folders = $('.jf_item');
   folders.on('click', function() {
     var selectedCl = 'selected',
@@ -223,7 +242,7 @@ var init = function() {
     JobsList.update(curFolder);
   });
 
-// got notification from bg script when popup is open
+  // got notification from bg script when popup is open
   window.addEventListener('message', function(e) {
     if (e.data === 'newJobs') {
       let curCache = cache.get(),

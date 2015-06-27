@@ -3,6 +3,7 @@
   <title>Watch Upwork. Upwork job watcher.</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="/css/fontawesome.css">
   <link rel="stylesheet" href="/css/main.css">
   <script src="/bower_components/requirejs/require.js"></script>
   <script src="/js/main.js"></script>
@@ -15,28 +16,35 @@
 </div>
 <div id="wrap">
   <header>
-    <div id="stngs_trigger" title="Settings"></div>
+    <div id="stngs_trigger" title="Settings">
+      <span class="fa fa-cogs"></span>
+    </div>
     <div id="logo" title="Watch Upwork. Upwork job watcher."></div>
   </header>
   <form id="search">
     <input type="text" name="search" placeholder="Find Jobs" class="js_text">
-    <input type="submit" value="" class="js_submit" title="Find">
+    <button type="submit" class="js_submit" title="Find">
+      <span class="fa fa-search"></span>
+      <span class="fa fa-spinner fa-pulse"></span>
+    </button>
   </form>
   <div id="menu">
     <div class="msiw">
       <label class="msitem m_select" title="Select All">
-        <span class="msis_check">
-          <input type="checkbox" class="fch_cust" id="jl_all">
-          <span class="fl_cust"></span>
-        </span>
+        <input type="checkbox" class="fch_cust" id="jl_all">
+        <span class="fa fa-check fl_cust"></span>
       </label>
     </div>
     <div class="msiw msiw_faworites">
-      <span class="msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
+      <span class="fa fa-star msitem m_favorites" id="m_favorites" data-value="favorites" title="Add selected to Favorites"></span>
       <div class="menu_blocker"></div>
     </div>
     <div class="msiw">
-      <span class="msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
+      <span class="fa fa-trash msitem m_delete" id="m_trash" data-value="trash" title="Delete selected"></span>
+      <div class="menu_blocker"></div>
+    </div>
+    <div class="msiw">
+      <span class="fa fa-eye msitem m_read" id="m_read" data-value="read" title="Mark as read"></span>
       <div class="menu_blocker"></div>
     </div>
   </div>
@@ -90,7 +98,7 @@
       </div>
       <div class="sg_item sgi_ntf_disable">
         <input type="checkbox" class="fch_cust" id="notifyDisabled" name="notifyDisabled">
-        <label for="notifyDisabled" class="fl_cust"></label>
+        <label for="notifyDisabled" class="fa fa-check fl_cust"></label>
         <label for="notifyDisabled">Disable notification</label>
       </div>
     </div>
@@ -135,7 +143,7 @@
       <div class="jl_num">{{num}}</div>
       <div class="jl_check">
         <input type="checkbox" class="fch_cust" value="{{{id}}}" id="jl_{{cut_id}}">
-        <label for="jl_{{cut_id}}" class="fl_cust"></label>
+        <label for="jl_{{cut_id}}" class="fa fa-check fl_cust"></label>
       </div>
       <div class="jli_name">
         <a href="{{url}}" class="jl_link" data-value="{{{id}}}">{{{title}}}</a>

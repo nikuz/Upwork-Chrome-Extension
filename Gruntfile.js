@@ -27,6 +27,18 @@ module.exports = function(grunt) {
       copy_images: {
         command: 'cp -r images release/'
       },
+      copy_fontawesome: {
+        command: [
+          'mkdir release/css/',
+          'mkdir release/css/fontawesome/',
+          'mkdir release/fonts/',
+          'cp -r bower_components/components-font-awesome/less/* release/css/fontawesome/',
+          'cp -r bower_components/components-font-awesome/fonts/fontawesome-webfont.woff2 release/fonts/'
+        ].join(' && ')
+      },
+      remove_fontawesome_surpluses: {
+        command: 'rm -rf release/css/fontawesome'
+      },
       remove_bower_surpluses: {
         command: 'rm release/bower_components/crypto-js/crypto-js.js'
       },
@@ -64,7 +76,8 @@ module.exports = function(grunt) {
                 '*.js'
               ]
             }
-          }
+          },
+          ignorePackages: ['components-font-awesome']
         },
         dest: 'release/bower_components/'
       }
@@ -162,6 +175,14 @@ module.exports = function(grunt) {
         },
         files: {
           'release/css/main.css': 'css/main.less'
+        }
+      },
+      fontawesome: {
+        options: {
+          compress: true
+        },
+        files: {
+          'release/css/fontawesome.css': 'release/css/fontawesome/font-awesome.less'
         }
       }
     },
@@ -291,8 +312,11 @@ module.exports = function(grunt) {
     'shell:copy_manifest_upwork',
     'shell:copy_html',
     'shell:copy_js',
-    'less:upwork',
     'shell:copy_images',
+    'shell:copy_fontawesome',
+    'less:upwork',
+    'less:fontawesome',
+    'shell:remove_fontawesome_surpluses',
     'bower',
     'babel:dev',
     'watch'
@@ -346,7 +370,10 @@ module.exports = function(grunt) {
     'shell:clean',
     'manifest_copy:upwork',
     'shell:copy_js',
+    'shell:copy_fontawesome',
     'less:upwork',
+    'less:fontawesome',
+    'shell:remove_fontawesome_surpluses',
     'bower',
     'shell:remove_bower_surpluses',
     'babel:dev',
@@ -362,7 +389,10 @@ module.exports = function(grunt) {
     'shell:clean',
     'manifest_copy:odesk',
     'shell:copy_js',
+    'shell:copy_fontawesome',
     'less:odesk',
+    'less:fontawesome',
+    'shell:remove_fontawesome_surpluses',
     'bower',
     'shell:remove_bower_surpluses',
     'babel:dev',

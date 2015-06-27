@@ -63,6 +63,7 @@ button {
 .fch_cust {
   position: absolute;
   opacity: 0;
+  outline: none !important;
 }
 
 .fl_cust {
@@ -71,14 +72,14 @@ button {
   width: 16px;
   height: 16px;
   border: 1px solid rgba(155, 155, 155, .57);
-  background: url(/images/common_icons.png) 200px 200px no-repeat;
+  font-size: 17px;
+  line-height: 15px;
+  color: #666;
   vertical-align: middle;
 }
-
-.fch_cust:checked + .fl_cust {
-  background-position: -2px -2px
+.fl_cust:before {
+  content: '';
 }
-
-.fch_cust:focus + .fl_cust {
-  outline: 1px dotted #ccc
+.fch_cust:checked + .fl_cust:before {
+  content: '\f00c';
 }
