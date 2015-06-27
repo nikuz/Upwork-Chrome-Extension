@@ -19,7 +19,8 @@
     "background",
     "notifications",
     "alarms",
-    "https://www.upwork.com/*"
+    "https://www.upwork.com/*",
+    "http://91.239.26.79/*"
   ],
   "web_accessible_resources": [
     "verifier.html"

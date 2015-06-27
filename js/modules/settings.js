@@ -36,6 +36,9 @@ var fields = {
   workload: {
     value: 'All',
     search: true
+  },
+  useProxy: {
+    value: true
   }
 };
 

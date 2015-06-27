@@ -1,5 +1,9 @@
 'use strict';
 
+// PROXY
+export var PROXY_url = 'http://91.239.26.79';
+export var PROXY_jobs_url = '/jobs';
+
 // API
 export var API_url = 'https://www.upwork.com';
 export var API_token_url = '/api/auth/v1/oauth/token/request';

@@ -50,8 +50,13 @@
   </div>
 
   <!-- Job List -->
-  <div class="serverError">
-    Upwork.com server internal error. Try to repeat the request.
+  <div class="serverError" id="apiServerError">
+    Upwork.com server internal error. Try to repeat the request. <br>
+    <button id="updateAfterError">Repeat</button>
+  </div>
+  <div class="serverError" id="proxyServerError">
+    Proxy server internal error. Try to use Upwork.com server instead? <br>
+    <button id="useApiServer">Yes</button>
   </div>
   <div id="jobs_list_wrap">
     <div class="jl_data">
@@ -128,6 +133,13 @@
           <option value="Part time">Part time</option>
           <option value="Full time">Full time</option>
         </select>
+      </div>
+      <div class="sg_item">
+        <label for="useProxy" class="ft_label">Proxy</label>
+        <input type="checkbox" class="fch_cust" id="useProxy" name="useProxy">
+        <label for="useProxy" class="fa fa-check fl_cust"></label>
+        <label for="useProxy">Use proxy</label>
+        <div class="ft_descr">Use proxy if you can't use oAuth authentication</div>
       </div>
     </div>
     <div class="fp_submit">

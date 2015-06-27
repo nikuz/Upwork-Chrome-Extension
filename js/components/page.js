@@ -1,9 +1,12 @@
 'use strict';
 
+import * as settings from 'modules/settings';
+
 var modes = {
   init: 'pageInitialMode',
   data: 'pageDataExistsMode',
-  error: 'pageErrorMode',
+  error_proxy: 'pageErrorProxyMode',
+  error_api: 'pageErrorApiMode',
   load: 'pageLoadMode',
   settings: 'appSettingsMode',
   empty: 'pageDataEmpty',
@@ -60,8 +63,15 @@ var pInit = function() {
   });
 
   GlobalEvents.inboxError.listen(() => {
+    var useProxy = settings.get('useProxy').value;
     pRemove('load');
-    pAdd('error');
+    if (useProxy) {
+      pAdd('error_proxy');
+      pRemove('error_api');
+    } else {
+      pAdd('error_api');
+      pRemove('error_proxy');
+    }
   });
   GlobalEvents.inboxFull.listen(() => {
     pRemove('load');
@@ -76,7 +86,8 @@ var pInit = function() {
     pRemove('load');
     pRemove('full');
     pRemove('empty');
-    pRemove('error');
+    pRemove('error_proxy');
+    pRemove('error_api');
     pRemove('bg');
     pRemove('settings');
     pAdd('data');

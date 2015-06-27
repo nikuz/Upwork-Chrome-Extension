@@ -3,6 +3,7 @@
 import * as storage from 'modules/storage';
 import * as cache from 'modules/cache';
 import * as badge from 'modules/badge';
+import * as settings from 'modules/settings';
 import * as Page from 'components/page';
 import * as JobsList from 'components/jobs_list';
 import * as Settings from 'components/settings';
@@ -269,7 +270,13 @@ var init = function() {
     }
   }, false);
 
-  $('#jl_get_new').on('click', function() {
+  $('#jl_get_new, #updateAfterError').on('click', function() {
+    JobsList.update('inbox');
+  });
+  $('#useApiServer').on('click', function() {
+    var s = settings.get();
+    s.useProxy.value = false;
+    settings.set(s);
     JobsList.update('inbox');
   });
 };
