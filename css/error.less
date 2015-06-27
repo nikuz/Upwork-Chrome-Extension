@@ -1,11 +1,26 @@
 .serverError {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 97px;
   display: none;
   padding: 15px 0;
   clear: both;
   font-size: 1.256rem;
+  background-color: #fde3e3;
   text-align: center;
+  z-index: 50;
+}
+.serverError button {
+  margin-top: 5px;
 }
 
-.pageErrorMode .serverError {
+.pageErrorApiMode #apiServerError {
   display: block;
+}
+.pageErrorProxyMode #proxyServerError {
+  display: block;
+}
+.appSettingsMode .serverError {
+  display: none!important;
 }

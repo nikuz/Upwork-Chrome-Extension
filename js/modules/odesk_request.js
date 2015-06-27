@@ -18,30 +18,42 @@ var fieldPrepare = function(field) {
 var pRequest = function(options, callback) {
   var opts = options,
     cb = callback,
-    query = opts.query,
-    start = opts.start,
-    end = opts.end,
-    s = settings.get();
+    s = settings.get(),
+    useProxy = s.useProxy.value,
+    requestBody = {
+      url: config.API_jobs_url,
+      dataType: 'json',
+      data: {
+        q: opts.query,
+        budget: '[' + s.budgetFrom.value + ' TO ' + s.budgetTo.value + ']',
+        days_posted: s.daysPosted.value,
+        duration: fieldPrepare(s.duration.value),
+        job_type: fieldPrepare(s.jobType.value),
+        workload: fieldPrepare(s.workload.value),
+        paging: opts.start + ';' + opts.end
+      }
+    };
 
-  odesk.request({
-    url: config.API_jobs_url,
-    dataType: 'json',
-    data: {
-      q: query,
-      budget: '[' + s.budgetFrom.value + ' TO ' + s.budgetTo.value + ']',
-      days_posted: s.daysPosted.value,
-      duration: fieldPrepare(s.duration.value),
-      job_type: fieldPrepare(s.jobType.value),
-      workload: fieldPrepare(s.workload.value),
-      paging: start + ';' + end
-    }
-  }, (err, response) => {
-    if (err) {
-      cb(err);
-    } else {
-      cb(null, response);
-    }
-  });
+  if (useProxy) {
+    _.extend(requestBody, {
+      url: config.PROXY_url + config.PROXY_jobs_url,
+      success: data => {
+        cb(null, data);
+      },
+      error: (jqXHR, textStatus) => {
+        cb(textStatus);
+      }
+    });
+    $.ajax(requestBody);
+  } else {
+    odesk.request(requestBody, (err, response) => {
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, response);
+      }
+    });
+  }
 };
 
 // ---------
