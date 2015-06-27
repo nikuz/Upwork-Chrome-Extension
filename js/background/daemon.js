@@ -27,26 +27,83 @@ var notificationShow = function(options, callback) {
   };
 
   var checkEnv = function() {
-    var popup = chrome.extension.getViews({type: 'popup'});
+    var popup = chrome.extension.getViews({type: 'popup'}),
+      tabs = chrome.extension.getViews({type: 'tab'});
+
     if (popup && popup[0]) {
       popup[0].postMessage('newJobs', '*');
-      badge.update();
       cb(null, 'Popup is opened');
+    } else if (tabs && tabs[0]) {
+      _.each(tabs, tab => {
+        tab.postMessage('newJobs', '*');
+      });
+      // if extension tab is active tab
+      async.parallel([
+        function(callback) {
+          chrome.windows.getCurrent({
+            populate: false
+          }, window => {
+            callback(null, {
+              id: window.id,
+              focused: window.focused
+            });
+          });
+        },
+        function(callback) {
+          chrome.tabs.query({
+            active: true
+          }, activeTabs => {
+            callback(null, activeTabs);
+          });
+        }
+      ], function(err, results) {
+        if (err) {
+          cb(err);
+        } else {
+          var activeWindow = results[0],
+            activeTabs = results[1],
+            extensionTabIsCurrent,
+            extensionId = chrome.runtime.id;
+
+          activeTabs.every(tab => {
+            if (tab.url.indexOf('//' + extensionId + '/popup.html') !== -1 && activeWindow.focused && activeWindow.id === tab.windowId) {
+              extensionTabIsCurrent = true;
+              return false;
+            } else {
+              return true;
+            }
+          });
+          if (extensionTabIsCurrent) {
+            cb(null, 'Tab is opened');
+          } else {
+            checkPermission();
+          }
+        }
+      });
     } else {
       if (window.env === 'test') {
-        badge.update();
         showNotification();
       } else {
-        chrome.notifications.getPermissionLevel(permission => {
-          if (permission !== 'granted') {
-            cb('Have not permissions to show notification');
-          } else {
-            badge.update();
-            showNotification();
-          }
-        });
+        checkPermission();
       }
     }
+    badge.update();
+  };
+
+  var checkPermission = function() {
+    chrome.notifications.getPermissionLevel(permission => {
+      if (permission !== 'granted') {
+        cb('Have not permissions to show notification');
+      } else {
+        chrome.notifications.getAll(notifications => {
+          console.log(notifications);
+          _.each(notifications, (item, key) => {
+            chrome.notifications.clear(key);
+          });
+          showNotification();
+        });
+      }
+    });
   };
 
   var showNotification = function() {
@@ -54,7 +111,7 @@ var notificationShow = function(options, callback) {
       newestJob = opts.newestJob,
       manifest = chrome.runtime.getManifest(),
       iconPrefix = manifest.name.indexOf('Upwork') !== -1 ? 'upwork' : 'odesk',
-      notificationId = manifest.short_name + storage.get('feeds') + Date.now(),
+      notificationId = manifest.short_name.replace(/\s+/g, '_') + storage.get('feeds') + Date.now(),
       notificationData = {
         type: 'basic',
         title: storage.get('feeds') + ':',
@@ -123,9 +180,12 @@ var newJobsCheck = function(callback) {
 
       _.each(downloadedJobs, downloaded => {
         let included;
-        _.each(localJobs, local => {
-          if (local.id === downloaded.id && local.title === downloaded.title && local.date_created === downloaded.date_created) {
+        localJobs.every(local => {
+          if (local.id === downloaded.id) {
             included = true;
+            return false;
+          } else {
+            return true;
           }
         });
         if (!included) {
