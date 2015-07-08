@@ -96,7 +96,6 @@ var notificationShow = function(options, callback) {
         cb('Have not permissions to show notification');
       } else {
         chrome.notifications.getAll(notifications => {
-          console.log(notifications);
           _.each(notifications, (item, key) => {
             chrome.notifications.clear(key);
           });
@@ -156,9 +155,10 @@ var settingsCheck = function(callback) {
 var newJobsCheck = function(callback) {
   var cb = callback || noop,
     feeds = storage.get('feeds'),
-    API_access = storage.get('access');
+    API_access = storage.get('access'),
+    useProxy = settings.get('useProxy').value;
 
-  if (!feeds || !API_access) {
+  if (!useProxy && (!feeds || !API_access)) {
     cb('No credentials');
     return;
   }

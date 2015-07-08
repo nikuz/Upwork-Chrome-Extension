@@ -1,7 +1,7 @@
 'use strict';
 
 // PROXY
-export var PROXY_url = 'http://91.239.26.79';
+export var PROXY_url = 'http://upwork-proxy.4go.mobi';
 export var PROXY_jobs_url = '/jobs';
 
 // API

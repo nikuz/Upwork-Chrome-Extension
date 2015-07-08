@@ -277,8 +277,7 @@ module.exports = function(grunt) {
           main: 'index'
         }],
         preserveLicenseComments: false,
-        name: 'main',
-        out: 'release/js/main.js',
+        optimize: 'uglify2',
         wrap: true
       },
       main: {

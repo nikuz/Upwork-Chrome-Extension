@@ -20,7 +20,7 @@
     "notifications",
     "alarms",
     "https://www.upwork.com/*",
-    "http://91.239.26.79/*"
+    "http://upwork-proxy.4go.mobi/*"
   ],
   "web_accessible_resources": [
     "verifier.html"
