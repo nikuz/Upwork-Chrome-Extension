@@ -1,0 +1,215 @@
+#listManager {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  height: 30px;
+  padding: 8px 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .2);
+  z-index: 12;
+}
+.ios #listManager {
+  top: 63px;
+}
+.listmanager-enter,
+.listmanager-leave {
+  transition: -webkit-transform .3s;
+}
+.listmanager-enter,
+.listmanager-leave.listmanager-leave-active {
+  -webkit-transform: translate3d(0, -50px, 0);
+}
+.listmanager-enter.listmanager-enter-active,
+.listmanager-leave {
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+#jobs_list_wrap {
+  position: absolute;
+  top: 45px;
+  bottom: 42px;
+  left: 0;
+  right: 0;
+  padding-top: 46px;
+  clear: both;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ios #jobs_list_wrap {
+  top: 63px;
+}
+
+.jl_response_empty {
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 1.75rem;
+  color: #7c7c7a;
+}
+.jl_info {
+  display: table;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.75rem;
+  white-space: nowrap;
+  color: #7c7c7a;
+}
+.jli_data {
+  display: table-cell;
+  vertical-align: middle;
+}
+.jl_info .fa {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10rem;
+  color: #CCC;
+}
+.jli_suggest .fa {
+  font-size: 7rem;
+}
+
+#jobs_list {
+  background-color: #0b8043;
+}
+.jl_item {
+  position: relative;
+  overflow: hidden;
+  max-height: 200px;
+}
+.listitem-leave {
+  max-height: 200px;
+  transition: max-height .3s;
+}
+.listitem-leave.listitem-leave-active {
+  max-height: 0;
+}
+.jl_trash_i {
+  position: absolute;
+  left: 50px;
+  top: 50%;
+  margin-top: -15px;
+  height: 30px;
+  font-size: 30px;
+  color: #fff;
+  z-index: 0;
+}
+
+.jl_item_cont {
+  position: relative;
+  padding: 10px 13px;
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  z-index: 1;
+}
+
+.selected .jl_item_cont {
+  background-color: #ffffcc;
+}
+
+.jli_is_new {
+  background-color: #EDF6FF;
+}
+
+.jl_link {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.watched_job .jl_link {
+  color: #999
+}
+
+.jli_params {
+  color: #494949;
+  font-size: 1.083rem;
+}
+
+.jl_more_wrap {
+  text-align: center;
+}
+
+.jl_more_btn {
+  margin: 10px 0;
+}
+
+.jl_full {
+  display: none;
+  padding: 10px 0;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.jli_new {
+  float: right;
+  margin-left: 5px;
+  padding: 2px 3px;
+  background-color: #fc4f4f;
+  color: #fff;
+  font-weight: bold;
+  font-size: .833rem;
+}
+
+#swipe_load {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  margin-left: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  box-shadow: 0 0 4px #aaa;
+  background-color: #6fda44;
+  -webkit-transform: translate3d(0, 0, 0);
+  text-align: center;
+  font-size: 20px;
+  line-height: 30px;
+  color: #333;
+  z-index: 11;
+}
+#swipe_load.fa-spin {
+  top: 130px;
+  z-index: 35;
+}
+
+#jl_loader {
+  position: fixed;
+  left: 0;
+  top: 45px;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, .5);
+  text-align: center;
+  padding: 50px 0 0;
+  font-size: 4rem;
+  z-index: 30;
+}
+.jl_info_folder {
+  text-transform: capitalize;
+}
+
+#lm_tooltip {
+  position: absolute;
+  top: 90px;
+  left: 55px;
+  padding: 5px 10px;
+  background-color: #ffeb99;
+  box-shadow: 0 1px 5px #333;
+  font-size: 1.167rem;
+  z-index: 20;
+}
+.tooltip-enter {
+  opacity: 0.01;
+  transition: opacity .3s;
+}
+.tooltip-enter.tooltip-enter-active {
+  opacity: 1;
+}
+.tooltip-leave {
+  opacity: 1;
+  transition: opacity .3s;
+}
+.tooltip-leave.tooltip-leave-active {
+  opacity: 0.01;
+}

@@ -1,41 +1,35 @@
 'use strict';
 
-import * as config from 'config';
+import * as _ from 'underscore';
+import * as config from '../config';
 import * as storage from 'modules/storage';
 import * as settings from 'modules/settings';
-import * as odeskR from 'modules/odesk_request';
-import * as badge from 'modules/badge';
+import * as request from 'modules/request';
+import * as CryptoJS from 'crypto-js';
+import * as EventManager from 'modules/events';
+import dateCorrect from 'utils/date';
 
 var noop = function() {};
 
-var nameGet = function() {
-  var name = storage.get('feeds');
-  return name.replace(/\s/g, '_');
-};
-
-var validate = function() {
-  var cacheTime = parseInt(storage.get('validate'), 10),
-    response = false;
-
-  if (cacheTime) {
-    // valid if less than two hours after update
-    response = (Date.now() - cacheTime) / 1000 / 60 / 60 < 2;
-  }
-  return response;
-};
+var cacheLiveTime = 36e5 * 3; // 3 hours
 
 var pick = function(jobs) {
   var allowedFields = [
     'id',
+    'cut_id',
+    'category2',
     'budget',
     'date_created',
+    'date',
     'duration',
     'job_type',
     'skills',
     'title',
     'url',
     'workload',
-    'is_new'
+    'is_new',
+    'watched',
+    'feeds'
   ];
   _.each(jobs, (item, key) => {
     jobs[key] = _.pick(item, allowedFields);
@@ -43,94 +37,193 @@ var pick = function(jobs) {
   return jobs;
 };
 
-var filter = function(jobs, localJobs) {
-  var result = [];
-  _.each(jobs, downloaded => {
-    let localDuplicate;
-    localJobs.every(local => {
-      if (local.id === downloaded.id && local.title === downloaded.title && local.date_created === downloaded.date_created) {
-        localDuplicate = true;
-        return false;
-      } else {
-        return true;
+var generateFeedSum = function() {
+  var s = settings.get(),
+    feeds = storage.get('feeds'),
+    fieldsToSum = [
+      'category2',
+      'budgetFrom',
+      'budgetTo',
+      'duration',
+      'jobType',
+      'workload'
+    ],
+    sum = feeds;
+
+  if (!s || !feeds) {
+    return null;
+  } else {
+    _.each(fieldsToSum, item => {
+      if (s[item]) {
+        sum += s[item].value.toString();
       }
     });
-    if (!localDuplicate) {
+    return CryptoJS.MD5(sum).toString();
+  }
+};
+
+var getCashedJobs = function(curCache) {
+  curCache = curCache || pGet();
+  var favoritesJobs = storage.get('favorites') || [],
+    trashJobs = storage.get('trash') || [];
+
+  return [].concat(curCache).concat(favoritesJobs).concat(trashJobs);
+};
+
+
+// if cached (inbox, favorites, trash) jobs has the same feedsSum as current request
+// and if cached jobs has date_created earlier than last inbox job + 3 hours
+var calculatePagerStart = function() {
+  var start = 0,
+    feedsSum = generateFeedSum(),
+    curCache = pGet(),
+    lastInboxJobDate = curCache.length ? _.last(curCache).date_created : null,
+    threeHoursAgo = Date.now() - cacheLiveTime,
+    localJobs = getCashedJobs(curCache),
+    trashExtra = storage.get('trash_extra') || [];
+
+  if (lastInboxJobDate) {
+    lastInboxJobDate = new Date(lastInboxJobDate).getTime() - cacheLiveTime;
+  }
+
+  var checks = function(item) {
+    var createdAt = new Date(item.date_created).getTime();
+    if (item.feeds === feedsSum && ((!lastInboxJobDate && createdAt > threeHoursAgo) || (lastInboxJobDate && createdAt > lastInboxJobDate))) {
+      start += 1;
+    }
+  };
+
+  _.each(localJobs, checks);
+  _.each(trashExtra, checks);
+  return start;
+};
+
+var filter = function(feedsSum, jobs, update) {
+  var result = [],
+    cacheTime = storage.get('last_job_date');
+
+  if (cacheTime) {
+    cacheTime = new Date(cacheTime);
+  }
+  // fast double response (less than 3 second between responses)
+  if (cacheTime && Date.now() - cacheTime.getTime() < 3000) {
+    return result;
+  }
+  // background response may be delayed
+  if (generateFeedSum() !== feedsSum) {
+    return result;
+  }
+  var localJobs = getCashedJobs(),
+    trashExtra = storage.get('trash_extra') || [],
+    localJobsIds = _.map(localJobs, item => {
+      return item.id;
+    }),
+    trashExtraIds = _.map(trashExtra, item => {
+      return item.id;
+    });
+
+  _.each(jobs, downloaded => {
+    downloaded.date_created = dateCorrect(downloaded.date_created);
+    var jobDate = new Date(downloaded.date_created);
+    // new job isn't contains in local jobs
+    // and if it's update operation, date created of new job is higher than last_job_date
+    // or if it's not the update operation
+    if (!_.contains(localJobsIds, downloaded.id) && !_.contains(trashExtraIds, downloaded.id) && (!update || !cacheTime || jobDate > cacheTime)) {
+      downloaded.cut_id = downloaded.id.replace(/^~+/, '_');
+      downloaded.feeds = feedsSum;
+      if (update && cacheTime) {
+        downloaded.is_new = true;
+      }
       result.push(downloaded);
     }
-  });
-  result = _.sortBy(result, item => {
-    return -new Date(item.date_created).getTime();
   });
   return result;
 };
 
-var fill = function(options, callback) {
+var reqFieldPrepare = function(field) {
+  field = field.toLowerCase();
+  return field === 'all' ? '' : field.replace(/\s+/g, '_');
+};
+
+// if cache updated more than 3 hours ago, need to update inbox cache totally
+var checkInboxCacheLiveTime = function() {
+  var lastUpdate = storage.get('cache_last_update'),
+    isUpdated = false;
+
+  if (lastUpdate) {
+    lastUpdate = new Date(lastUpdate);
+    if (Date.now() - lastUpdate.getTime() > cacheLiveTime) {
+      pFlush();
+      isUpdated = true;
+    }
+  }
+  return isUpdated;
+};
+
+var populate = function(options, callback) {
   var opts = options,
     cb = callback,
-    query = storage.get('feeds'),
+    s = settings.get(),
+    feeds = storage.get('feeds'),
+    feedsSum = generateFeedSum(),
     update = opts.update,
-    start,
-    curCache,
-    favoritesJobs = storage.get('favorites') || [],
-    trashJobs = storage.get('trash') || [],
-    localJobs = [].concat(favoritesJobs).concat(trashJobs);
+    start = update ? 0 : calculatePagerStart(),
+    curCache = pGet();
 
-  // API pager format is `$offset;$count`.
-  // Page size is restricted to be <= 100.
-  // Example: page=100;99.
-  if (!update) {
-    curCache = pGet() || [];
-    start = curCache.length + localJobs.length;
-  } else {
-    start = 0;
+  if (start === 0) {
+    update = true;
   }
 
-  odeskR.request({
-    query: query,
-    start: start,
-    end: config.cache_per_page
+  var requestData = {
+    q: feeds,
+    budget: '[' + s.budgetFrom.value + ' TO ' + s.budgetTo.value + ']',
+    days_posted: config.UPWORK_jobs_days_posted,
+    duration: reqFieldPrepare(s.duration.value),
+    job_type: reqFieldPrepare(s.jobType.value),
+    workload: reqFieldPrepare(s.workload.value),
+    paging: start + ';' + config.cache_per_request, // API pager format is `$offset;$count`
+    sort: 'create_time desc'
+  };
+  if (s.category2.value !== 'All') {
+    requestData.category2 = s.category2.value;
+  }
+  request.get({
+    url: config.UPWORK_jobs_url,
+    data: requestData
   }, (err, response) => {
     if (err) {
       cb(err);
     } else {
-      var data = filter(response.jobs, localJobs),
-        jobsCount = data.length;
+      var jobsTotal = (response.paging && response.paging.total) || 0;
+      EventManager.trigger('gotNewJobsCount', {
+        count: jobsTotal
+      });
+      response = filter(feedsSum, response.jobs, update);
+      var jobsCount = response.length;
 
-      if (!update) {
-        data = curCache.concat(data);
+      if (response.length) {
+        if (update || !curCache.length) {
+          storage.set('cache_last_update', new Date());
+        }
+        if (update) {
+          let newLastJobDate = response[0].date_created;
+          storage.set('last_job_date', newLastJobDate);
+          EventManager.trigger('cacheUpdated', {
+            newLastJobDate
+          });
+          response = response.concat(curCache);
+          if (response.length > config.cache_limit) {
+            response.length = config.cache_limit;
+          }
+        } else {
+          response = curCache.concat(response);
+        }
+        pSet(response);
       }
-      pSet(data);
+
       cb(null, jobsCount);
     }
   });
-};
-
-var request = function(options, callback) {
-  var opts = options,
-    cb = callback,
-    page = opts.page || 1,
-    per_page = settings.get('jobsPerPage').value,
-    curCache = pGet() || [],
-    start = (page - 1) * per_page,
-    end = page * per_page,
-    cacheSlice = curCache.slice(start, end);
-
-  if (cacheSlice.length === per_page) {
-    callback(null, cacheSlice);
-  } else {
-    fill(opts, (err, response) => {
-      if (err) {
-        cb(err);
-      } else {
-        if (response > 0) {
-          request(opts, cb);
-        } else {
-          cb(null, null);
-        }
-      }
-    });
-  }
 };
 
 // ----------------
@@ -138,26 +231,54 @@ var request = function(options, callback) {
 // ----------------
 
 var pRequest = function(options, callback) {
-  var opts = options || {},
-    cb = callback || noop;
+  var opts = options,
+    cb = callback,
+    page = opts.page || 1,
+    per_page = config.jobs_per_page,
+    curCache = pGet(),
+    cacheSlice;
 
-  if (validate()) {
-    request(opts, cb);
-  } else {
-    opts.update = true;
-    fill(opts, err => {
+  function getJobs() {
+    var start = (page - 1) * per_page,
+      end = page * per_page;
+
+    cacheSlice = curCache.slice(start, end);
+
+    if (cacheSlice.length === per_page) {
+      cb(null, cacheSlice);
+    } else {
+      getMoreJobs();
+    }
+  }
+  function getMoreJobs() {
+    opts.update = checkInboxCacheLiveTime();
+    populate(opts, (err, response) => {
       if (err) {
         cb(err);
       } else {
-        opts.update = false;
-        request(opts, cb);
+        if (response > 0) {
+          curCache = pGet();
+          getJobs();
+        } else {
+          cb(null, cacheSlice);
+        }
       }
     });
   }
+
+  getJobs();
+};
+
+var pCheckNew = function(callback) {
+  var cb = callback || noop;
+  checkInboxCacheLiveTime();
+  populate({
+    update: true
+  }, cb);
 };
 
 var pGet = function(id) {
-  var curCache = storage.get('cache_' + nameGet());
+  var curCache = storage.get('cache') || [];
   if (id) {
     curCache.every(item => {
       if (item.id === id) {
@@ -172,14 +293,11 @@ var pGet = function(id) {
 };
 
 var pSet = function(data) {
-  storage.set('validate', Date.now());
-  storage.set('cache_' + nameGet(), pick(data));
-  badge.update();
+  storage.set('cache', pick(data));
 };
 
 var pUpdate = function(id, data) {
-  var cacheName = storage.get('feeds'),
-    curCache = pGet(cacheName);
+  var curCache = pGet();
   _.each(curCache, item => {
     if (item.id === id) {
       _.extend(item, data);
@@ -189,14 +307,12 @@ var pUpdate = function(id, data) {
 };
 
 var pFlush = function() {
-  var data = storage.get(),
-    keys = _.keys(data);
+  storage.clear('cache');
+  storage.clear('last_job_date');
+};
 
-  _.each(keys, item => {
-    if (item.indexOf('cache_') !== -1) {
-      storage.clear(item);
-    }
-  });
+var pIsEmpty = function() {
+  return pGet().length === 0;
 };
 
 // ---------
@@ -205,8 +321,16 @@ var pFlush = function() {
 
 export {
   pRequest as request,
+  pCheckNew as checkNew,
   pGet as get,
   pSet as set,
   pUpdate as update,
-  pFlush as flush
+  pFlush as flush,
+  pIsEmpty as isEmpty,
+  // for tests
+  generateFeedSum,
+  calculatePagerStart,
+  filter,
+  checkInboxCacheLiveTime,
+  populate
 };

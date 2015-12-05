@@ -1,0 +1,28 @@
+#jobFolders {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #dee3e1;
+  border-top: 3px solid #6fda44;
+  font-size: 1.417rem;
+  font-weight: bold;
+  list-style: none;
+  color: #4b4b4b;
+  z-index: 20;
+}
+
+.pageInitialMode #jobFolders,
+.pageJobView #jobFolders {
+  display: none;
+}
+
+.jf_item {
+  float: left;
+  padding: 7px 20px;
+  transition: background-color 0.3s linear;
+}
+.jf_item.selected {
+  background-color: #FFF;
+  color: #6fda44;
+}

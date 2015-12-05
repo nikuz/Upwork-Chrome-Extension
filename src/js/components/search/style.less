@@ -1,0 +1,84 @@
+@animate: 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+@animate2: 0.2s ease-out;
+
+#search {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  height: 46px;
+  background-color: #fff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .2);
+  -webkit-transform: translate3d(0, 0, 0);
+  transition: -webkit-transform @animate;
+  text-align: center;
+  z-index: 12;
+}
+.ios #search {
+  top: 63px;
+}
+#search.hide {
+  -webkit-transform: translate3d(0, -50px, 0);
+}
+.pageJobView #search {
+  display: none;
+}
+#searchField {
+  border: 1px solid #fff;
+  height: 46px;
+  padding: 0 50px 0 10px;
+  border-radius: 0;
+  -webkit-appearance: none;
+  transition: padding-bottom @animate2;
+}
+.pageDataExistsMode #searchField {
+  padding-bottom: 10px;
+}
+#searchField:focus {
+  border-color: rgba(81, 203, 238, 1);
+  box-shadow: inset 0 0 5px rgba(81, 203, 238, 1);
+  padding-bottom: 0 !important;
+}
+#searchLabel {
+  position: absolute;
+  left: 12px;
+  bottom: 2px;
+  font-size: .833rem;
+  color: #999;
+  opacity: 0;
+  transition: opacity @animate2;
+  z-index: 10;
+}
+.pageDataExistsMode #searchLabel {
+  opacity: 1;
+}
+#searchField:focus + #searchLabel {
+  opacity: 0 !important;
+}
+
+.js_submit {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-top: -23px;
+  width: 55px;
+  height: 46px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 20px;
+  color: #999;
+  outline: none !important;
+  z-index: 10;
+}
+.js_submit:active {
+  padding: 1px 0 0 1px;
+}
+
+#ph_icon {
+  float: right;
+  margin-left: 10px;
+  width: 96px;
+  height: 35px;
+  background-repeat: no-repeat;
+}

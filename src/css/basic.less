@@ -1,38 +1,124 @@
+@animate: 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+
 html, body, form, fieldset, ul, dl, dt, dd, table, td, th, img, menu {
   margin: 0;
   padding: 0;
   border: none;
 }
 
+* {
+  -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
 html {
   height: 100%;
+  width: 100%;
+  overflow: hidden;
   font-size: 12px;
 }
 
 body {
+  -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+  -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+  -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
   width: 100%;
   height: 100%;
+  overflow: hidden;
   color: #333;
-  font: 1em/1.5 "Segoe UI", "Myriad pro", Verdana;
+  font: 1em/1.5 sans-serif;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: #494949;
+}
+h2 {
+  width: 100%;
+  margin: 15px -13px;
+  padding: 10px 13px;
+  border: 1px solid #EDEDED;
+  border-left: 0;
+  border-right: 0;
+  background-color: #F9F9F9;
+  font-size: 1.167rem;
+  line-height: 20px;
+}
+h3 {
+  color: #919191;
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
 }
 
 a {
-  color: @linkColor;
+  color: #43ac12;
   text-decoration: none;
 }
-
-a:visited {
-  color: #8855c9
+p {
+  margin: 0;
 }
 
+.blocker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
 #wrap {
   position: relative;
-  width: 600px;
   height: 100%;
 }
 
-.pageWideMode #wrap {
+#content {
+  position: relative;
+  overflow: hidden;
+  width: 600px;
+  height: 100%;
+}
+#content.pageWideMode {
   width: 800px;
   margin: 0 auto;
   box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+}
+
+.fl_l {
+  float: left;
+}
+.fl_r {
+  float: right;
+}
+.page-extra {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 5px 0 15px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: #fff;
+  -webkit-overflow-scrolling: touch;
+  z-index: 25;
+}
+.ios .page-extra {
+  top: 63px;
+}
+.pageextra-enter,
+.pageextra-leave {
+  transition: transform @animate;
+}
+.pageextra-enter,
+.pageextra-leave.pageextra-leave-active {
+  -webkit-transform: translate3d(100%, 0, 0);
+}
+.pageextra-enter.pageextra-enter-active,
+.pageextra-leave {
+  -webkit-transform: translate3d(0, 0, 0);
+}
+.pageextra-leave {
+  z-index: 24;
 }

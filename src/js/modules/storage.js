@@ -18,7 +18,12 @@ var pGet = function(name) {
 };
 
 var pSet = function(name, data) {
-  localStorage[name] = typeof data === 'object' ? JSON.stringify(data) : data;
+  if (data instanceof Date) {
+    data = data.toString();
+  } else if (data instanceof Object) {
+    data = JSON.stringify(data);
+  }
+  localStorage[name] = data;
 };
 var pCheck = function(name) {
   return !!localStorage[name];

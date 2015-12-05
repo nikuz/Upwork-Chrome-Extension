@@ -1,19 +1,21 @@
 'use strict';
 
-// PROXY
-export var PROXY_url = 'http://upwork-proxy.4go.mobi';
-export var PROXY_jobs_url = '/jobs';
-
-// API
-export var API_url = 'https://www.upwork.com';
-export var API_token_url = '/api/auth/v1/oauth/token/request';
-export var API_verifier_url = '/services/api/auth';
-export var API_access_url = '/api/auth/v1/oauth/token/access';
-export var API_jobs_url = '/api/profiles/v2/search/jobs.json';
-export var API_key = '6892f6b7b2ad1170412588fad3762d21';
-export var API_secret = '886c89c899e1e1a8';
-export var API_verifier_page = 'verifier.html';
+// UPWORK
+export const UPWORK_url = 'https://www.upwork.com';
+export const UPWORK_token_url = '/api/auth/v1/oauth/token/request';
+export const UPWORK_verifier_url = '/services/api/auth';
+export const UPWORK_access_url = '/api/auth/v1/oauth/token/access';
+export const UPWORK_jobs_url = '/api/profiles/v2/search/jobs.json';
+export const UPWORK_jobs_categories = '/api/profiles/v2/metadata/categories.json';
+export const UPWORK_job_url = '/api/profiles/v1/jobs/{id}.json';
+export const UPWORK_key = '6892f6b7b2ad1170412588fad3762d21';
+export const UPWORK_secret = '886c89c899e1e1a8';
+export const UPWORK_jobs_days_posted = '50';
 
 // cache
-export var cache_per_page = 100;
-export var cache_limit = 500;
+export const jobs_per_page = 15;
+export const cache_per_request = 45;
+export const cache_limit = 180;
+export const favorites_limit = 100;
+export const trash_limit = 45;
+export const trash_extra_limit = 200;
