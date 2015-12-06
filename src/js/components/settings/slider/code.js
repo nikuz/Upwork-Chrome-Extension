@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as _ from 'underscore';
 
 import './style';
 
@@ -18,7 +19,7 @@ class Slider extends React.Component {
     sliderStep: 10
   };
   setValue = () => {
-    var props = this.props,
+    var props = this.values,
       text = props.from + '$ - ' + props.to + '$';
 
     this.props.handler([{
@@ -30,13 +31,13 @@ class Slider extends React.Component {
     }], text);
   };
   setValueText = (value) => {
-    var props = this.props,
-      index = Math.round(value / this.state.step),
+    var props = this.values,
+      index = Math.round(value / this.values.step),
       changed,
       newValue;
 
     if (this.isRight) {
-      newValue = props.values[this.state.sliderStep - 1 - index];
+      newValue = props.values[this.values.sliderStep - 1 - index];
       if (newValue !== props.to) {
         props.to = newValue;
         changed = true;
@@ -53,17 +54,16 @@ class Slider extends React.Component {
     }
   };
   getCoordinates(e) {
-    var target = e.targetTouches[0];
     return {
-      x: Number(target.pageX),
-      y: Number(target.pageY)
+      x: Number(e.pageX),
+      y: Number(e.pageY)
     };
   }
   movePin = (coordinates) => {
     var prop = 'left',
-      offset = this.state.offset,
-      width = this.state.width,
-      step = this.state.step,
+      offset = this.values.offset,
+      width = this.values.width,
+      step = this.values.step,
       pointWidth = 50,
       value = coordinates.x - offset - pointWidth / 2,
       fillEl = ReactDOM.findDOMNode(this.refs.fill);
@@ -94,23 +94,28 @@ class Slider extends React.Component {
     this.setValueText(value);
   };
   startHandler = (e) => {
-    this.start = this.getCoordinates(e);
-    this.isRight = false;
-    this.scrolled = false;
-    var pin = e.targetTouches[0].target,
-      props = this.props,
+    var pin = e.target;
+    if (!pin.classList.contains('sgis_pin')) {
+      return;
+    }
+
+    var props = this.values,
       values = props.values,
       from = props.from,
       to = props.to;
+
+    this.start = this.getCoordinates(e);
+    this.isRight = false;
+    this.scrolled = false;
 
     if (pin.getAttribute('data-value') === 'right') {
       this.isRight = true;
     }
 
-    this.oppositePos = values.indexOf(this.isRight ? from : to) * this.state.step;
+    this.oppositePos = values.indexOf(this.isRight ? from : to) * this.values.step;
   };
   moveHandler = (e) => {
-    if (this.scrolled) {
+    if (!this.start) {
       return;
     }
 
@@ -125,16 +130,14 @@ class Slider extends React.Component {
       e.preventDefault();
       this.isMoved = true;
       this.movePin(coordinates);
-    } else if (!this.isMoved && !this.scrolled && Math.abs(this.start.yShift) > 5) { // vertical move
-      this.scrolled = true;
     }
   };
   endHandler = () => {
-    if (this.scrolled) {
+    if (!this.start) {
       return;
     }
     var prop = 'left',
-      step = this.state.step,
+      step = this.values.step,
       nearPosition = Math.round(this.start.position / step) * step;
 
     if (this.isRight) {
@@ -142,6 +145,7 @@ class Slider extends React.Component {
     }
     ReactDOM.findDOMNode(this.refs.fill).style[prop] = nearPosition + 'px';
     this.setValue();
+    this.start = null;
   };
   recalculateSizes = () => {
     var props = this.props,
@@ -150,26 +154,33 @@ class Slider extends React.Component {
       values = props.values,
       fillEl = ReactDOM.findDOMNode(this.refs.fill),
       sliderWidth = fillEl.clientWidth || 400, // default value for tests
-      sliderOffset = fillEl.offsetLeft,
+      sliderOffset = fillEl.offsetLeft + document.getElementById('content').offsetLeft,
       step = sliderWidth / this.state.sliderStep;
 
-    this.setState({
+    this.values = _.extend({
       step: step,
+      sliderStep: this.state.sliderStep,
       width: sliderWidth,
       offset: sliderOffset,
       left: values.indexOf(from) * step,
       right: (this.state.sliderStep - 1 - values.indexOf(to)) * step
+    }, _.clone(this.props));
+
+    this.setState({
+      left: this.values.left,
+      right: this.values.right
     });
-  };
-  windowResizeHandler = () => {
-    this.recalculateSizes();
   };
   componentDidMount = () => {
     setTimeout(this.recalculateSizes, 400);
-    window.addEventListener('resize', this.windowResizeHandler);
+    document.addEventListener('mousedown', this.startHandler);
+    document.addEventListener('mousemove', this.moveHandler);
+    document.addEventListener('mouseup', this.endHandler);
   };
   componentWillUnmount = () => {
-    window.removeEventListener('resize', this.windowResizeHandler);
+    document.removeEventListener('mousedown', this.startHandler);
+    document.removeEventListener('mousemove', this.moveHandler);
+    document.removeEventListener('mouseup', this.endHandler);
   };
   render() {
     var filPosition = {
@@ -179,8 +190,8 @@ class Slider extends React.Component {
     return (
       <div className="sgi_slider" ref="wrap">
         <div className="sgis_fill" ref="fill" style={filPosition}>
-          <div className="sgis_pin sgispl" onTouchStart={this.startHandler} onTouchMove={this.moveHandler} onTouchEnd={this.endHandler} data-value="left"></div>
-          <div className="sgis_pin sgispr" onTouchStart={this.startHandler} onTouchMove={this.moveHandler} onTouchEnd={this.endHandler} data-value="right"></div>
+          <div className="sgis_pin sgispl" data-value="left" />
+          <div className="sgis_pin sgispr" data-value="right" />
         </div>
       </div>
     );

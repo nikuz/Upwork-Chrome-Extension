@@ -40,7 +40,7 @@ var ajax = function(options) {
 
   if(opts.data && rType === 'POST'){
     request.setRequestHeader('content-type', 'application/x-www-form-urlencoded; charset=utf-8');
-    dataString = paramsSerialise();
+    dataString = paramsSerialise(opts.data);
   }
 
   request.onload = function(){

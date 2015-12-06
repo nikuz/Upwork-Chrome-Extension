@@ -45,14 +45,11 @@ class App extends React.Component {
     EventManager.on('settingsInit', () => {
       this.extraUpdate('settings', <Settings />);
     });
-    EventManager.on('feedbackInit', () => {
-      this.extraUpdate('feedback', <Feedback />);
-    });
     EventManager.on('jobItemInit', options => {
       var opts = options || {};
       this.extraUpdate('jobView', <JobView {...opts.jobItem} />);
     });
-    EventManager.on('settingsHide feedbackHide jobItemHide', () => {
+    EventManager.on('settingsHide jobItemHide', () => {
       this.extraUpdate();
     });
     document.addEventListener('resume', function() {
@@ -77,7 +74,6 @@ class App extends React.Component {
     );
   };
   render() {
-    //{this.getExtraHtml('feedback')}
     return (
       <div id="content" className={this.state.wide ? 'pageWideMode' : ''}>
         <Header />

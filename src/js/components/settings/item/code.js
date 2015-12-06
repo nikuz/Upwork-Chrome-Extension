@@ -98,11 +98,11 @@ class BlockModern extends React.Component {
           value = values[0].value;
 
         if (/from/i.test(name)) {
-          this.props.from = value;
+          this.values.from = value;
         } else {
-          this.props.to = value;
+          this.values.to = value;
         }
-        valueText = this.props.from + ' - ' + this.props.to;
+        valueText = this.values.from + ' - ' + this.values.to;
         break;
     }
     ReactDOM.findDOMNode(this.refs.value).innerText = valueText;
@@ -141,6 +141,7 @@ class BlockModern extends React.Component {
   componentDidMount = () => {
     EventManager.on('stngListSelected', this.handleSelect);
     EventManager.on('stngSwitcherChange', this.handleSwitcherChange);
+    this.values = _.clone(this.props);
   };
   componentWillUnmount = () => {
     EventManager.off('stngListSelected', this.handleSelect);

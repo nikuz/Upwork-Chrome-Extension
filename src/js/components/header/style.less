@@ -16,7 +16,7 @@ header {
   width: 150px;
   height: 33px;
   margin-left: 8px;
-  background: url(/src/images/logo.svg) 50% 50% no-repeat;
+  background: url(/images/logo.svg) 50% 50% no-repeat;
   font-size: 0
 }
 
@@ -30,4 +30,15 @@ header {
   line-height: 37px;
   text-align: center;
   color: #fff;
+  border-radius: 7px 7px 0 0;
+  transition:
+    transform 0.3s ease-out,
+    background 0.3s ease-out;
+  cursor: pointer;
+}
+
+#stngs_trigger.stgns-tr-open {
+  background-color: #fff;
+  color: #6fda44;
+  transform: translate3d(-20px, 0, 0);
 }

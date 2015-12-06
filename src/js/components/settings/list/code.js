@@ -29,7 +29,7 @@ class List extends React.Component {
         if (err) {
           state.err = err;
         } else {
-          state.values = response;
+          state.values = response || [];
         }
         this.setState(state);
         this.props.handlerResize();
@@ -81,7 +81,7 @@ class List extends React.Component {
     } else if (!values.length) {
       loader = (
         <li className="sgi_list_load">
-          <Icon spin name="pulse" />
+          <Icon spin name="refresh" />
         </li>
       );
     }

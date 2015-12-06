@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import * as _ from 'underscore';
 import Skills from 'components/skills/code';
 import Icon from 'react-fa';
 import timeAgo from 'utils/timeAgo';
 import animate from 'utils/animate';
 
 class ListItem extends React.Component {
+  touch = {};
   updateTimeAgo = () => {
     var newTimeAgo = timeAgo(this.props.date_created);
     if (newTimeAgo !== this.curTimeAgo) {
@@ -18,10 +20,9 @@ class ListItem extends React.Component {
     }
   };
   getCoordinates(e) {
-    var target = e.targetTouches[0];
     return {
-      x: Number(target.pageX),
-      y: Number(target.pageY)
+      x: Number(e.pageX),
+      y: Number(e.pageY)
     };
   }
   touchStartHandler = (e) => {
@@ -32,7 +33,7 @@ class ListItem extends React.Component {
     });
   };
   touchMoveHandler = (e) => {
-    if (this.touch.isScrolled) {
+    if (this.touch.isScrolled || !this.touch.el) {
       return;
     }
     var coordinates = this.getCoordinates(e);
@@ -52,19 +53,28 @@ class ListItem extends React.Component {
     }
   };
   touchEndHandler = () => {
+    if (!this.touch.el) {
+      return;
+    }
     clearTimeout(this.touch.holdTimer);
     if (this.touch.holdCatch) {
+      this.touch = {};
       return;
     }
     var jobId = this.props.id;
     if (this.touch.isTrawled) {
       if (this.touch.xShift > this.touch.xShiftPrev && this.touch.xShift > 50) {
-        this.trawler('100%');
+        this.trawler('100%', () => {
+          this.touch = {};
+        });
         this.props.remove([jobId]);
       } else {
-        this.trawler('0');
+        this.trawler('0', () => {
+          this.touch = {};
+        });
       }
     } else if (!this.touch.isScrolled) {
+      this.touch = {};
       this.props.open(jobId);
     }
   };
@@ -74,11 +84,13 @@ class ListItem extends React.Component {
       this.props.select(this.props.id);
     }
   };
-  trawler = (targetPosition) => {
+  trawler = (targetPosition, callback) => {
+    var cb = callback || _.noop;
     if (_.isUndefined(targetPosition)) {
       _.extend(this.touch.el.style, {
         left: this.touch.xShift + 'px'
       });
+      cb();
     } else {
       let animateType = null,
         duration = 500;
@@ -91,11 +103,14 @@ class ListItem extends React.Component {
         duration: duration,
         target: targetPosition === '100%' ? this.touch.el.clientWidth : 0,
         draw: progress => {
-          _.extend(this.touch.el.style, {
-            left: progress + 'px'
-          });
+          if (this.touch.el) {
+            _.extend(this.touch.el.style, {
+              left: progress + 'px'
+            });
+          }
         },
-        type: animateType
+        type: animateType,
+        finish: cb
       });
     }
   };
@@ -130,7 +145,7 @@ class ListItem extends React.Component {
                 Posted: <span ref="date_created">{timeAgo(props.date_created)}</span>
               </div>
               <Skills items={props.skills} />
-              <div className="blocker" onTouchStart={this.touchStartHandler} onTouchMove={this.touchMoveHandler} onTouchEnd={this.touchEndHandler}></div>
+              <div className="blocker" onMouseDown={this.touchStartHandler} onMouseMove={this.touchMoveHandler} onMouseUp={this.touchEndHandler} onMouseOut={this.touchEndHandler}></div>
             </div>
             <Icon name="trash" className="jl_trash_i" />
           </div>

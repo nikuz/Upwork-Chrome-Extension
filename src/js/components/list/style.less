@@ -26,16 +26,12 @@
 }
 
 #jobs_list_wrap {
-  position: absolute;
-  top: 45px;
-  bottom: 42px;
-  left: 0;
-  right: 0;
   padding-top: 46px;
+  min-height: 340px;
+  max-height: calc(~"100% - 142px");
   clear: both;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 .ios #jobs_list_wrap {
   top: 63px;
@@ -50,7 +46,7 @@
 .jl_info {
   display: table;
   position: relative;
-  height: 100%;
+  min-height: 285px;
   width: 100%;
   text-align: center;
   font-size: 1.75rem;
@@ -149,28 +145,6 @@
   color: #fff;
   font-weight: bold;
   font-size: .833rem;
-}
-
-#swipe_load {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  margin-left: -15px;
-  width: 30px;
-  height: 30px;
-  border-radius: 100%;
-  box-shadow: 0 0 4px #aaa;
-  background-color: #6fda44;
-  -webkit-transform: translate3d(0, 0, 0);
-  text-align: center;
-  font-size: 20px;
-  line-height: 30px;
-  color: #333;
-  z-index: 11;
-}
-#swipe_load.fa-spin {
-  top: 130px;
-  z-index: 35;
 }
 
 #jl_loader {

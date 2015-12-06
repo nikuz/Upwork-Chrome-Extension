@@ -33,6 +33,7 @@ var data = {
   },
   notifyInterval: {
     values: [
+      {1: '1 minute'},
       {5: '5 minutes'},
       {10: '10 minutes'},
       {20: '20 minutes'},

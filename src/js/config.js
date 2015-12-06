@@ -11,6 +11,7 @@ export const UPWORK_job_url = '/api/profiles/v1/jobs/{id}.json';
 export const UPWORK_key = '6892f6b7b2ad1170412588fad3762d21';
 export const UPWORK_secret = '886c89c899e1e1a8';
 export const UPWORK_jobs_days_posted = '50';
+export const verifier_page = 'verifier.html';
 
 // cache
 export const jobs_per_page = 15;

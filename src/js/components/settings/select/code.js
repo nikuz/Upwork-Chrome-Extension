@@ -70,7 +70,7 @@ class Select extends React.Component {
     } else if (!values.length) {
       loader = (
         <div className="sgi_legacy_list_load">
-          <Icon spin name="pulse" />
+          <Icon spin name="refresh" />
         </div>
       );
     }

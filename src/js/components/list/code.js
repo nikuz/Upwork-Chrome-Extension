@@ -30,6 +30,12 @@ class List extends React.Component {
       this.setState(options);
     }
     var opts = _.extend(this.state, options || {});
+    if (opts.curFolder === 'inbox' && !storage.get('feeds')) {
+      this.setState({
+        load: false
+      });
+      return;
+    }
     folders.getJobs({
       folder: opts.curFolder,
       page: opts.curPage
@@ -156,82 +162,6 @@ class List extends React.Component {
       folder: this.state.curFolder
     });
   };
-  loaderTrawler = (targetPosition) => {
-    var loader = this.refs.swipe_load.getDOMNode();
-    if (targetPosition) {
-      targetPosition = Number(targetPosition);
-      animate({
-        initial: this.touch.swipeShift,
-        target: targetPosition,
-        draw: progress => {
-          _.extend(loader.style, {
-            '-webkit-transform': 'translate3d(0, ' + progress + 'px, 0) rotate(' + progress * 2 + 'deg)'
-          });
-        },
-        finish: () => {
-          if (targetPosition) {
-            loader.classList.add('fa-spin');
-            this.checkNewItems(true, () => {
-              loader.classList.remove('fa-spin');
-              this.touch.swipeShift = this.touch.swipeTargetPosition;
-              this.loaderTrawler('0');
-            });
-          }
-        }
-      });
-    } else {
-      this.touch.swipeShift = this.touch.yNegativeShift / 2 + 50;
-      this.touch.swipeShift = this.touch.swipeShift > 0 ? this.touch.swipeShift : 0;
-      _.extend(loader.style, {
-        '-webkit-transform': 'translate3d(0, ' + this.touch.swipeShift + 'px, 0) rotate(' + this.touch.swipeShift * 2 + 'deg)',
-        borderSpacing: this.touch.swipeShift + 'px'
-      });
-    }
-  };
-  getCoordinates(e) {
-    var target = e.targetTouches[0];
-    return {
-      x: Number(target.pageX),
-      y: Number(target.pageY)
-    };
-  }
-  touchStartHandler = (e) => {
-    this.touch = _.extend(this.getCoordinates(e), {
-      swipeTargetPosition: 130
-    });
-  };
-  touchMoveHandler = (e) => {
-    if (this.state.load) {
-      return;
-    }
-    var coordinates = this.getCoordinates(e),
-      curScroll = ReactDOM.findDOMNode(this).scrollTop;
-
-    this.touch.yShift = coordinates.y - this.touch.y;
-    this.touch.xShift = coordinates.x - this.touch.x;
-
-    if (this.touch.swipeUpdateProcess) {
-      e.preventDefault();
-      this.touch.yNegativeShift = coordinates.y - this.touch.swipeStartPosition;
-      this.loaderTrawler();
-    } else if (!this.touch.swipeUpdateProcess && this.touch.yShift > 0 && curScroll <= 0) { // vertical move
-      e.preventDefault();
-      _.extend(this.touch, {
-        swipeUpdateProcess: true,
-        swipeStartPosition: coordinates.y
-      });
-      this.loaderTrawler();
-    }
-  };
-  touchEndHandler = () => {
-    if (this.touch.swipeUpdateProcess) {
-      if (this.touch.swipeShift >= this.touch.swipeTargetPosition) {
-        this.loaderTrawler(this.touch.swipeTargetPosition);
-      } else {
-        this.loaderTrawler('0');
-      }
-    }
-  };
   scrollValue = 0;
   scrollHandler = () => {
     var curScroll = ReactDOM.findDOMNode(this).scrollTop;
@@ -243,18 +173,16 @@ class List extends React.Component {
       EventManager.trigger('listScrolledTop');
     }
   };
-  checkNewItems = (swipeRefresh, callback) => {
+  checkNewItems = (callback) => {
     var cb = callback || _.noop;
     this.setState({
       load: true,
-      noFeeds: false,
-      swipeRefresh: swipeRefresh
+      noFeeds: false
     });
     folders.checkNew({
       folder: 'inbox'
     }, (err, response) => {
       var state = {
-        swipeRefresh: false,
         load: false
       };
       if (err) {
@@ -359,7 +287,7 @@ class List extends React.Component {
   render = () => {
     var state = this.state;
     return (
-      <div id="jobs_list_wrap" onScroll={this.scrollHandler} onTouchStart={this.touchStartHandler} onTouchMove={this.touchMoveHandler} onTouchEnd={this.touchEndHandler}>
+      <div id="jobs_list_wrap" onScroll={this.scrollHandler}>
         {!state.empty ?
         <div id="jobs_list">
           {state.items.map((item, key) => {
@@ -379,7 +307,7 @@ class List extends React.Component {
           </div>
           : null
         }
-        {state.noFeeds ?
+        {state.noFeeds && state.curFolder === 'inbox' ?
           <div className="jl_info jli_suggest">
             <div className="jli_data">
               <Icon name="arrow-up" />
@@ -396,11 +324,10 @@ class List extends React.Component {
         }
         {state.load ?
           <div id="jl_loader">
-            {!state.swipeRefresh ? <Icon spin name="pulse" /> : null}
+            <Icon spin name="refresh" />
           </div>
           : null
         }
-        <Icon name="refresh" ref="swipe_load" id="swipe_load"/>
       </div>
     );
   }

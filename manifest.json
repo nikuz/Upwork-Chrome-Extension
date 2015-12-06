@@ -1,17 +1,17 @@
 {
   "manifest_version": 2,
-  "name": "Watch Upwork. Upwork job watcher.",
-  "short_name": "Watch Upwork",
+  "name": "Upwatcher. Upwork job watcher.",
+  "short_name": "Upwatcher",
   "description": "This extension use Upwork API for watching new jobs and showing notifications.",
-  "version": "1.0.7",
+  "version": "1.1.4",
   "browser_action": {
-    "default_icon": "/images/upwork-icon.png",
-    "default_popup": "popup.html"
+    "default_icon": "/images/icon.png",
+    "default_popup": "index.html"
   },
   "icons": {
-    "16": "/images/upwork-icon.png",
-    "48": "/images/upwork-icon48.png",
-    "128": "/images/upwork-icon128.png"
+    "16": "/images/icon.png",
+    "48": "/images/icon48.png",
+    "128": "/images/icon128.png"
   },
   "content_security_policy": "script-src 'self'; object-src 'self'",
   "permissions": [
@@ -19,8 +19,7 @@
     "background",
     "notifications",
     "alarms",
-    "https://www.upwork.com/*",
-    "http://upwork-proxy.4go.mobi/*"
+    "https://www.upwork.com/*"
   ],
   "web_accessible_resources": [
     "verifier.html"

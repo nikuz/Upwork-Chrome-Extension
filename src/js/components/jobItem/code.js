@@ -1,6 +1,7 @@
 'use strict';
 
 import * as React from 'react';
+import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
 import * as config from '../../config';
 import * as request from 'modules/request';
@@ -55,7 +56,8 @@ class jobItem extends React.Component {
 
     result = _.extend({}, this.props, {
       extended: true,
-      description: window.linkify(_.escape(data.op_description)),
+      //description: window.linkify(_.escape(data.op_description)),
+      description: _.escape(data.op_description),
       applicants: data.op_tot_cand,
       interviewing: data.interviewees_total_active,
       feedback: feedback > 0,
@@ -175,7 +177,7 @@ class jobItem extends React.Component {
                 <p dangerouslySetInnerHTML={{__html: data.description}} />
               </div> :
               <div className="jbd_loader">
-                <Icon spin name="pulse" />
+                <Icon spin name="refresh" />
               </div>
             }
           </div>

@@ -53,7 +53,7 @@ var getToken = function(callback) {
       url: config.UPWORK_token_url,
       method: 'POST',
       data: {
-        oauth_callback: config.API_url + config.API_verifier_callback
+        oauth_callback: chrome.runtime.getURL(config.verifier_page)
       }
     }, (err, response) => {
       if (err) {
@@ -75,98 +75,15 @@ var getToken = function(callback) {
 
 var getVerifier = function(callback) {
   var cb = callback,
-    verifier = storage.get('verifier'),
-    verifierWindow,
-    url = config.UPWORK_url + config.UPWORK_verifier_url + '?oauth_token=' + storage.get('token'),
-    cbSent,
-    loop;
-
-  function verifierLoop() {
-    verifierWindow.executeScript({
-      code: 'localStorage.getItem("verifier")'
-    }, function(values) {
-      var verifier = values[0];
-      if (verifier) {
-        finish(null, verifier);
-      } else {
-        clearTimeout(loop);
-        loop = setTimeout(verifierLoop, 100);
-      }
-    });
-  }
-  // catch 401 - Unauthorized access error
-  function checkAuthorization() {
-    setTimeout(function() {
-      ajax.get({
-        url: url,
-        error: function(jqXHR) {
-          if (jqXHR.status === 401) {
-            finish('Can\'t get Upwork verifier');
-          }
-        }
-      });
-    }, 1000);
-  }
-  function parseLoadedUrl(e) {
-    e = e.originalEvent;
-    var url = (e.url && e.url.split('&')) || [],
-      verifier;
-
-    url.forEach(function(item) {
-      if (item.indexOf('oauth_verifier') !== -1) {
-        item = item.split('=');
-        verifier = item[1];
-      }
-    });
-    if (verifier) {
-      finish(null, verifier);
-    } else {
-      checkAuthorization();
-    }
-  }
-  function loadStop() {
-    verifierWindow.executeScript({
-      code: 'delete localStorage["verifier"]'
-    }, function() {
-      verifierLoop();
-    });
-  }
-  function exit() {
-    if (!cbSent) {
-      finish('Closed upwork authorisation page');
-    }
-  }
-  function finish(err, verifier) {
-    clearTimeout(loop);
-    if (err) {
-      if (!cbSent) {
-        cbSent = true;
-        cb(err);
-      }
-    } else if (verifier) {
-      storage.set('verifier', verifier);
-      if (!cbSent) {
-        cbSent = true;
-        cb();
-      }
-    }
-    verifierWindow.removeEventListener('loadstart', parseLoadedUrl);
-    verifierWindow.removeEventListener('loaderror', parseLoadedUrl);
-    verifierWindow.removeEventListener('loadstop', loadStop);
-    verifierWindow.removeEventListener('exit', exit);
-    verifierWindow.close();
-    storage.clear('start_verifier_request');
-  }
+    verifier = storage.get('verifier');
 
   if (verifier) {
-    cb();
+    cb(null, verifier);
   } else {
-    verifierWindow = window.open(url, '_blank', 'location=no');
-    storage.set('start_verifier_request', true);
-    verifierWindow.addEventListener('loadstart', parseLoadedUrl);
-    verifierWindow.addEventListener('loaderror', parseLoadedUrl);
-    verifierWindow.addEventListener('loadstop', loadStop);
-    verifierWindow.addEventListener('exit', exit);
+    chrome.tabs.create({
+      url: chrome.runtime.getURL(config.verifier_page + '?request=1')
+    });
+    cb();
   }
 };
 
@@ -240,7 +157,6 @@ var request = function(options, callback) {
     if (method === 'POST') {
       request = ajax.post;
     }
-
     request_data = oauth.authorize(request_data, {
       secret: storage.get('token_secret')
     });
@@ -263,7 +179,7 @@ var request = function(options, callback) {
 
 var pRequest = function(options, callback) {
   var cb = callback || noop,
-    result,
+    result = {},
     promise = new Promise();
 
   options.promise = promise;
@@ -276,7 +192,15 @@ var pRequest = function(options, callback) {
       getToken(internalCallback);
     },
     function(internalCallback) {
-      getVerifier(internalCallback);
+      getVerifier(function(err, verifier) {
+        if (err) {
+          internalCallback(err);
+        } else if (!verifier) {
+          internalCallback('go_to_verifier');
+        } else {
+          internalCallback();
+        }
+      });
     },
     function(internalCallback) {
       getAccess(internalCallback);
@@ -293,15 +217,19 @@ var pRequest = function(options, callback) {
     }
   ], function(err) {
     if (err) {
-      cb(err);
-      //Raven.captureException(err);
-      var access = storage.get('access');
-      if (access) {
-        errorWithCredentials += 1;
-      }
-      if (!access || errorWithCredentials === 2) {
-        errorWithCredentials = 0;
-        flushAccess();
+      if (err === 'go_to_verifier') {
+        cb(null, null);
+      } else {
+        cb(err);
+        //Raven.captureException(err);
+        var access = storage.get('access');
+        if (access) {
+          errorWithCredentials += 1;
+        }
+        if (!access || errorWithCredentials === 2) {
+          errorWithCredentials = 0;
+          flushAccess();
+        }
       }
     } else if (!promise.rejected) {
       cb(null, result);

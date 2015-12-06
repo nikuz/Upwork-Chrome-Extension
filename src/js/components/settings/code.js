@@ -34,6 +34,8 @@ class Settings extends React.Component {
         if (err) {
           cb(err);
           //Raven.captureException(err);
+        } else if (!response) {
+          cb(null, null);
         } else {
           var categories = _.pluck(response.categories, 'title');
           categories.unshift('All');

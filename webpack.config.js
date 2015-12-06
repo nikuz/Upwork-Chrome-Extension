@@ -7,12 +7,14 @@ var path = require('path'),
 
 module.exports = {
   entry: {
-    main: ['./src/js/main.jsx']
+    main: './src/js/main.jsx',
+    verifier: './src/js/verifier.js',
+    background: './src/js/background.js'
   },
   output: {
     path: path.join(__dirname, 'release'),
     filename: '[name].js',
-    chunkFilename: '[chunkhash].js',
+    chunkFilename: '[name]-[chunkhash].js',
     publicPath: '/'
   },
   module: {
@@ -55,10 +57,19 @@ module.exports = {
     }
   },
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin('commons.js'),
     new ExtractTextPlugin('bundle.css'),
     new htmlPlugin({
       filename: 'index.html',
-      template: './src/popup.html'
+      template: './src/index.html'
+    }),
+    new htmlPlugin({
+      filename: 'background.html',
+      template: './src/background.html'
+    }),
+    new htmlPlugin({
+      filename: 'verifier.html',
+      template: './src/verifier.html'
     })
   ]
 };
