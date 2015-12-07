@@ -53,7 +53,6 @@ class Settings extends React.Component {
   };
   tmpSettings = {};
   handlerChange = (values) => {
-    //console.log('Some temp settings changed');
     _.each(values, item => {
       this.tmpSettings[item.name].value = item.value;
     });
