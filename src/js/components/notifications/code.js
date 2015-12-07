@@ -18,9 +18,6 @@ class Notifications extends React.Component {
     EventManager.on('notificationsGot', () => {
       this.setState({isHide: false});
     });
-    EventManager.on('backClicked', () => {
-      this.setState({isHide: true});
-    });
   };
   render() {
     return (

@@ -1,10 +1,19 @@
 #job_menu {
-  position: relative;
-  padding: 3px 10px 8px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin-top: -6px;
+  padding: 8px 10px;
   height: 30px;
   background-color: #fff;
   box-shadow: 0 2px 2px rgba(0, 0, 0, .2);
   z-index: 20;
+}
+
+.pageWideMode #job_menu {
+  position: relative;
+  margin-top: 0;
+  padding: 3px 10px 8px;
 }
 
 .jbd_loader {
@@ -25,9 +34,12 @@
 }
 
 #job_description {
-  padding: 10px 13px;
+  padding: 40px 13px 10px;
   font-size: 1.167rem;
   -webkit-user-select: text;
+}
+.pageWideMode #job_description {
+  padding: 10px 13px;
 }
 
 .jd_b {

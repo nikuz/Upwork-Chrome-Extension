@@ -140,6 +140,21 @@ class List extends React.Component {
       EventManager.trigger('jobItemInit', {
         jobItem: item
       });
+
+      cache.update(item.id, {
+        is_new: false,
+        watched: true
+      });
+
+      setTimeout(() => {
+        _.extend(item, {
+          is_new: false,
+          watched: true
+        });
+        this.setState({
+          items: curItems
+        });
+      }, 400);
     }
   };
   itemRead = () => {
@@ -164,7 +179,15 @@ class List extends React.Component {
   };
   scrollValue = 0;
   scrollHandler = () => {
-    var curScroll = ReactDOM.findDOMNode(this).scrollTop;
+    var thisHeight = this.elHeight + this.el.scrollTop,
+      curScroll = this.el.scrollTop;
+
+    if (this.listElHeight && thisHeight > this.listElHeight - 100 /*&& !Page.has('load') && !Page.has('full')*/) {
+      this.getJobs({
+        curPage: this.state.curPage + 1,
+        load: true
+      });
+    }
     if (curScroll - this.scrollValue > 30 && curScroll > 0) {
       this.scrollValue = curScroll;
       EventManager.trigger('listScrolledBottom');
@@ -216,13 +239,17 @@ class List extends React.Component {
     }
   };
   componentDidMount = () => {
-    console.log('List mounted');
+    this.el = ReactDOM.findDOMNode(this);
+    this.elHeight = this.el.clientHeight;
     EventManager.on('ready', () => {
       if (storage.get('feeds')) {
         this.getJobs({
+          load: true,
           noFeeds: false
         });
-        this.checkNewItems();
+        if (!this.state.empty) {
+          this.checkNewItems();
+        }
       }
     });
     EventManager.on('feedsAdded', () => {
@@ -233,7 +260,7 @@ class List extends React.Component {
         noFeeds: false
       });
     });
-    EventManager.on('feedsCheckNews resume notificationsClicked', () => {
+    EventManager.on('feedsCheckNews notificationsClicked', () => {
       this.checkNewItems();
     });
     EventManager.on('folderChanged', options => {
@@ -284,12 +311,18 @@ class List extends React.Component {
       }
     });
   };
+  componentDidUpdate = () => {
+    var listEl = ReactDOM.findDOMNode(this.refs.jobs_list);
+    if (listEl) {
+      this.listElHeight = listEl.clientHeight;
+    }
+  };
   render = () => {
     var state = this.state;
     return (
       <div id="jobs_list_wrap" onScroll={this.scrollHandler}>
         {!state.empty ?
-        <div id="jobs_list">
+        <div id="jobs_list" ref="jobs_list">
           {state.items.map((item, key) => {
             return <ListItem key={key} {...item} remove={this.itemRemove} select={this.itemSelect} open={this.itemOpen} />;
           })}

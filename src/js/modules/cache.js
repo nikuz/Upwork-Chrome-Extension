@@ -193,6 +193,8 @@ var populate = function(options, callback) {
   }, (err, response) => {
     if (err) {
       cb(err);
+    } else if (!response) {
+      cb(null, null);
     } else {
       var jobsTotal = (response.paging && response.paging.total) || 0;
       EventManager.trigger('gotNewJobsCount', {

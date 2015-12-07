@@ -4,14 +4,14 @@ import * as _ from 'underscore';
 
 var events = [
   'ready',
-  'resume',
   // search
   'feedsAdded',
   //
   'jobItemInit',
   'jobItemHide',
+  'jobItemShare',
   'jobsReceived',
-  'backClicked',
+  'btnBackClicked',
   //'notificationsUpdateTime',
   'notificationsGot',
   'notificationsClicked',
@@ -35,6 +35,7 @@ var events = [
   'btnTrashClicked',
   'btnReadClicked',
   'btnShareClicked',
+  'btnShareCloseClicked',
   'listHaventSelectedItems',
   'listBecomeEmpty',
   'jobHasFolderChanged',
@@ -43,10 +44,7 @@ var events = [
   'stngSwitcherChange',
   'settingsInit',
   'settingsHide',
-  'settingsSaved',
-  // feedback
-  'feedbackInit',
-  'feedbackHide'
+  'settingsSaved'
 ];
 
 var _evs = events;

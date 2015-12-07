@@ -9,9 +9,6 @@
   box-shadow: 0 2px 2px rgba(0, 0, 0, .2);
   z-index: 12;
 }
-.ios #listManager {
-  top: 63px;
-}
 .listmanager-enter,
 .listmanager-leave {
   transition: -webkit-transform .3s;
@@ -27,16 +24,13 @@
 
 #jobs_list_wrap {
   padding-top: 46px;
+  padding-bottom: 48px;
   min-height: 340px;
   max-height: calc(~"100% - 142px");
   clear: both;
   overflow-x: hidden;
   overflow-y: auto;
 }
-.ios #jobs_list_wrap {
-  top: 63px;
-}
-
 .jl_response_empty {
   padding: 10px 20px;
   text-align: center;
@@ -69,6 +63,9 @@
 
 #jobs_list {
   background-color: #0b8043;
+}
+#jobs_list > div:last-child .jl_item_cont {
+  border: none;
 }
 .jl_item {
   position: relative;

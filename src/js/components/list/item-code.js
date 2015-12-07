@@ -127,7 +127,8 @@ class ListItem extends React.Component {
 
     if (props.watched) {
       cl += ' watched_job';
-    } else if (props.selected) {
+    }
+    if (props.selected) {
       cl += ' selected';
     }
 

@@ -22,56 +22,55 @@ import 'css/form';
 class App extends React.Component {
   state = {
     wide: false,
-    extra: {}
+    extra: null
   };
-  extraUpdate = (name, component) => {
-    var extra = {};
-    if (name && component) {
-      _.extend(extra, {
-        name: name,
-        component: component
-      });
+  getExtraContent = (content) => {
+    return (
+      <ReactCSSTransitionGroup transitionName="pageextra" transitionAppear={true} transitionEnterTimeout={300} transitionAppearTimeout={300} transitionLeaveTimeout={300} component="div">
+        {content ?
+        <div className="page-extra">{content}</div>
+          : null
+          }
+      </ReactCSSTransitionGroup>
+    );
+  };
+  insertExtraContent = (name, content) => {
+    var settingsCont,
+      jobViewCont;
+
+    if (name === 'settings') {
+      settingsCont = content;
+    } else if (name === 'jobView') {
+      jobViewCont = content;
     }
-    this.setState({
-      extra: extra
-    });
+
+    ReactDOM.render(
+      this.getExtraContent(settingsCont),
+      this.settingsContainer
+    );
+    ReactDOM.render(
+      this.getExtraContent(jobViewCont),
+      this.jobViewContainer
+    );
   };
   componentDidMount = () => {
+    this.settingsContainer = ReactDOM.findDOMNode(this.refs.settingsContainer);
+    this.jobViewContainer = ReactDOM.findDOMNode(this.refs.jobViewContainer);
     if (window.innerWidth > 800) {
       this.setState({
         wide: true
       });
     }
     EventManager.on('settingsInit', () => {
-      this.extraUpdate('settings', <Settings />);
+      this.insertExtraContent('settings', <Settings />);
     });
     EventManager.on('jobItemInit', options => {
       var opts = options || {};
-      this.extraUpdate('jobView', <JobView {...opts.jobItem} />);
+      this.insertExtraContent('jobView', <JobView {...opts.jobItem} />);
     });
     EventManager.on('settingsHide jobItemHide', () => {
-      this.extraUpdate();
+      this.insertExtraContent();
     });
-    document.addEventListener('resume', function() {
-      EventManager.trigger('resume');
-    });
-    EventManager.on('backClicked', () => {
-      if (this.state.extra.name) {
-        this.extraUpdate();
-      } else {
-        navigator.app.exitApp();
-      }
-    });
-  };
-  getExtraHtml = (name) => {
-    var extra = this.state.extra,
-      active = extra.name === name;
-
-    return (
-      <ReactCSSTransitionGroup transitionName="pageextra" component="div" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-        {active ? <div className="page-extra">{extra.component}</div> : null}
-      </ReactCSSTransitionGroup>
-    );
   };
   render() {
     return (
@@ -83,8 +82,8 @@ class App extends React.Component {
         <Errors />
         <List />
         <Tabs />
-        {this.getExtraHtml('settings')}
-        {this.getExtraHtml('jobView')}
+        <div ref="settingsContainer" />
+        <div ref="jobViewContainer" />
       </div>
     );
   }

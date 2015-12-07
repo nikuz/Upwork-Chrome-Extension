@@ -50,6 +50,7 @@ module.exports = {
     extensions: ['', '.js', '.jsx', '.less'],
     modulesDirectories: ['node_modules'],
     alias: {
+      linkify: path.join(__dirname, 'node_modules/linkifyjs/lib/linkify-string'),
       components: path.join(__dirname, 'src/js/components'),
       modules: path.join(__dirname, 'src/js/modules'),
       utils: path.join(__dirname, 'src/js/utils'),

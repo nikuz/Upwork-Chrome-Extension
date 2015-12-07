@@ -9,7 +9,7 @@ import Skills from 'components/skills/code';
 import Manager from 'components/manager/code';
 import Icon from 'react-fa';
 import timeAgo from 'utils/timeAgo';
-import * as Linkify from 'linkifyjs';
+import Linkify from 'linkify';
 
 import './style';
 
@@ -56,8 +56,7 @@ class jobItem extends React.Component {
 
     result = _.extend({}, this.props, {
       extended: true,
-      //description: window.linkify(_.escape(data.op_description)),
-      description: _.escape(data.op_description),
+      description: Linkify(_.escape(data.op_description)),
       applicants: data.op_tot_cand,
       interviewing: data.interviewees_total_active,
       feedback: feedback > 0,
@@ -101,7 +100,7 @@ class jobItem extends React.Component {
   };
   shareEventsHandler = () => {
     var props = this.props;
-    window.socialmessage.send({
+    EventManager.trigger('jobItemShare', {
       subject: props.title,
       text: props.title + '\n\n' + props.url,
       link: props.url
@@ -117,6 +116,9 @@ class jobItem extends React.Component {
   handlerUpdateAfterError = () => {
     this.requestJobData();
   };
+  handlerBackBtn() {
+    EventManager.trigger('jobItemHide');
+  }
   componentDidMount = () => {
     this.requestJobData();
     this.curTimeAgo = timeAgo(this.props.date_created);
@@ -124,6 +126,7 @@ class jobItem extends React.Component {
     EventManager.on('btnFavoritesClicked btnTrashClicked', this.managerEventsHandler);
     EventManager.on('btnShareClicked', this.shareEventsHandler);
     EventManager.on('updatedAfterError', this.handlerUpdateAfterError);
+    EventManager.on('btnBackClicked', this.handlerBackBtn);
   };
   componentWillUnmount = () => {
     if (this.request) {
@@ -139,7 +142,7 @@ class jobItem extends React.Component {
     return (
       <div>
         <div id="job_menu">
-          <Manager favorites trash share />
+          <Manager favorites trash share back />
         </div>
         <div id="job_description">
           <h1>{data.title}</h1>

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as EventManager from 'modules/events';
 import * as StateManager from 'modules/states';
+import Sharing from 'components/sharing/code';
 import Icon from 'react-fa';
 
 import './style';
@@ -33,12 +34,33 @@ class Manager extends React.Component {
       case 'share':
         EventManager.trigger('btnShareClicked');
         break;
+      case 'back':
+        EventManager.trigger('btnBackClicked');
+        break;
     }
+  };
+  mouseEnter = false;
+  sharingHandlerMouseEnter = () => {
+    this.mouseEnter = true;
+  };
+  sharingHandlerMouseLeave = () => {
+    this.mouseEnter = false;
+    setTimeout(() => {
+      if (!this.mouseEnter) {
+        EventManager.trigger('btnShareCloseClicked');
+      }
+    }, 300);
   };
   render() {
     var props = this.props;
     return (
       <div>
+        {props.back ?
+          <div className="msiw">
+            <Icon name="arrow-left" className="msitem m_back" data-value="back" onClick={this.handlerClick} />
+          </div>
+          : null
+        }
         {props.select ?
           <div className="msiw">
             <label htmlFor="jl_all" className="msitem m_select" id="m_all">
@@ -67,8 +89,9 @@ class Manager extends React.Component {
           : null
         }
         {props.share ?
-          <div className="msiw">
+          <div className="msiw" onMouseEnter={this.sharingHandlerMouseEnter} onMouseLeave={this.sharingHandlerMouseLeave}>
             <Icon name="share-alt" className="msitem m_share" data-value="share" onClick={this.handlerClick} />
+            <Sharing />
           </div>
           : null
         }

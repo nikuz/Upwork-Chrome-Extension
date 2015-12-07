@@ -34,23 +34,18 @@ class Errors extends React.Component {
   };
   componentDidMount() {
     EventManager.on('inboxError', () => {
-      var network = navigator.connection.type,
-        state = {
-          isHide: false
-        };
-      if (network !== 'none') {
-        let useProxy = settings.get('useProxy').value;
-        if (useProxy) {
-          state.proxyError = true;
-        } else {
-          state.upworkError = true;
-        }
+      var state = {
+        isHide: false
+      };
+
+      if (navigator.onLine) {
+        state.upworkError = true;
       } else {
         state.networkError = true;
       }
       this.setState(state);
     });
-    EventManager.on('backClicked settingsInit', () => {
+    EventManager.on('settingsInit', () => {
       this.clearState();
     });
   };
@@ -62,17 +57,8 @@ class Errors extends React.Component {
           <div id="serverError">
             {state.upworkError ?
               <div>
-                Upwork.com server internal error. Try to use proxy server instead? <br />
-                <button className="btn_blue" onClick={this.handlerRetry}>No, retry</button>
-                <button onClick={this.handlerChangeServer}>Yes</button>
-              </div>
-              : null
-            }
-            {state.proxyError ?
-              <div>
-                Proxy server internal error. Try to use Upwork.com server instead? <br />
-                <button className="btn_blue" onClick={this.handlerRetry}>No, retry</button>
-                <button onClick={this.handlerChangeServer}>Yes</button>
+                Upwork.com server internal error <br />
+                <button className="btn_blue" onClick={this.handlerRetry}>Retry</button>
               </div>
               : null
             }

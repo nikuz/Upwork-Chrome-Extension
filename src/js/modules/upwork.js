@@ -119,7 +119,6 @@ var getAccess = function(callback) {
   }
 };
 
-var errorWithCredentials = 0;
 var request = function(options, callback) {
   var opts = options || {},
     cb = callback,
@@ -177,6 +176,7 @@ var request = function(options, callback) {
 // public methods
 // ----------------
 
+var errorWithCredentials = 0;
 var pRequest = function(options, callback) {
   var cb = callback || noop,
     result = {},

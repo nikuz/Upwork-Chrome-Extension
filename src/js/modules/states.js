@@ -30,7 +30,6 @@ var currentOverlay = null;
 const overlays = [
   'settings',
   'jobView',
-  'feedback'
 ];
 function setOverlay(overlay) {
   if (overlay) {
@@ -81,13 +80,10 @@ EventManager.on('folderChanged', options => {
 
   setPage(opts.folder);
 });
-EventManager.on('feedbackInit', () => {
-  setOverlay('feedback');
-});
 EventManager.on('jobItemInit', () => {
   setOverlay('jobView');
 });
-EventManager.on('settingsHide settingsSaved feedbackHide jobItemHide', () => {
+EventManager.on('settingsHide settingsSaved jobItemHide', () => {
   setOverlay();
 });
 

@@ -1,5 +1,4 @@
 release/*
 node_modules/*
 store/*
-bower_components/*
 .DS_Store
