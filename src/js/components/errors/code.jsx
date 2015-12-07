@@ -27,7 +27,7 @@ class Errors extends React.Component {
     EventManager.trigger('updatedAfterError');
   };
   handlerChangeServer = () => {
-    let sData = settings.get();
+    var sData = settings.get();
     sData.useProxy.value = !sData.useProxy.value;
     settings.set(sData);
     this.handlerRetry();

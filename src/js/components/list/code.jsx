@@ -9,6 +9,7 @@ import * as StateManager from 'modules/states';
 import * as folders from 'modules/folders';
 import * as storage from 'modules/storage';
 import * as cache from 'modules/cache';
+import * as settings from 'modules/settings';
 import ListItem from 'components/list/item-code';
 import Icon from 'react-fa';
 import animate from 'utils/animate';
@@ -135,11 +136,16 @@ class List extends React.Component {
       this.itemSelect(itemId);
     } else {
       let curItems = this.state.items,
-        item = _.findWhere(curItems, {id: itemId});
+        item = _.findWhere(curItems, {id: itemId}),
+        sData = settings.get();
 
-      EventManager.trigger('jobItemInit', {
-        jobItem: item
-      });
+      if (sData.preview.value) {
+        EventManager.trigger('jobItemInit', {
+          jobItem: item
+        });
+      } else {
+        window.open(config.UPWORK_url + '/job/' + item.id, '_system');
+      }
 
       cache.update(item.id, {
         is_new: false,
