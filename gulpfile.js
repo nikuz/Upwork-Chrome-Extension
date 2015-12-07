@@ -68,6 +68,9 @@ gulp.task('copy:manifest', function(done) {
   fs.writeFileSync(`./${releaseFolder}/${manifestFile}`, JSON.stringify(manifest, null, 2));
   done();
 });
+gulp.task('copy:manifest-dev', function() {
+  gulp.src(['./manifest.json']).pipe(gulp.dest('release'));
+});
 
 gulp.task('copy:images', function() {
   gulp.src(['./src/images/**/*']).pipe(gulp.dest('release/images'));
@@ -98,7 +101,7 @@ gulp.task('webpack:build-dev', function(callback) {
 // Advantage: No server required, can run app from filesystem
 // Disadvantage: Requests are not blocked until bundle is available,
 //               can serve an old app on refresh
-gulp.task('build-dev', ['copy:manifest', 'copy:images', 'webpack:build-dev'], function() {
+gulp.task('build-dev', ['copy:manifest-dev', 'copy:images', 'webpack:build-dev'], function() {
   gulp.watch(['src/**/*'], ['webpack:build-dev']);
 });
 
