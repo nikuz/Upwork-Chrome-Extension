@@ -14,6 +14,10 @@ import Linkify from 'linkify';
 import './style';
 
 class jobItem extends React.Component {
+  static propTypes = {
+    id: React.PropTypes.string.isRequired,
+    date_created: React.PropTypes.string.isRequired
+  };
   state = {
     itemData: null,
     showFeedback: null

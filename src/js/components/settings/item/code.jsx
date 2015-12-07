@@ -22,7 +22,8 @@ class BlockModern extends React.Component {
     relations: React.PropTypes.string,
     from: React.PropTypes.string,
     to: React.PropTypes.string,
-    descr: React.PropTypes.string
+    descr: React.PropTypes.string,
+    value: React.PropTypes.node
   };
   openCl = 'sgi_opened';
   disableCl = 'sgi_block';

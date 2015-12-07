@@ -26,7 +26,7 @@ class App extends React.Component {
   };
   getExtraContent = (content) => {
     return (
-      <ReactCSSTransitionGroup transitionName="pageextra" transitionAppear={true} transitionEnterTimeout={300} transitionAppearTimeout={300} transitionLeaveTimeout={300} component="div">
+      <ReactCSSTransitionGroup transitionName="pageextra" transitionAppear transitionEnterTimeout={300} transitionAppearTimeout={300} transitionLeaveTimeout={300} component="div">
         {content ?
         <div className="page-extra">{content}</div>
           : null

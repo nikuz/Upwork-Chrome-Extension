@@ -9,6 +9,13 @@ import timeAgo from 'utils/timeAgo';
 import animate from 'utils/animate';
 
 class ListItem extends React.Component {
+  static propTypes = {
+    id: React.PropTypes.string.isRequired,
+    date_created: React.PropTypes.string.isRequired,
+    remove: React.PropTypes.func.isRequired,
+    open: React.PropTypes.func.isRequired,
+    select: React.PropTypes.func.isRequired
+  };
   touch = {};
   updateTimeAgo = () => {
     var newTimeAgo = timeAgo(this.props.date_created);
