@@ -195,6 +195,7 @@ var populate = function(options, callback) {
       cb(null, null);
     } else {
       var jobsTotal = (response.paging && response.paging.total) || 0;
+      storage.set('found_jobs', jobsTotal);
       EventManager.trigger('gotNewJobsCount', {
         count: jobsTotal
       });

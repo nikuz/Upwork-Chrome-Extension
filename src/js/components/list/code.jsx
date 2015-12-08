@@ -65,6 +65,7 @@ class List extends React.Component {
         state.items = jobs;
       }
       this.setState(state);
+      badge.update();
     });
   };
   itemSelect = (item, isSelect) => {
@@ -132,6 +133,7 @@ class List extends React.Component {
         amount: 0
       });
     }
+    badge.update();
   };
   itemOpen = (itemId) => {
     if (this.state.selectedCount) {

@@ -69,16 +69,30 @@ class Search extends React.Component {
     });
     EventManager.on('listScrolledTop', () => {
       if (StateManager.is('inbox')) {
-      this.setState({isHide: false});
+        this.setState({isHide: false});
+      }
+    });
+    EventManager.on('gotNewJobsCount', (options) => {
+      var opts = options || {};
+      if (StateManager.is('inbox')) {
+        this.setState({
+          resultsCount: opts.count
+        });
       }
     });
   };
   render() {
-    var classString = this.state.isHide || this.state.isHideByListManager ? 'hide' : '';
+    var classString = this.state.isHide || this.state.isHideByListManager ? 'hide' : '',
+      resultsCount = this.state.resultsCount || Number(storage.get('found_jobs'));
+
+    if (resultsCount) {
+      classString += ' found-some-jobs';
+    }
+
     return (
       <form id="search" className={classString} onSubmit={this.handlerSubmit}>
         <input type="text" name="search" defaultValue={this.state.feedsValue} placeholder="Find Jobs" id="searchField" className="f_text" />
-        <label htmlFor="searchField" id="searchLabel" />
+        <label htmlFor="searchField" id="searchLabel">Found {resultsCount} job</label>
         <button type="submit" className="js_submit fa fa-search" title="Find" />
       </form>
     );
