@@ -13,6 +13,7 @@ import * as settings from 'modules/settings';
 import ListItem from 'components/list/item-code';
 import Icon from 'react-fa';
 import animate from 'utils/animate';
+import * as badge from 'modules/badge';
 
 import './style';
 
@@ -140,28 +141,28 @@ class List extends React.Component {
         item = _.findWhere(curItems, {id: itemId}),
         sData = settings.get();
 
-      if (sData.preview.value) {
-        EventManager.trigger('jobItemInit', {
-          jobItem: item
-        });
-      } else {
-        window.open(config.UPWORK_url + '/job/' + item.id, '_system');
-      }
-
       cache.update(item.id, {
         is_new: false,
         watched: true
       });
+      badge.update();
 
-      setTimeout(() => {
-        _.extend(item, {
-          is_new: false,
-          watched: true
+      if (sData.preview.value) {
+        EventManager.trigger('jobItemInit', {
+          jobItem: item
         });
-        this.setState({
-          items: curItems
-        });
-      }, 400);
+        setTimeout(() => {
+          _.extend(item, {
+            is_new: false,
+            watched: true
+          });
+          this.setState({
+            items: curItems
+          });
+        }, 400);
+      } else {
+        window.open(config.UPWORK_url + '/job/' + item.id, '_system');
+      }
     }
   };
   itemRead = () => {
