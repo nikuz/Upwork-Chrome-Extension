@@ -6,7 +6,8 @@ var gulp = require('gulp'),
   webpack = require('webpack'),
   webpackConfig = require('./webpack.config.js'),
   eslint = require('gulp-eslint'),
-  clean = require('gulp-clean');
+  clean = require('gulp-clean'),
+  zip = require('gulp-zip');
 
 gulp.task('webpack:build', ['build:clean'], function(done) {
   // modify some webpack config options
@@ -101,6 +102,24 @@ gulp.task('build-dev', function() {
   return gulp.watch(['src/**/*'], ['webpack:build-dev']);
 });
 
+gulp.task('remove:extrafonts', ['webpack:build'], function() {
+  return gulp.src([
+    'release/*.eot',
+    'release/*.woff',
+    'release/*.ttf',
+    'release/*.svg'
+  ], {read: false}).pipe(clean({force: true}));
+});
+
+gulp.task('build:compress', ['copy:manifest', 'copy:images', 'remove:extrafonts'], function() {
+  var manifest = require('./release/manifest.json'),
+    buildName = manifest.short_name.replace(/\s/g, '_') + '_' + manifest.version;
+
+  return gulp.src('release/**/*')
+    .pipe(zip(`${buildName}.zip`))
+    .pipe(gulp.dest('release'));
+});
+
 gulp.task('eslint', function () {
   return gulp.src([
       'app/**/*.js',
@@ -113,6 +132,18 @@ gulp.task('eslint', function () {
 });
 
 
-gulp.task('build', ['build:clean', 'webpack:build', 'copy:manifest', 'copy:images']);
+gulp.task('build', [
+  'build:clean',
+  'webpack:build',
+  'copy:manifest',
+  'copy:images',
+  'remove:extrafonts',
+  'build:compress'
+]);
 
-gulp.task('default', ['copy:manifest-dev', 'copy:images-dev', 'webpack:build-dev', 'build-dev']);
+gulp.task('default', [
+  'copy:manifest-dev',
+  'copy:images-dev',
+  'webpack:build-dev',
+  'build-dev'
+]);
