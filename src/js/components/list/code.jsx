@@ -65,7 +65,6 @@ class List extends React.Component {
         state.items = jobs;
       }
       this.setState(state);
-      badge.update();
     });
   };
   itemSelect = (item, isSelect) => {

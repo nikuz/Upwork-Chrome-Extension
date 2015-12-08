@@ -16,6 +16,7 @@ import Settings from 'components/settings/code';
 import List from 'components/list/code';
 import JobView from 'components/job-item/code';
 import WideModeHelper from 'components/wide-mode-helper/code';
+import * as badge from 'modules/badge';
 
 import 'css/basic';
 import 'css/form';
@@ -71,6 +72,9 @@ class App extends React.Component {
     });
     EventManager.on('settingsHide jobItemHide', () => {
       this.insertExtraContent();
+    });
+    EventManager.on('cacheUpdated', () => {
+      badge.update();
     });
   };
   render() {
