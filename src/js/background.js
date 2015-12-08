@@ -10,9 +10,11 @@ import * as badge from 'modules/badge';
 import * as async from 'utils/async';
 import timeAgo from 'utils/timeAgo';
 
-var notifyInterval = 5;
+var notifyInterval = 5,
+  notifyAllow = true,
+  isDnDTimeNow = false;
 
-var notificationShow = function(options, callback) {
+function notificationShow(options, callback) {
   var opts = options || {},
     cb = callback || _.noop,
     count = opts.count;
@@ -133,25 +135,49 @@ var notificationShow = function(options, callback) {
   }
 
   validateParams();
-};
+}
 
-var settingsCheck = function(callback) {
+function isDnDTimeCheck(sData) {
+  var timeReg = /\d{2}:\d{2}/,
+    today = new Date(),
+    curMinute = today.getHours() * 60 + today.getMinutes(),
+    minutesDND = function(dndTime) {
+      if (!timeReg.test(dndTime)) {
+        return null;
+      }
+      dndTime = dndTime.split(':');
+      return Number(dndTime[0]) * 60 + Number(dndTime[1]);
+    },
+    from = minutesDND(sData.dndFrom.value),
+    to = minutesDND(sData.dndTo.value);
+
+  if (from === to) {
+    return;
+  }
+  isDnDTimeNow = (from < to && curMinute >= from && curMinute <= to) || (from > to && (curMinute >= from || curMinute <= to));
+}
+
+function settingsCheck(callback) {
   var cb = callback || _.noop,
-    newInterval = settings.get('notifyInterval').value;
+    sData = settings.get(),
+    newInterval = sData.notifyInterval.value;
+
+  notifyAllow = sData.notifyAllow.value;
+  isDnDTimeCheck(sData);
 
   if (newInterval !== notifyInterval) {
     notifyInterval = newInterval;
     createAlarms();
   }
   cb(null, newInterval);
-};
+}
 
-var newJobsCheck = function(callback) {
+function newJobsCheck(callback) {
   var cb = callback || _.noop,
     feeds = storage.get('feeds'),
     API_access = storage.get('access');
 
-  if (!feeds || !API_access) {
+  if (!feeds || !API_access || isDnDTimeNow || !notifyAllow) {
     cb('No credentials');
     return;
   }
@@ -169,9 +195,9 @@ var newJobsCheck = function(callback) {
       });
     }
   });
-};
+}
 
-var createAlarms = function() {
+function createAlarms() {
   var alarms = {
     settingsWatch: 1,
     newJobsNotifier: notifyInterval || 1
@@ -193,7 +219,7 @@ var createAlarms = function() {
       periodInMinutes: Number(period)
     });
   };
-};
+}
 
 // ----------------
 // public methods
