@@ -9,7 +9,15 @@ module.exports = {
   entry: {
     main: './src/js/main.jsx',
     verifier: './src/js/verifier.js',
-    background: './src/js/background.js'
+    background: './src/js/background.js',
+    vendor: [
+      'underscore',
+      'config',
+      'modules/storage',
+      'modules/settings',
+      'modules/cache',
+      'modules/constants'
+    ]
   },
   output: {
     path: path.join(__dirname, 'release'),
@@ -51,6 +59,7 @@ module.exports = {
     modulesDirectories: ['node_modules'],
     alias: {
       linkify: path.join(__dirname, 'node_modules/linkifyjs/lib/linkify-string'),
+      config: path.join(__dirname, 'src/js/config'),
       components: path.join(__dirname, 'src/js/components'),
       modules: path.join(__dirname, 'src/js/modules'),
       utils: path.join(__dirname, 'src/js/utils'),
@@ -58,7 +67,7 @@ module.exports = {
     }
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('commons.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'commons.js'),
     new ExtractTextPlugin('bundle.css'),
     new htmlPlugin({
       filename: 'index.html',

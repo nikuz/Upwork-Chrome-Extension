@@ -1,7 +1,7 @@
 'use strict';
 
 import * as _ from 'underscore';
-import * as config from './config';
+import * as config from 'config';
 import * as storage from 'modules/storage';
 
 var location = window.location.href;

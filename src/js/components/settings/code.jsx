@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
-import * as config from '../../config';
+import * as config from 'config';
 import * as settings from 'modules/settings';
 import * as request from 'modules/request';
 import Item from 'components/settings/item/code';

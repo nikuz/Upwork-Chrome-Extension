@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'underscore';
-import * as config from '../../config';
+import * as config from 'config';
 import * as EventManager from 'modules/events';
 import * as StateManager from 'modules/states';
 import * as folders from 'modules/folders';

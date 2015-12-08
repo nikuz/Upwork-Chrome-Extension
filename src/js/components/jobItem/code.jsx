@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
-import * as config from '../../config';
+import * as config from 'config';
 import * as request from 'modules/request';
 import Skills from 'components/skills/code';
 import Manager from 'components/manager/code';
