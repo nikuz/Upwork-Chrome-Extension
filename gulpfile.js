@@ -70,11 +70,14 @@ gulp.task('copy:manifest', ['build:clean'], function(done) {
   done();
 });
 
-gulp.task('copy:manifest-dev', ['build:clean'], function() {
+gulp.task('copy:manifest-dev', function() {
   return gulp.src(['./manifest.json']).pipe(gulp.dest('release'));
 });
 
 gulp.task('copy:images', ['build:clean'], function() {
+  return gulp.src(['./src/images/**/*']).pipe(gulp.dest('release/images'));
+});
+gulp.task('copy:images-dev', function() {
   return gulp.src(['./src/images/**/*']).pipe(gulp.dest('release/images'));
 });
 
@@ -84,7 +87,7 @@ myDevConfig.debug = true;
 
 var devCompiler = webpack(myDevConfig);
 
-gulp.task('webpack:build-dev', ['build:clean'], function(callback) {
+gulp.task('webpack:build-dev', function(callback) {
   return devCompiler.run(function(err, stats) {
     if(err) throw new gutil.PluginError('webpack:build-dev', err);
     gutil.log('[webpack:build-dev]', stats.toString({
@@ -94,7 +97,7 @@ gulp.task('webpack:build-dev', ['build:clean'], function(callback) {
   });
 });
 
-gulp.task('build-dev', ['build:clean'], function() {
+gulp.task('build-dev', function() {
   return gulp.watch(['src/**/*'], ['webpack:build-dev']);
 });
 
@@ -112,4 +115,4 @@ gulp.task('eslint', function () {
 
 gulp.task('build', ['build:clean', 'webpack:build', 'copy:manifest', 'copy:images']);
 
-gulp.task('default', ['build:clean', 'copy:manifest-dev', 'copy:images', 'webpack:build-dev', 'build-dev']);
+gulp.task('default', ['copy:manifest-dev', 'copy:images-dev', 'webpack:build-dev', 'build-dev']);

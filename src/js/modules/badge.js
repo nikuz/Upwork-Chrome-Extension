@@ -1,5 +1,6 @@
 'use strict';
 
+import * as _ from 'underscore';
 import * as cache from 'modules/cache';
 
 // ----------------

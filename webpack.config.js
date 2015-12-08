@@ -12,11 +12,8 @@ module.exports = {
     background: './src/js/background.js',
     vendor: [
       'underscore',
-      'config',
-      'modules/storage',
-      'modules/settings',
       'modules/cache',
-      'modules/constants'
+      'utils/timeAgo'
     ]
   },
   output: {

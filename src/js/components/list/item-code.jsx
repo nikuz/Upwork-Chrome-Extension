@@ -144,12 +144,12 @@ class ListItem extends React.Component {
         {!props.hidden ?
           <div className={cl}>
             <div className="jl_item_cont">
-              {props.is_new && <div className="jli_new">new</div>}
+              {props.is_new ? <div className="jli_new">new</div> : null}
               <a className="jl_link">{props.title}</a>
               <div className="jli_params">
                 <strong>{props.job_type} - </strong>
-                {props.duration && <span>Est. Time: {props.duration} - </span>}
-                {props.budget && <span>Est. Budget: {props.budget} - </span>}
+                {props.duration ? <span>Est. Time: {props.duration} - </span> : null}
+                {props.budget ? <span>Est. Budget: {props.budget} - </span> : null}
                 Posted: <span ref="date_created">{timeAgo(props.date_created)}</span>
               </div>
               <Skills items={props.skills} />

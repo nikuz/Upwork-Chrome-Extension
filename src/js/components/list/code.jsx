@@ -254,9 +254,6 @@ class List extends React.Component {
           load: true,
           noFeeds: false
         });
-        if (!this.state.empty) {
-          this.checkNewItems();
-        }
       }
     });
     EventManager.on('feedsAdded', () => {
