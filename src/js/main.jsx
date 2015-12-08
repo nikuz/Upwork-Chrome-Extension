@@ -14,7 +14,8 @@ import Errors from 'components/errors/code';
 import Tabs from 'components/tabs/code';
 import Settings from 'components/settings/code';
 import List from 'components/list/code';
-import JobView from 'components/jobItem/code';
+import JobView from 'components/job-item/code';
+import WideModeHelper from 'components/wide-mode-helper/code';
 
 import 'css/basic';
 import 'css/form';
@@ -76,6 +77,7 @@ class App extends React.Component {
     return (
       <div id="content" className={this.state.wide ? 'pageWideMode' : ''}>
         <Header />
+        {this.state.wide ? <WideModeHelper /> : null}
         <ListManager />
         <Search />
         <Notifications />
