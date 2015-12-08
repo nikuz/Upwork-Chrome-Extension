@@ -87,7 +87,9 @@ class jobItem extends React.Component {
         EventManager.trigger('inboxError');
       } else {
         this.request = null;
-        this.parseJobData(response.profile);
+        if (response) {
+          this.parseJobData(response.profile);
+        }
       }
     });
   };

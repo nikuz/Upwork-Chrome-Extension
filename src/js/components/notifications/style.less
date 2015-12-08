@@ -9,13 +9,16 @@
   line-height: 28px;
   font-size: 1.167rem;
   text-align: center;
+  transition: transform .3s ease-out;
   z-index: 20;
+}
+.notification.attop {
+  transform: translate3d(0, -46px, 0);
 }
 
 .notification-enter,
 .notification-leave {
-  transition:
-    opacity .3s;
+  transition: opacity .3s;
 }
 .notification-enter {
   opacity: 0;

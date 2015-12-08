@@ -10,7 +10,7 @@ import * as badge from 'modules/badge';
 import * as async from 'utils/async';
 import timeAgo from 'utils/timeAgo';
 
-var notifyInterval;
+var notifyInterval = 5;
 
 var notificationShow = function(options, callback) {
   var opts = options || {},
@@ -108,7 +108,7 @@ var notificationShow = function(options, callback) {
       notificationData = {
         type: 'basic',
         title: storage.get('feeds') + ':',
-        iconUrl: '/images/icon128n.png',
+        iconUrl: '/images/icon128.png',
         message: `You have new ${count} vacancies`
       };
 
@@ -190,7 +190,7 @@ var createAlarms = function() {
 
   var create = function(name, period) {
     chrome.alarms.create(name, {
-      periodInMinutes: period
+      periodInMinutes: Number(period)
     });
   };
 };

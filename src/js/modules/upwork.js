@@ -9,7 +9,6 @@ import * as async from 'utils/async';
 import * as ajax from 'utils/ajax';
 import Promise from 'utils/promise';
 
-var noop = function() {};
 var oauth;
 
 var init = function(callback) {
@@ -178,7 +177,7 @@ var request = function(options, callback) {
 
 var errorWithCredentials = 0;
 var pRequest = function(options, callback) {
-  var cb = callback || noop,
+  var cb = callback || _.noop,
     result = {},
     promise = new Promise();
 

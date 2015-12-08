@@ -96,3 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
   );
   EventManager.trigger('ready');
 });
+
+window.addEventListener('message', function(e) {
+  if (e.data === 'newJobs') {
+    EventManager.trigger('notificationsGot');
+  }
+}, false);

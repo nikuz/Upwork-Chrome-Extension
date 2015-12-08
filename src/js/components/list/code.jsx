@@ -265,6 +265,7 @@ class List extends React.Component {
       });
     });
     EventManager.on('feedsCheckNews notificationsClicked', () => {
+      ReactDOM.findDOMNode(this).scrollTop = 0;
       this.checkNewItems();
     });
     EventManager.on('folderChanged', options => {

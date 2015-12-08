@@ -9,8 +9,6 @@ import * as CryptoJS from 'crypto-js';
 import * as EventManager from 'modules/events';
 import dateCorrect from 'utils/date';
 
-var noop = function() {};
-
 var cacheLiveTime = 36e5 * 3; // 3 hours
 
 var pick = function(jobs) {
@@ -272,7 +270,7 @@ var pRequest = function(options, callback) {
 };
 
 var pCheckNew = function(callback) {
-  var cb = callback || noop;
+  var cb = callback || _.noop;
   checkInboxCacheLiveTime();
   populate({
     update: true
