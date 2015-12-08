@@ -37,6 +37,7 @@ class List extends React.Component {
       });
       return;
     }
+    EventManager.trigger('listStartUpdate');
     folders.getJobs({
       folder: opts.curFolder,
       page: opts.curPage
@@ -188,7 +189,7 @@ class List extends React.Component {
     var thisHeight = this.elHeight + this.el.scrollTop,
       curScroll = this.el.scrollTop;
 
-    if (this.listElHeight && thisHeight > this.listElHeight - 100 /*&& !Page.has('load') && !Page.has('full')*/) {
+    if (this.listElHeight && thisHeight > this.listElHeight - 100 && !StateManager.is('inbox.loading')) {
       this.getJobs({
         curPage: this.state.curPage + 1,
         load: true
@@ -333,7 +334,7 @@ class List extends React.Component {
             return <ListItem key={key} {...item} remove={this.itemRemove} select={this.itemSelect} open={this.itemOpen} />;
           })}
         </div> : null}
-        {state.full ?
+        {state.full && state.curFolder === 'inbox' ?
           <div className="jl_full">No more jobs that match your search</div>
           : null
         }

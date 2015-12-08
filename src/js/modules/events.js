@@ -20,6 +20,7 @@ var events = [
   //'folderFull',
   //'folderEmpty',
   //'hideNotification',
+  'listStartUpdate',
   'listScrolledBottom',
   'listScrolledTop',
   'jobsSelected',

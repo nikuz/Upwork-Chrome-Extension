@@ -29,7 +29,7 @@ function setPage(page, savePrev) {
 var currentOverlay = null;
 const overlays = [
   'settings',
-  'jobView',
+  'jobView'
 ];
 function setOverlay(overlay) {
   if (overlay) {
@@ -60,6 +60,9 @@ function setState(state = 'ready') {
 EventManager.on('ready', () => {
   setPage('inbox');
   setState('empty');
+});
+EventManager.on('listStartUpdate', () => {
+  setState('loading');
 });
 EventManager.on('jobsReceived', () => {
   setState('ready');
