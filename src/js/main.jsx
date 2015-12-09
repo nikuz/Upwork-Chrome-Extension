@@ -1,5 +1,14 @@
 'use strict';
 
+// temp
+import * as storage from 'modules/storage';
+var updateName = 'update_08_12_2015';
+if (!storage.get(updateName)) {
+  localStorage.clear();
+  storage.set(updateName, new Date());
+}
+//
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
