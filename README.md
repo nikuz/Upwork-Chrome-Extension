@@ -12,7 +12,7 @@ Features:
  - preview jobs in extension 
  - sharing jobs
 
-![alt text](store_resources/1.png "1")
-![alt text](store_resources/2.png "2")
-![alt text](store_resources/3.png "3")
-![alt text](store_resources/4.png "4")
+![alt text](store_resources/list.png "List of jobs")
+![alt text](store_resources/preview.png "Job preview")
+![alt text](store_resources/settings.png "Settings")
+![alt text](store_resources/notification.png "Notification")
