@@ -118,7 +118,8 @@ gulp.task('build:compress', ['copy:manifest', 'copy:images', 'remove:extrafonts'
 
   return gulp.src('release/**/*')
     .pipe(zip(`${buildName}.zip`))
-    .pipe(gulp.dest('release'));
+    .pipe(gulp.dest('release'))
+    .pipe(gulp.dest('store_resources'));
 });
 
 gulp.task('eslint', function () {
