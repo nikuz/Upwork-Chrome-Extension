@@ -1,12 +1,14 @@
 'use strict';
 
 import * as React from 'react';
+import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
 import * as data from 'tests/data/index';
-import BlockModern from '/code';
+import BlockModern from './code';
+import * as chai from 'chai';
+import TestUtils from 'react-addons-test-utils';
 
-var TestUtils = React.addons.TestUtils,
-  expect = chai.expect;
+var expect = chai.expect;
 
 describe('Block modern', () => {
   var values = [
@@ -115,7 +117,7 @@ describe('Block modern', () => {
       relation: props.relations,
       value: false
     });
-    expect(stngItem.getDOMNode().className).to.contain('sgi_block');
+    expect(stngItem.className).to.contain('sgi_block');
   });
 
   it('should expand the content block if user clicked to the block when content block is closed, and collapse the block back with second click', () => {
@@ -142,15 +144,15 @@ describe('Block modern', () => {
         component, 'sgi_cont_wrap sgc_cont_list'
       );
 
-    var initialContHeight = contEl.getDOMNode().style.height,
+    var initialContHeight = contEl.style.height,
       openedCl = 'sgi_opened';
 
-    expect(stngItem.getDOMNode().className).to.not.contain(openedCl);
+    expect(stngItem.className).to.not.contain(openedCl);
     TestUtils.Simulate.click(blockerEl);
-    expect(stngItem.getDOMNode().className).to.contain(openedCl);
+    expect(stngItem.className).to.contain(openedCl);
     // actual height is still zero, just check that component tried to change it
-    expect(contEl.getDOMNode().style.height).to.not.eql(initialContHeight);
+    expect(contEl.style.height).to.not.eql(initialContHeight);
     TestUtils.Simulate.click(blockerEl);
-    expect(stngItem.getDOMNode().className).to.not.contain(openedCl);
+    expect(stngItem.className).to.not.contain(openedCl);
   });
 });

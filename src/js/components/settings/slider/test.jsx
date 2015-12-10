@@ -3,10 +3,11 @@
 import * as React from 'react';
 import * as EventManager from 'modules/events';
 import * as data from 'tests/data/index';
-import Slider from 'components/settings/slider/code';
+import Slider from './code';
+import * as chai from 'chai';
+import TestUtils from 'react-addons-test-utils';
 
-var TestUtils = React.addons.TestUtils,
-  expect = chai.expect;
+var expect = chai.expect;
 
 describe('Slider', () => {
   var values = [
@@ -27,7 +28,7 @@ describe('Slider', () => {
     data.cleanup();
   });
 
-  it('should insert the Slider to the DOM and get the value from it when onChange event is triggered', () => {
+  it('should insert the Slider to the DOM and get the value from it when onChange event is triggered', (done) => {
     var props = {
       from: '0',
       to: '200',
@@ -47,28 +48,30 @@ describe('Slider', () => {
     TestUtils.findRenderedDOMComponentWithClass(
       component, 'sgis_fill'
     );
-    var sliderLeftPin = TestUtils.findRenderedDOMComponentWithClass(
-      component, 'sgispl'
-    );
+    var sliderRootEl = TestUtils.findRenderedDOMComponentWithClass(
+        component, 'sgi_slider'
+      ),
+      sliderLeftPin = TestUtils.findRenderedDOMComponentWithClass(
+        component, 'sgispl'
+      );
+
     expect(component.oppositePos).to.be.an('undefined');
-    TestUtils.Simulate.touchStart(sliderLeftPin, {
-      targetTouches: [{
-        target: sliderLeftPin.getDOMNode(),
+    setTimeout(function() {
+      TestUtils.Simulate.mouseDown(sliderLeftPin, {
         pageX: 0,
         pageY: 0
-      }]
-    });
-    expect(component.oppositePos).to.not.be.an('undefined');
-    TestUtils.Simulate.touchMove(sliderLeftPin, {
-      targetTouches: [{
-        target: sliderLeftPin.getDOMNode(),
+      });
+      TestUtils.Simulate.mouseMove(sliderRootEl, {
         pageX: 100,
         pageY: 0
-      }]
-    });
+      });
+      TestUtils.Simulate.mouseUp(sliderRootEl);
+      expect(component.oppositePos).to.not.be.an('undefined');
+      done();
+    }, 500);
   });
 
-  it('should change the left value from 0 to 100', () => {
+  it('should change the left value from 0 to 100', (done) => {
     var props = {
       from: '0',
       to: '200',
@@ -81,35 +84,36 @@ describe('Slider', () => {
       }
     };
     var component = TestUtils.renderIntoDocument(
-      <Slider {...props} />
-    );
-    var sliderLeftPin = TestUtils.findRenderedDOMComponentWithClass(
+        <Slider {...props} />
+      ),
+      sliderRootEl = TestUtils.findRenderedDOMComponentWithClass(
+        component, 'sgi_slider'
+      ),
+      sliderLeftPin = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgispl'
       ),
       fillEl = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgis_fill'
       );
 
-    TestUtils.Simulate.touchStart(sliderLeftPin, {
-      targetTouches: [{
-        target: sliderLeftPin.getDOMNode(),
+    setTimeout(function() {
+      TestUtils.Simulate.mouseDown(sliderLeftPin, {
         pageX: 0,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchMove(sliderLeftPin, {
-      targetTouches: [{
-        target: sliderLeftPin.getDOMNode(),
+      });
+      TestUtils.Simulate.mouseMove(sliderRootEl, {
         pageX: 100,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchEnd(sliderLeftPin);
-    var leftShift = parseInt(fillEl.getDOMNode().style.left, 10);
-    expect(leftShift).to.be.above(0);
+      });
+      TestUtils.Simulate.mouseUp(sliderRootEl);
+      expect(component.oppositePos).to.not.be.an('undefined');
+      var leftShift = parseInt(fillEl.style.left, 10);
+      expect(leftShift).to.be.above(0);
+      done();
+    }, 500);
   });
 
-  it('should change the left value from 100 to 0', () => {
+  it('should change the left value from 100 to 0', (done) => {
     var props = {
       from: '100',
       to: '200',
@@ -122,35 +126,36 @@ describe('Slider', () => {
       }
     };
     var component = TestUtils.renderIntoDocument(
-      <Slider {...props} />
-    );
-    var sliderLeftPin = TestUtils.findRenderedDOMComponentWithClass(
+        <Slider {...props} />
+      ),
+      sliderRootEl = TestUtils.findRenderedDOMComponentWithClass(
+        component, 'sgi_slider'
+      ),
+      sliderLeftPin = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgispl'
       ),
       fillEl = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgis_fill'
       );
 
-    TestUtils.Simulate.touchStart(sliderLeftPin, {
-      targetTouches: [{
-        target: sliderLeftPin.getDOMNode(),
+    setTimeout(function() {
+      TestUtils.Simulate.mouseDown(sliderLeftPin, {
         pageX: 100,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchMove(sliderLeftPin, {
-      targetTouches: [{
-        target: sliderLeftPin.getDOMNode(),
+      });
+      TestUtils.Simulate.mouseMove(sliderRootEl, {
         pageX: 0,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchEnd(sliderLeftPin);
-    var leftShift = parseInt(fillEl.getDOMNode().style.left, 10);
-    expect(leftShift).to.eql(0);
+      });
+      TestUtils.Simulate.mouseUp(sliderRootEl);
+      expect(component.oppositePos).to.not.be.an('undefined');
+      var leftShift = parseInt(fillEl.style.left, 10);
+      expect(leftShift).to.eql(0);
+      done();
+    }, 500);
   });
 
-  it('should change the right value from 1000000 to 5000', () => {
+  it('should change the right value from 1000000 to 5000', (done) => {
     var props = {
       from: '100',
       to: '1000000',
@@ -163,35 +168,36 @@ describe('Slider', () => {
       }
     };
     var component = TestUtils.renderIntoDocument(
-      <Slider {...props} />
-    );
-    var sliderRightPin = TestUtils.findRenderedDOMComponentWithClass(
+        <Slider {...props} />
+      ),
+      sliderRootEl = TestUtils.findRenderedDOMComponentWithClass(
+        component, 'sgi_slider'
+      ),
+      sliderRightPin = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgispr'
       ),
       fillEl = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgis_fill'
       );
 
-    TestUtils.Simulate.touchStart(sliderRightPin, {
-      targetTouches: [{
-        target: sliderRightPin.getDOMNode(),
+    setTimeout(function() {
+      TestUtils.Simulate.mouseDown(sliderRightPin, {
         pageX: 400,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchMove(sliderRightPin, {
-      targetTouches: [{
-        target: sliderRightPin.getDOMNode(),
+      });
+      TestUtils.Simulate.mouseMove(sliderRootEl, {
         pageX: 350,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchEnd(sliderRightPin);
-    var rightShift = parseInt(fillEl.getDOMNode().style.right, 10);
-    expect(rightShift).to.be.above(0);
+      });
+      TestUtils.Simulate.mouseUp(sliderRootEl);
+      expect(component.oppositePos).to.not.be.an('undefined');
+      var rightShift = parseInt(fillEl.style.right, 10);
+      expect(rightShift).to.be.above(0);
+      done();
+    }, 500);
   });
 
-  it('should change the right value from 5000 to 1000000', () => {
+  it('should change the right value from 5000 to 1000000', (done) => {
     var props = {
       from: '100',
       to: '5000',
@@ -204,31 +210,32 @@ describe('Slider', () => {
       }
     };
     var component = TestUtils.renderIntoDocument(
-      <Slider {...props} />
-    );
-    var sliderRightPin = TestUtils.findRenderedDOMComponentWithClass(
+        <Slider {...props} />
+      ),
+      sliderRootEl = TestUtils.findRenderedDOMComponentWithClass(
+        component, 'sgi_slider'
+      ),
+      sliderRightPin = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgispr'
       ),
       fillEl = TestUtils.findRenderedDOMComponentWithClass(
         component, 'sgis_fill'
       );
 
-    TestUtils.Simulate.touchStart(sliderRightPin, {
-      targetTouches: [{
-        target: sliderRightPin.getDOMNode(),
+    setTimeout(function() {
+      TestUtils.Simulate.mouseDown(sliderRightPin, {
         pageX: 350,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchMove(sliderRightPin, {
-      targetTouches: [{
-        target: sliderRightPin.getDOMNode(),
+      });
+      TestUtils.Simulate.mouseMove(sliderRootEl, {
         pageX: 400,
         pageY: 0
-      }]
-    });
-    TestUtils.Simulate.touchEnd(sliderRightPin);
-    var rightShift = parseInt(fillEl.getDOMNode().style.right, 10);
-    expect(rightShift).to.eql(0);
+      });
+      TestUtils.Simulate.mouseUp(sliderRootEl);
+      expect(component.oppositePos).to.not.be.an('undefined');
+      var rightShift = parseInt(fillEl.style.right, 10);
+      expect(rightShift).to.eql(0);
+      done();
+    }, 500);
   });
 });

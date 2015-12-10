@@ -1,4 +1,5 @@
 release/*
+tests/release/*
 node_modules/*
 store/*
 .DS_Store

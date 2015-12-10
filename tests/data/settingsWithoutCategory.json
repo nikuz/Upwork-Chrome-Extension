@@ -1,0 +1,47 @@
+{
+  "name": "settings",
+  "data": {
+    "jobsPerPage": {
+      "value": 15
+    },
+    "budgetFrom": {
+      "value": 0,
+      "search": true
+    },
+    "budgetTo": {
+      "value": 1000000,
+      "search": true
+    },
+    "daysPosted": {
+      "value": 50,
+      "search": true
+    },
+    "notifyInterval": {
+      "value": 5
+    },
+    "notifyAllow": {
+      "value": true
+    },
+    "dndFrom": {
+      "value": "00:00"
+    },
+    "dndTo": {
+      "value": "06:00"
+    },
+    "duration": {
+      "value": "All",
+      "search": true
+    },
+    "jobType": {
+      "value": "All",
+      "search": true
+    },
+    "workload": {
+      "value": "All",
+      "search": true
+    },
+    "useProxy": {
+      "value": true
+    }
+  }
+}

@@ -1,12 +1,14 @@
 'use strict';
 
 import * as React from 'react';
+import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
 import * as data from 'tests/data/index';
-import List from 'components/settings/list/code';
+import List from './code';
+import * as chai from 'chai';
+import TestUtils from 'react-addons-test-utils';
 
-var TestUtils = React.addons.TestUtils,
-  expect = chai.expect;
+var expect = chai.expect;
 
 describe('List', () => {
   var selectValues = [
@@ -41,14 +43,13 @@ describe('List', () => {
     var selectEl = TestUtils.findRenderedDOMComponentWithClass(
       component, 'sgi_select'
     );
-    var slNode = selectEl.getDOMNode();
-    expect(slNode.getAttribute('data-name')).to.eql(props.name);
-    _.each(slNode.childNodes, function(listItem) {
+    expect(selectEl.getAttribute('data-name')).to.eql(props.name);
+    _.each(selectEl.childNodes, function(listItem) {
       if (listItem.className === 'selected') {
         expect(listItem.getAttribute('data-value')).to.eql(props.value);
       }
     });
-    TestUtils.Simulate.click(slNode.childNodes[3]);
+    TestUtils.Simulate.click(selectEl.childNodes[3]);
   });
 
   it('should render empty list with loading if values is empty', () => {
@@ -123,7 +124,7 @@ describe('List', () => {
           var list = TestUtils.findRenderedDOMComponentWithClass(
             component, 'sgi_select'
           );
-          expect(list.getDOMNode().childNodes).to.have.length.above(1);
+          expect(list.childNodes).to.have.length.above(1);
           done();
         }, 100);
       },
@@ -161,7 +162,7 @@ describe('List', () => {
             var list = TestUtils.findRenderedDOMComponentWithClass(
               component, 'sgi_select'
             );
-            expect(list.getDOMNode().childNodes).to.have.length.above(1);
+            expect(list.childNodes).to.have.length.above(1);
             done();
           }, 100);
         }

@@ -83,7 +83,8 @@ var pOff = function(eventName, handler) {
 
 var pTrigger = function(eventName, values) {
   if (checkEventExists(eventName)) {
-    if (process.env.CURRENT_ENV !== 'PROD') {
+    let env = process.env.CURRENT_ENV;
+    if (env !== 'PROD' && env !== 'TEST') {
       console.log(`'${eventName}' event is triggered`);
     }
     events[eventName].handlers.forEach(function(handler) {

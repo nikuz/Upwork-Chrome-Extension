@@ -94,12 +94,8 @@ class Slider extends React.Component {
     this.setValueText(value);
   };
   startHandler = (e) => {
-    var pin = e.target;
-    if (!pin.classList.contains('sgis_pin')) {
-      return;
-    }
-
-    var props = this.values,
+    var pin = e.target,
+      props = this.values,
       values = props.values,
       from = props.from,
       to = props.to;
@@ -112,7 +108,7 @@ class Slider extends React.Component {
       this.isRight = true;
     }
 
-    this.oppositePos = values.indexOf(this.isRight ? from : to) * this.values.step;
+    this.oppositePos = values.indexOf(this.isRight ? from : to) * props.step;
   };
   moveHandler = (e) => {
     if (!this.start) {
@@ -154,8 +150,13 @@ class Slider extends React.Component {
       values = props.values,
       fillEl = ReactDOM.findDOMNode(this.refs.fill),
       sliderWidth = fillEl.clientWidth || 400, // default value for tests
-      sliderOffset = fillEl.offsetLeft + document.getElementById('content').offsetLeft,
-      step = sliderWidth / this.state.sliderStep;
+      sliderOffset = fillEl.offsetLeft,
+      step = sliderWidth / this.state.sliderStep,
+      contentBlock = document.getElementById('content');
+
+    if (contentBlock) {
+      sliderOffset += contentBlock.offsetLeft;
+    }
 
     this.values = _.extend({
       step: step,
@@ -173,14 +174,6 @@ class Slider extends React.Component {
   };
   componentDidMount = () => {
     setTimeout(this.recalculateSizes, 400);
-    document.addEventListener('mousedown', this.startHandler);
-    document.addEventListener('mousemove', this.moveHandler);
-    document.addEventListener('mouseup', this.endHandler);
-  };
-  componentWillUnmount = () => {
-    document.removeEventListener('mousedown', this.startHandler);
-    document.removeEventListener('mousemove', this.moveHandler);
-    document.removeEventListener('mouseup', this.endHandler);
   };
   render() {
     var filPosition = {
@@ -188,10 +181,10 @@ class Slider extends React.Component {
       right: this.state.right + 'px'
     };
     return (
-      <div className="sgi_slider" ref="wrap">
+      <div className="sgi_slider" ref="wrap" onMouseMove={this.moveHandler} onMouseUp={this.endHandler} onMouseLeave={this.endHandler}>
         <div className="sgis_fill" ref="fill" style={filPosition}>
-          <div className="sgis_pin sgispl" data-value="left" />
-          <div className="sgis_pin sgispr" data-value="right" />
+          <div className="sgis_pin sgispl" data-value="left" onMouseDown={this.startHandler} />
+          <div className="sgis_pin sgispr" data-value="right" onMouseDown={this.startHandler} />
         </div>
       </div>
     );

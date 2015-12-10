@@ -148,7 +148,7 @@ var request = function(options, callback) {
           cb(null, data);
         },
         error: (jqXHR, textStatus) => {
-          cb(textStatus);
+          cb(textStatus || jqXHR);
         }
       };
 

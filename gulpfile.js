@@ -7,7 +7,8 @@ var gulp = require('gulp'),
   webpackConfig = require('./webpack.config.js'),
   eslint = require('gulp-eslint'),
   clean = require('gulp-clean'),
-  zip = require('gulp-zip');
+  zip = require('gulp-zip'),
+  Karma = require('karma').Server;
 
 gulp.task('webpack:build', ['build:clean'], function(done) {
   // modify some webpack config options
@@ -131,7 +132,6 @@ gulp.task('eslint', function () {
     .pipe(eslint.failAfterError());
 });
 
-
 gulp.task('build', [
   'build:clean',
   'webpack:build',
@@ -147,3 +147,10 @@ gulp.task('default', [
   'webpack:build-dev',
   'build-dev'
 ]);
+
+gulp.task('test', function(done) {
+  new Karma({
+    configFile: __dirname + '/tests/karma.conf.js',
+    singleRun: true
+  }, done).start();
+});

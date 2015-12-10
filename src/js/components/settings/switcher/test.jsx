@@ -1,12 +1,14 @@
 'use strict';
 
 import * as React from 'react';
+import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
 import * as data from 'tests/data/index';
-import Switcher from 'components/settings/switcher/code';
+import Switcher from './code';
+import * as chai from 'chai';
+import TestUtils from 'react-addons-test-utils';
 
-var TestUtils = React.addons.TestUtils,
-  expect = chai.expect;
+var expect = chai.expect;
 
 describe('Switcher', () => {
   beforeEach(function() {
@@ -27,15 +29,13 @@ describe('Switcher', () => {
       }
     };
     var component = TestUtils.renderIntoDocument(
-      <div id="test_container">
-        <Switcher {...props} />
-      </div>
+      <Switcher {...props} />
     );
     var checkEl = TestUtils.findRenderedDOMComponentWithClass(
       component, 'fch_cust'
     );
 
-    expect(checkEl.getDOMNode().checked).to.eql(props.checked);
+    expect(checkEl.checked).to.eql(props.checked);
     TestUtils.Simulate.change(checkEl);
   });
 
@@ -52,9 +52,7 @@ describe('Switcher', () => {
       //expect(opts.value).to.eql(!value);
     });
     var component = TestUtils.renderIntoDocument(
-      <div id="test_container">
-        <Switcher {...props} />
-      </div>
+      <Switcher {...props} />
     );
     var checkEl = TestUtils.findRenderedDOMComponentWithClass(
       component, 'fch_cust'
