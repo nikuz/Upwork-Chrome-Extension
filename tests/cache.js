@@ -5,7 +5,7 @@ import * as settings from 'modules/settings';
 import * as data from 'tests/data/index';
 import * as cache from 'modules/cache';
 import * as storage from 'modules/storage';
-import * as async from 'utils/async';
+import {series as asyncSeries} from 'async';
 import * as chai from 'chai';
 
 var expect = chai.expect;
@@ -189,7 +189,7 @@ describe('Populate', () => {
 
   it('should populate cache based on user\'s settings', (done) => {
     var populatedJobsCount;
-    async.series([
+    asyncSeries([
       function(callback) {
         cache.populate({}, function(err, response) {
           expect(err).to.be.an('null');
@@ -214,7 +214,7 @@ describe('Populate', () => {
     var cachedJobs = data.get('cache'),
       populatedJobsCount;
 
-    async.series([
+    asyncSeries([
       function(callback) {
         cache.populate({}, function(err, response) {
           expect(err).to.be.an('null');
@@ -240,7 +240,7 @@ describe('Populate', () => {
     var cachedJobs = data.get('cache'),
       populatedJobsCount;
 
-    async.series([
+    asyncSeries([
       function(callback) {
         cache.populate({
           update: true
@@ -276,7 +276,7 @@ describe('Check is empty', () => {
     expect(cache.isEmpty()).to.eql(true);
   });
   it('should return false', (done) => {
-    async.series([
+    asyncSeries([
       function(callback) {
         cache.populate({}, function(err, response) {
           expect(err).to.be.an('null');

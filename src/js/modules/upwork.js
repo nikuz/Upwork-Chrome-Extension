@@ -5,9 +5,8 @@ import * as config from 'config';
 import * as storage from 'modules/storage';
 import * as OAuth from 'modules/oauth';
 import * as constants from 'modules/constants';
-import * as async from 'utils/async';
+import {series as asyncSeries} from 'async';
 import * as ajax from 'utils/ajax';
-import Promise from 'utils/promise';
 
 var oauth;
 
@@ -122,8 +121,7 @@ var request = function(options, callback) {
   var opts = options || {},
     cb = callback,
     url = opts.url,
-    method = opts.method || 'GET',
-    promise = opts.promise;
+    method = opts.method || 'GET';
 
   var validateParams = function() {
     if (!url) {
@@ -159,13 +157,7 @@ var request = function(options, callback) {
       secret: storage.get('token_secret')
     });
     request_obj.data = request_data;
-    request = request(request_obj);
-    if (promise) {
-      promise.catch(function() {
-        request.abort();
-        cb();
-      });
-    }
+    request(request_obj);
   };
 
   validateParams();
@@ -178,12 +170,9 @@ var request = function(options, callback) {
 var errorWithCredentials = 0;
 var pRequest = function(options, callback) {
   var cb = callback || _.noop,
-    result = {},
-    promise = new Promise();
+    result = {};
 
-  options.promise = promise;
-
-  async.series([
+  asyncSeries([
     function(internalCallback) {
       init(internalCallback);
     },
@@ -230,11 +219,10 @@ var pRequest = function(options, callback) {
           flushAccess();
         }
       }
-    } else if (!promise.rejected) {
+    } else {
       cb(null, result);
     }
   });
-  return promise;
 };
 
 // ---------

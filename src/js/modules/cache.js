@@ -7,7 +7,6 @@ import * as settings from 'modules/settings';
 import * as request from 'modules/request';
 import * as CryptoJS from 'crypto-js';
 import * as EventManager from 'modules/events';
-import dateCorrect from 'utils/date';
 
 var cacheLiveTime = 36e5 * 3; // 3 hours
 
@@ -121,7 +120,6 @@ var filter = function(feedsSum, jobs, update) {
     });
 
   _.each(jobs, downloaded => {
-    downloaded.date_created = dateCorrect(downloaded.date_created);
     var jobDate = new Date(downloaded.date_created);
     // new job isn't contains in local jobs
     // and if it's update operation, date created of new job is higher than last_job_date

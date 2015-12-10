@@ -1,7 +1,7 @@
 'use strict';
 
-import * as React from 'react';
 import * as _ from 'underscore';
+import * as React from 'react';
 import * as EventManager from 'modules/events';
 import * as config from 'config';
 import * as request from 'modules/request';
@@ -85,11 +85,9 @@ class jobItem extends React.Component {
     }, (err, response) => {
       if (err) {
         EventManager.trigger('inboxError');
-      } else {
+      } else if(response && this.request) {
         this.request = null;
-        if (response) {
-          this.parseJobData(response.profile);
-        }
+        this.parseJobData(response.profile);
       }
     });
   };
@@ -135,9 +133,7 @@ class jobItem extends React.Component {
     EventManager.on('btnBackClicked', this.handlerBackBtn);
   };
   componentWillUnmount = () => {
-    if (this.request) {
-      this.request.reject(); // request - it's promise instance
-    }
+    this.request = null;
     clearTimeout(this.updateTimer);
     EventManager.off('btnFavoritesClicked btnTrashClicked', this.managerEventsHandler);
     EventManager.off('btnShareClicked', this.shareEventsHandler);

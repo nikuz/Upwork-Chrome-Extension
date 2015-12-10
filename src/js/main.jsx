@@ -12,8 +12,6 @@ if (!storage.get(updateName)) {
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import * as _ from 'underscore';
-import * as async from 'utils/async';
 import * as EventManager from 'modules/events';
 import Header from 'components/header/code';
 import ListManager from 'components/list/manager-code';

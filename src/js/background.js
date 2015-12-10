@@ -7,7 +7,7 @@ import * as settings from 'modules/settings';
 import * as cache from 'modules/cache';
 import * as constants from 'modules/constants';
 import * as badge from 'modules/badge';
-import * as async from 'utils/async';
+import {parallel as asyncParallel} from 'async';
 import timeAgo from 'utils/timeAgo';
 
 var notifyInterval = 5,
@@ -39,7 +39,7 @@ function notificationShow(options, callback) {
         tab.postMessage('newJobs', '*');
       });
       // if extension tab is active tab
-      async.parallel([
+      asyncParallel([
         function(callback) {
           chrome.windows.getCurrent({
             populate: false

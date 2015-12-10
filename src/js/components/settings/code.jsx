@@ -28,15 +28,17 @@ class Settings extends React.Component {
       sData = settings.get();
 
     if (!sData.category2.values.length) {
-      request.get({
+      this.categoriesRequest = request.get({
         url: config.UPWORK_jobs_categories
       }, (err, response) => {
+        console.log(this.categoriesRequest);
         if (err) {
           cb(err);
           //Raven.captureException(err);
         } else if (!response) {
           cb(null, null);
-        } else {
+        } else if (this.categoriesRequest) {
+          this.categoriesRequest = null;
           var categories = _.pluck(response.categories, 'title');
           categories.unshift('All');
           _.each(categories, item => {
@@ -62,6 +64,7 @@ class Settings extends React.Component {
     EventManager.on('stngListSelected', this.handlerListSelect);
   };
   componentWillUnmount = () => {
+    this.categoriesRequest = null;
     var cur_settings = settings.get(),
       needToUpdateCache = false,
       changed = false;

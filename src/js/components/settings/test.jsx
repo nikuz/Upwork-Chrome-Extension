@@ -5,7 +5,10 @@ import * as ReactDOM from 'react-dom';
 import * as _ from 'underscore';
 import * as EventManager from 'modules/events';
 import * as data from 'tests/data/index';
-import {series, each} from 'async';
+import {
+  series as asyncSeries,
+  each as asyncEach
+} from 'async';
 import * as settings from 'modules/settings';
 import Settings from 'components/settings/code';
 import Item from 'components/settings/item/code';
@@ -37,10 +40,10 @@ describe('Settings', () => {
       }),
       sData = settings.get();
 
-    series([
+    asyncSeries([
       function(callback) {
         // trigger change events to get new settings
-        each(renderedComponents, function(component, internalCallback) {
+        asyncEach(renderedComponents, function(component, internalCallback) {
           switch (component.props.type) {
             case 'list':
               let listChange = function() {
@@ -53,7 +56,7 @@ describe('Settings', () => {
                 setTimeout(function() {
                   listChange();
                   internalCallback();
-                }, 2000);
+                }, 3000);
               } else {
                 listChange();
                 internalCallback();
