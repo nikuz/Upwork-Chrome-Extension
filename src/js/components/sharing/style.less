@@ -1,0 +1,46 @@
+.sharingTooltip {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  padding: 10px;
+  background-color: #3b3d46;
+  box-shadow: 0 1px 5px #333;
+  transition: opacity .3s;
+  transform: translate(-50%, 0);
+  white-space: nowrap;
+  font-size: 0;
+  z-index: 30;
+}
+.sharing-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin: 0 5px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+.si-facebook {
+  background-image: url(/images/facebook.svg);
+}
+.si-google {
+  background-image: url(/images/google.svg);
+}
+.si-linkedin {
+  background-image: url(/images/linkedin.svg);
+}
+.si-twitter {
+  background-image: url(/images/twitter.svg);
+}
+
+.sharing-enter {
+  opacity: 0;
+}
+.sharing-enter.sharing-enter-active {
+  opacity: 1;
+}
+.sharing-leave {
+  opacity: 1;
+}
+.sharing-leave.sharing-leave-active {
+  opacity: 0;
+}

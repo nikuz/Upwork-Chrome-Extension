@@ -1,0 +1,49 @@
+.sgi_slider {
+  position: relative;
+  margin: 20px 15px 15px;
+  height: 15px;
+  border-radius: 16px;
+  border: 1px solid #CCC;
+  background-image: -webkit-linear-gradient(#E3E3E3, #ECECEC);
+  background-image: linear-gradient(#E3E3E3, #ECECEC);
+}
+.sg_item_legacy .sgi_slider {
+  margin: 15px 0;
+}
+.sgis_fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 15px;
+  border-radius: 16px;
+  background-color: #6fda44;
+}
+.sgis_pin {
+  position: absolute;
+  top: -18px;
+  width: 50px;
+  height: 50px;
+  padding-top: 11px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.sgis_pin:first-child {
+  left: -15px;
+}
+.sgis_pin:last-child {
+  right: -15px;
+}
+.sgis_pin:after {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: 28px;
+  box-shadow: 0 0 5px #aaa;
+  background-image: -webkit-linear-gradient(#fff, #f1f1f1);
+  background-image: linear-gradient(#fff, #f1f1f1);
+}
+.sgi_opened .sgc_cont_slider {
+  -webkit-transform: translate3d(0, -10px, 0);
+}

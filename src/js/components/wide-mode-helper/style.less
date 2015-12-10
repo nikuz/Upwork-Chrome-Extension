@@ -1,0 +1,33 @@
+#popup_helper {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  max-width: 250px;
+  padding: 10px 15px;
+  background-color: #FFF;
+  box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+  font-size: 1.25rem;
+  z-index: 100;
+}
+
+.pageWideMode #popup_helper {
+  display: block
+}
+
+#popup_helper:after {
+  content: '';
+  position: absolute;
+  right: 32px;
+  top: -5px;
+  width: 12px;
+  height: 6px;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAGCAQAAABd57cKAAAAPElEQVR4XlXJuwEAIAhDQd3/h1tpLV1aXIAFlAajSXev5FAh8Zrw8kC/iWy6fbspEznGFIyW/CUy05qQA9aOUhY20QbyAAAAAElFTkSuQmCC') 0 0 no-repeat;
+}
+
+#ph_icon {
+  float: right;
+  margin-left: 10px;
+  width: 96px;
+  height: 35px;
+  background: url(/images/help.png) 0 0 no-repeat;
+}

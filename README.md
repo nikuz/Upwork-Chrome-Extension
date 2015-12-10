@@ -1,5 +1,18 @@
-# oDesk-Chrome-Extension
-Chrome extension for watch new jobs on Upwork (oDesk)
+# Upwatcher. Upwork job watcher.
 
-## [Upwork!](https://chrome.google.com/webstore/detail/watch-upwork-upwork-job-w/cpmlhfgkdmkceojlpjdnddhjimnlockd)
-## [oDesk!](https://chrome.google.com/webstore/detail/watch-desk-odesk-job-watc/bnladopbklnbiepipgcpippebohiomko)
+[App in store!](https://chrome.google.com/webstore/detail/upwatcher-upwork-job-watc/cpmlhfgkdmkceojlpjdnddhjimnlockd)
+
+This extension use Upwork API for watching new jobs and showing notifications.
+Upwatcher - it is Upwork jobs watcher based on native Upwork API. Extension haven't access to any you data on Upwork.com, also don't change any your settings. It's working totally locally, API access needed only for use native Upwork search.
+
+Features:
+ - customizable search
+ - ability to mark jobs as Favorites
+ - show browser Notifications 
+ - preview jobs in extension 
+ - sharing jobs
+
+![alt text](store_resources/list.png "List of jobs")
+![alt text](store_resources/preview.png "Job preview")
+![alt text](store_resources/settings.png "Settings")
+![alt text](store_resources/notification.png "Notification")

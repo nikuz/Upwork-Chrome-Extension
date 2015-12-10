@@ -1,0 +1,34 @@
+.notification {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 91px;
+  background-color: #ffeb99;
+  box-shadow: 0 1px 5px #333;
+  line-height: 28px;
+  font-size: 1.167rem;
+  text-align: center;
+  transition: transform .3s ease-out;
+  z-index: 20;
+}
+.notification.attop {
+  transform: translate3d(0, -46px, 0);
+}
+
+.notification-enter,
+.notification-leave {
+  transition: opacity .3s;
+}
+.notification-enter {
+  opacity: 0;
+}
+.notification-enter.notification-enter-active {
+  opacity: 1;
+}
+.notification-leave {
+  opacity: 1;
+}
+.notification-leave.notification-leave-active {
+  opacity: 0;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "favorites",
+  "data": [
+    {
+      "id": "~01590de293c8c6d7c3",
+      "cut_id": "_01590de293c8c6d7c3",
+      "category2": "Web, Mobile & Software Dev",
+      "budget": null,
+      "date_created": "2015/08/22 11:58:36+0000",
+      "duration": "More than 6 months",
+      "job_type": "Hourly",
+      "skills": [
+        "css3",
+        "html5",
+        "javascript",
+        "jquery",
+        "php",
+        "twitter-bootstrap"
+      ],
+      "title": "PHP Developer for permanent job position",
+      "url": "http://www.upwork.com/jobs/~01590de293c8c6d7c3",
+      "workload": "30+ hrs/week",
+      "feeds": "275c643ec89f723b719b6a7606944a94"
+    },
+    {
+      "id": "~0126e94754d59a7e74",
+      "cut_id": "_0126e94754d59a7e74",
+      "category2": "Web, Mobile & Software Dev",
+      "budget": null,
+      "date_created": "2015/08/22 11:33:08+0000",
+      "duration": "More than 6 months",
+      "job_type": "Hourly",
+      "skills": [
+        "html5"
+      ],
+      "title": "Veritaseum is seeking a full stack JavaScript developer",
+      "url": "http://www.upwork.com/jobs/~0126e94754d59a7e74",
+      "workload": "30+ hrs/week",
+      "feeds": "275c643ec89f723b719b6a7606944a94"
+    }
+  ]
+}

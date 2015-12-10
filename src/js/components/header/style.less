@@ -1,0 +1,41 @@
+header {
+  position: relative;
+  padding: 7px 5px 5px;
+  border-radius: 3px 3px 0 0;
+  background-color: #6FDA44;
+  z-index: 50;
+}
+.appSettingsMode header {
+  box-shadow: inset 0 -2px 4px rgba(102, 102, 102, 0.2);
+}
+
+#logo {
+  width: 150px;
+  height: 33px;
+  margin-left: 8px;
+  background: url(/images/logo.svg) 50% 50% no-repeat;
+  font-size: 0
+}
+
+#stngs_trigger {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 56px;
+  height: 40px;
+  font-size: 27px;
+  line-height: 37px;
+  text-align: center;
+  color: #fff;
+  border-radius: 7px 7px 0 0;
+  transition:
+    transform 0.3s ease-out,
+    background 0.3s ease-out;
+  cursor: pointer;
+}
+
+#stngs_trigger.stgns-tr-open {
+  background-color: #fff;
+  color: #6fda44;
+  transform: translate3d(-20px, 0, 0);
+}
