@@ -39,6 +39,9 @@ class jobItem extends React.Component {
   handlerApplyClick = () => {
     window.open(config.UPWORK_url + '/job/' + this.props.id + '/apply', '_system');
   };
+  escape = (text) => {
+    return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  };
   parseJobData = (data) => {
     var assignments = [],
       feedback,
@@ -60,7 +63,7 @@ class jobItem extends React.Component {
 
     result = _.extend({}, this.props, {
       extended: true,
-      description: Linkify(_.escape(data.op_description)),
+      description: Linkify(this.escape(data.op_description)),
       applicants: data.op_tot_cand,
       interviewing: data.interviewees_total_active,
       feedback: feedback > 0,

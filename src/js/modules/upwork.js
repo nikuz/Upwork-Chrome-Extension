@@ -167,7 +167,6 @@ var request = function(options, callback) {
 // public methods
 // ----------------
 
-var errorWithCredentials = 0;
 var pRequest = function(options, callback) {
   var cb = callback || _.noop,
     result = {};
@@ -210,14 +209,6 @@ var pRequest = function(options, callback) {
       } else {
         cb(err);
         //Raven.captureException(err);
-        var access = storage.get('access');
-        if (access) {
-          errorWithCredentials += 1;
-        }
-        if (!access || errorWithCredentials === 2) {
-          errorWithCredentials = 0;
-          flushAccess();
-        }
       }
     } else {
       cb(null, result);

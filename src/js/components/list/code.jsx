@@ -185,6 +185,7 @@ class List extends React.Component {
       items: itemsToUpdate,
       folder: this.state.curFolder
     });
+    badge.update();
   };
   scrollValue = 0;
   scrollHandler = () => {
