@@ -3,3 +3,4 @@ tests/release/*
 node_modules/*
 store/*
 .DS_Store
+store_resources/Upwatcher_*.zip

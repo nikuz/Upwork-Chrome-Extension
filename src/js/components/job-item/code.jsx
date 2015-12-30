@@ -150,7 +150,7 @@ class jobItem extends React.Component {
           <Manager favorites trash share back />
         </div>
         <div id="job_description">
-          <h1>{data.title}</h1>
+          <h1><a href={config.UPWORK_url + '/job/' + this.props.id} target="_blank">{data.title}</a></h1>
           <strong className="jd_s">{data.job_type}</strong> - <span className="jd_s jd_sg">Posted <span ref="date_created">{timeAgo(data.date_created)}</span></span>
           <button id="jd_apply" onClick={this.handlerApplyClick}>
             Apply to this job &nbsp;<Icon name="external-link" />
